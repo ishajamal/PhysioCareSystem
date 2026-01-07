@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class itemUsage extends Model
 {
     protected $table = 'item_usages';
+    protected $primaryKey = 'itemUsageID'; 
+    public $incrementing = true;
+    protected $keyType = 'int';
     
     protected $fillable = [
         'usageID',

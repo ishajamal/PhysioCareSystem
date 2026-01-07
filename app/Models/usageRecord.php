@@ -8,6 +8,10 @@ class usageRecord extends Model
 {
     protected $table = 'usage_records';
     
+    protected $primaryKey = 'usageID';
+    public $incrementing = true;
+    protected $keyType = 'int';
+
     protected $fillable = [
         'userID',
         'usedBy',

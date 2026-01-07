@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class itemMaintenance extends Model
 {
-     protected $table = 'item_maintenances';
+    protected $table = 'item_maintenances';
+    
+    protected $primaryKey = 'itemMaintenanceID'; 
+    public $incrementing = true;
+    protected $keyType = 'int';
     
     protected $fillable = [
         'requestID',

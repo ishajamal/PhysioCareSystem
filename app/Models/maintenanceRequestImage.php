@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class maintenanceRequestImage extends Model
 {
     protected $table = 'maintenance_request_images';
+
+    protected $primaryKey = 'imageID';
+    public $incrementing = true;
+    protected $keyType = 'int';
     
     protected $fillable = [
         'requestID',
