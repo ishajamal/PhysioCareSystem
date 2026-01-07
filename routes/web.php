@@ -1,0 +1,74 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\therapist\RecordItemUsage\UsageController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// Redirect root to login
+Route::get('/', function () {
+    return redirect('/login');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Guest Routes (Not Logged In)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
+    // Login routes
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    
+    // Register routes
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes (Logged In)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+        
+        
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | THERAPIST Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:therapist')->prefix('therapist')->name('therapist.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', function () {
+            return view('therapist.dashboard');
+        })->name('dashboard');
+        
+        //Usage Record
+        Route::get('inventory-list', [UsageController::class, 'inventoryList'])->name('inventory.list');
+        Route::get('select-item/{itemID}', [UsageController::class, 'selectItem'])->name('select.item');
+        Route::get('add-usage-record/{itemID}', [UsageController::class, 'addUsageRecord'])->name('add.usage.record');
+        Route::post('store-usage', [UsageController::class, 'storeUsage'])->name('usage.store'); // Store usage record
+    });
+    
+    // Logout (must be POST for security)
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
