@@ -1,6 +1,6 @@
 @extends('layouts.therapist')
 
-@section('title', 'Add Usage Record')
+@section('title', 'Edit Usage Record')
 
 @section('content')
 
@@ -229,7 +229,7 @@
 
     <!-- Header -->
     <div class="page-header">
-        <h1 class="page-title">Add Usage Record</h1>
+        <h1 class="page-title">Edit Usage Record</h1>
         <div>
             <button class="btn-back" onclick="window.history.back()"><i class="bi bi-arrow-left"></i> Back</button>
             <button type="submit" form="usageForm" class="btn-save"><i class="bi bi-floppy"></i> Save</button>
@@ -241,33 +241,33 @@
 
         <!-- Left Side: Form -->
         <div class="usage-left">
-            <form id="usageForm" action="{{ route('therapist.usage.store') }}" method="POST">
+            <form id="usageForm" action="{{ route('therapist.cart.update', $cartItem->itemID) }}" method="POST">
                 @csrf
 
-                <input type="hidden" name="item_id" value="{{ $item->itemID }}">
+                <input type="hidden" name="item_id" value="{{ $cartItem->itemID }}">
 
                 <div class="form-grid">
 
                     <div class="form-group">
                         <label class="form-label">Product Code</label>
-                        <input type="text" class="form-control readonly" value="{{ $item->itemID }}" readonly>
+                        <input type="text" class="form-control readonly" value="{{ $cartItem->itemID }}" readonly>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Product Name</label>
-                        <input type="text" class="form-control readonly" value="{{ $item->itemName }}" readonly>
+                        <input type="text" class="form-control readonly" value="{{ $cartItem->itemMaintenanceInfo->itemName }}" readonly>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">Quantity</label>
                         <input type="number" 
-                               name="quantity" 
+                               name="quantityUsed" 
                                class="form-control" 
-                               min="1" 
-                               max="{{ $item->quantity }}"
-                               value="1"
+                               min="1"
+                               max="{{ $cartItem->itemMaintenanceInfo->quantity }}"
+                               value="{{ $cartItem->quantityUsed }}"
                                required>
-                        <span class="available-text">Available: {{ $item->quantity }}</span>
+                        <span class="available-text">Available: {{ $cartItem->itemMaintenanceInfo->quantity }}</span>
                     </div>
 
                     <div class="form-group">
@@ -293,7 +293,7 @@
                         <textarea name="notes" 
                                   class="form-control readonly" 
                                   rows="5"
-                                  placeholder="Add notes here..."> {{ $item->description }}</textarea>
+                                  placeholder="Add notes here..."> {{ $cartItem->itemMaintenanceInfo->description }}</textarea>
                     </div>
 
                 </div>
@@ -301,22 +301,23 @@
         </div>
 
        <!-- Right Side: Image -->
-<div class="usage-right">
-    <div class="image-box">
-        @if($item->images && $item->images->count() > 0)
-            <img src="{{ asset('storage/' . $item->images->first()->imagePath) }}" alt="Item Image">
-        @else
-            <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No Image">
-        @endif
-    </div>
-</div>
+        <div class="usage-right">
+            <div class="image-box">
+                @if($cartItem->itemMaintenanceInfo && $cartItem->itemMaintenanceInfo->images->count() > 0)
+                    <img src="{{ asset('storage/' . $cartItem->itemMaintenanceInfo->images->first()->imagePath) }}" alt="Item Image">
+                @else
+                    <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No Image">
+                @endif
+            </div>
+        </div>
+
 
     </div>
 </div>
 
 <script>
 document.querySelector('input[name="quantity"]').addEventListener('change', function() {
-    const maxQuantity = {{ $item->quantity }};
+    const maxQuantity = {{ $cartItem->quantity }};
     if (this.value > maxQuantity) {
         this.value = maxQuantity;
         alert('Quantity cannot exceed available stock of ' + maxQuantity);

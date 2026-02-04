@@ -13,7 +13,6 @@ class usageRecord extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'userID',
         'usedBy',
         'usageDate',
     ];
@@ -21,11 +20,6 @@ class usageRecord extends Model
     protected $casts = [
         'usageDate' => 'date',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'userID', 'userID');
-    }
 
     public function usedByUser()
     {

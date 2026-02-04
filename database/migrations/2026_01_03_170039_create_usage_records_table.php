@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('usage_records', function (Blueprint $table) {
             $table->id('usageID');
-            $table->foreignId('userID')->constrained('users', 'userID')->onDelete('cascade');
-            $table->foreignId('usedBy')->constrained('users', 'userID');
+            $table->foreignId('usedBy')->constrained('users', 'userID')->onDelete('cascade');
             $table->date('usageDate');
             $table->timestamps();
         });

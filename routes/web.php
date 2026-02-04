@@ -67,6 +67,14 @@ Route::middleware('auth')->group(function () {
         Route::get('select-item/{itemID}', [UsageController::class, 'selectItem'])->name('select.item');
         Route::get('add-usage-record/{itemID}', [UsageController::class, 'addUsageRecord'])->name('add.usage.record');
         Route::post('store-usage', [UsageController::class, 'storeUsage'])->name('usage.store'); // Store usage record
+        Route::get('usage-record', [UsageController::class, 'viewCart'])->name('usage.record');
+        Route::get('cart/edit/{itemID}', [UsageController::class, 'editCartItem'])->name('cart.edit');
+        Route::post('cart/update/{itemID}', [UsageController::class, 'updateCartItem'])->name('cart.update');
+        Route::post('usage/submit', [UsageController::class, 'submitUsageRecord'])->name('cart.submit');
+        Route::delete('cart/delete/{itemID}', [UsageController::class, 'deleteCartItem'])->name('cart.delete');
+        Route::post('cart/cancel', [UsageController::class, 'cancelUsage'])->name('cart.cancel');
+
+
     });
     
     // Logout (must be POST for security)

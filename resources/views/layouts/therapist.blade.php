@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard') | PhysioCare</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap");
@@ -702,6 +702,184 @@
         .content-wrapper::-webkit-scrollbar-thumb:hover {
             background: var(--gray-400);
         }
+
+        .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.delete-modal {
+    background: #f3e1e1;
+    padding: 40px;
+    border-radius: 20px;
+    width: 420px;
+    text-align: center;
+    position: relative;
+    animation: pop .25s ease;
+}
+
+@keyframes pop {
+    from { transform: scale(.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    background: #b42318;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-circle i {
+    color: white;
+    font-size: 32px;
+}
+
+.modal-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.modal-text {
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.confirm-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-cancel {
+    background: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-delete {
+    background: #d92d20;
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: .5;
+}
+
+.btn-delete:enabled {
+    opacity: 1;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 18px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+.modal-box {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    width: 420px;
+    text-align: center;
+    position: relative;
+}
+
+
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .modal-icon {
+    font-size: 60px;
+    color: #ffc107;
+    margin-bottom: 15px;
+  }
+
+  .modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #333;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .modal-buttons .btn {
+    padding: 10px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+  }
+
+  .modal-buttons .cancel {
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  .modal-buttons .submit {
+    background: #4caf50;
+    color: white;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #888;
+  }
+  
+
     </style>
     @stack('styles')
 </head>
@@ -742,7 +920,14 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('therapist.inventory.list') }}" class="{{ request()->routeIs('therapist.inventory.list') ? 'active' : '' }}">
+                        <a href="{{ route('therapist.inventory.list') }}"  
+                        class="{{ in_array(request()->route()->getName(), [
+                                'therapist.inventory.list',
+                                'therapist.select.item',
+                                'therapist.add.usage.record',
+                                'therapist.usage.store',
+                                'therapist.usage.record'
+                            ]) ? 'active' : '' }}">
                             <i class="bi bi-person-gear"></i>
                             <span>Usage record</span>
                         </a>
@@ -837,7 +1022,9 @@
         </div>
     </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('active');
@@ -927,7 +1114,41 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateHeaderPosition();
         });
+
+        // function openModal(id) {
+        // document.getElementById(id).classList.remove('hidden');
+        // }
+
+        // function closeModal(id) {
+        // document.getElementById(id).classList.add('hidden');
+        // }
+
+        document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay')
+            .forEach(m => m.classList.add('hidden'));
+        }
+        });
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+
+            const checkbox = document.getElementById('confirmCheck' + id);
+            const deleteBtn = document.getElementById('deleteBtn' + id);
+
+            checkbox.checked = false;
+            deleteBtn.disabled = true;
+
+            checkbox.onchange = () => {
+                deleteBtn.disabled = !checkbox.checked;
+            };
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
     </script>
     @stack('scripts')
+    
 </body>
 </html>
