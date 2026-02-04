@@ -702,6 +702,182 @@
         .content-wrapper::-webkit-scrollbar-thumb:hover {
             background: var(--gray-400);
         }
+        .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.delete-modal {
+    background: #f3e1e1;
+    padding: 40px;
+    border-radius: 20px;
+    width: 420px;
+    text-align: center;
+    position: relative;
+    animation: pop .25s ease;
+}
+
+@keyframes pop {
+    from { transform: scale(.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    background: #b42318;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-circle i {
+    color: white;
+    font-size: 32px;
+}
+
+.modal-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.modal-text {
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.confirm-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-cancel {
+    background: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-delete {
+    background: #d92d20;
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: .5;
+}
+
+.btn-delete:enabled {
+    opacity: 1;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 18px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+.modal-box {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    width: 420px;
+    text-align: center;
+    position: relative;
+}
+
+
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .modal-icon {
+    font-size: 60px;
+    color: #ffc107;
+    margin-bottom: 15px;
+  }
+
+  .modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #333;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .modal-buttons .btn {
+    padding: 10px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+  }
+
+  .modal-buttons .cancel {
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  .modal-buttons .submit {
+    background: #4caf50;
+    color: white;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #888;
+  }
+  
     </style>
     @stack('styles')
 </head>
@@ -853,5 +1029,132 @@
             <button onclick="closeComingSoon()" style="background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">Got it!</button>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+            
+            // Update header position when sidebar toggles
+            updateHeaderPosition();
+        }
+
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function updateHeaderPosition() {
+            const sidebar = document.getElementById('sidebar');
+            const header = document.querySelector('.header-title');
+            const mainContent = document.querySelector('.main-content');
+            
+            if (window.innerWidth <= 768) {
+                if (sidebar.classList.contains('active')) {
+                    header.style.left = '280px';
+                    mainContent.style.marginLeft = '280px';
+                    mainContent.style.width = 'calc(100% - 280px)';
+                } else {
+                    header.style.left = '0';
+                    mainContent.style.marginLeft = '0';
+                    mainContent.style.width = '100%';
+                }
+            }
+        }
+
+        // Auto-hide sidebar on mobile when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.querySelector('.menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggleBtn.contains(event.target) && 
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                updateHeaderPosition();
+            }
+
+            // Close notifications when clicking outside
+            const dropdown = document.getElementById('notificationDropdown');
+            const bellIcon = document.querySelector('.notification-wrapper .header-icon');
+            
+            if (dropdown && dropdown.style.display === 'block') {
+                if (!dropdown.contains(event.target) && !bellIcon.contains(event.target)) {
+                    dropdown.style.display = 'none';
+                }
+            }
+        });
+
+        // Close sidebar when clicking logout or settings
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    const sidebar = document.getElementById('sidebar');
+                    sidebar.classList.remove('active');
+                    updateHeaderPosition();
+                }
+            });
+        });
+
+        // Show notification count
+        document.addEventListener('DOMContentLoaded', function() {
+            const notificationCount = document.getElementById('notificationCount');
+            if (notificationCount) {
+                notificationCount.style.display = 'flex';
+            }
+        });
+
+        // Rotate chevron on click
+        document.querySelector('.admin-text').addEventListener('click', function() {
+            const chevron = this.querySelector('i');
+            chevron.style.transform = chevron.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            updateHeaderPosition();
+        });
+
+        // Initial update
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHeaderPosition();
+        });
+
+        // function openModal(id) {
+        // document.getElementById(id).classList.remove('hidden');
+        // }
+
+        // function closeModal(id) {
+        // document.getElementById(id).classList.add('hidden');
+        // }
+
+        document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay')
+            .forEach(m => m.classList.add('hidden'));
+        }
+        });
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+
+            const checkbox = document.getElementById('confirmCheck' + id);
+            const deleteBtn = document.getElementById('deleteBtn' + id);
+
+            checkbox.checked = false;
+            deleteBtn.disabled = true;
+
+            checkbox.onchange = () => {
+                deleteBtn.disabled = !checkbox.checked;
+            };
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+    </script>
 
     
