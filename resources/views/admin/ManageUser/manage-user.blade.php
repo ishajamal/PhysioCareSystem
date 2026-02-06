@@ -1,58 +1,105 @@
 @extends('layouts.app')
 
-@section('title', 'Inventory List') 
+@section('title', 'Manage Users')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
 
-    <h3>Manage Users</h3>
+    <!-- Page Heading -->
+    <h1 class="h3 text-gray-800" style="margin-bottom:25px;">Manage Users</h1>
 
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success alert-dismissible fade show">
+            {{ session('success') }}
+        </div>
     @endif
 
-    <form method="GET" action="{{ route('manage.user') }}" class="mb-3">
-        <input type="text" name="search" placeholder="Search ID or Name"
-               value="{{ $search }}" class="form-control">
+    <!-- Search Area -->
+    <form method="GET" action="{{ route('admin.manage.user') }}" style="margin-bottom:30px;">
+        <div class="row align-items-center">
+            <div class="col-md-5">
+                <input type="text" name="search"
+                       class="form-control form-control-lg"
+                       placeholder="Search ID or Name"
+                       value="{{ $search }}">
+            </div>
+
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-lg w-100">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
     </form>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th width="150">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($users as $u)
-            <tr>
-                <td>{{ $u->id }}</td>
-                <td>{{ $u->name }}</td>
-                <td>{{ $u->email }}</td>
-                <td>{{ $u->role }}</td>
-                <td>
-                    <a href="{{ route('manage.user.edit', $u->id) }}"
-                       class="btn btn-primary btn-sm">Edit</a>
+    <!-- User Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">User List</h6>
+        </div>
 
-                    <form action="{{ route('manage.user.delete', $u->id) }}"
-                          method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger btn-sm"
-                            onclick="return confirm('Delete this user?')">
-                            Delete
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <div class="card-body">
+            <div class="table-responsive">
 
-    {{ $users->links() }}
+                <table class="table table-bordered table-striped table-hover align-middle"
+                       style="border:2px solid #4e73df;">
+
+                    <thead style="background:#4e73df; color:white;">
+                        <tr>
+                            <th class="text-center" style="width:80px;">ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th class="text-center" style="width:150px;">Role</th>
+                            <th class="text-center" style="width:150px;">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach($users as $u)
+                        <tr style="height:80px;">
+                            <!-- ID CENTER -->
+                            <td class="text-center py-3">{{ $u->userID }}</td>
+
+                            <td class="py-3">{{ $u->name }}</td>
+                            <td class="py-3">{{ $u->email }}</td>
+
+                            <!-- ROLE CENTER -->
+                            <td class="text-center py-3">
+                                <span class="badge badge-info px-3 py-2">
+                                    {{ ucfirst($u->role) }}
+                                </span>
+                            </td>
+
+                            <!-- ACTION CENTER -->
+                            <td class="text-center py-3">
+                                <a href="{{ route('admin.manage.user.edit', $u->userID) }}"
+                                   class="btn btn-sm btn-warning mr-1">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                <form action="{{ route('admin.manage.user.delete', $u->userID) }}"
+                                      method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Delete this user?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+
+                </table>
+
+                <div class="mt-3">
+                    {{ $users->links() }}
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 </div>
 @endsection
