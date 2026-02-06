@@ -47,8 +47,23 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', function () {
             return view('admin.dashboard');
         })->name('dashboard');
-        
-        
+      /*
+    |--------------------------------------------------------------------------
+    | MANAGE USER ROUTES
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/manage-user', [ManageUserController::class, 'index'])
+        ->name('manage.user');
+
+    Route::get('/manage-user/edit/{id}', [ManageUserController::class, 'edit'])
+        ->name('manage.user.edit');
+
+    Route::post('/manage-user/update/{id}', [ManageUserController::class, 'update'])
+        ->name('manage.user.update');
+
+    Route::delete('/manage-user/delete/{id}', [ManageUserController::class, 'destroy'])
+        ->name('manage.user.delete');
+               
     });
 
     /*
