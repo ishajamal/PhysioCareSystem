@@ -1,12 +1,10 @@
 <?php
 
 use App\Http\Controllers\admin\ManageUser\ManageUserController;
-use App\Http\Controllers\Admin\ManageUserController as AdminManageUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\therapist\ManageUsageHistory\UsageHistoryController;
 use App\Http\Controllers\therapist\RecordItemUsage\UsageController;
 use App\Http\Controllers\admin\ManageMaintenanceRequest\ManageMaintenanceController;
-use App\Http\Controllers\Admin\ManageUser\ManageUserController;
 use Illuminate\Support\Facades\Route;
 
 
