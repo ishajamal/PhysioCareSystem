@@ -141,7 +141,7 @@ body {
     font-size: 14px;
     color: #1f2937;
     cursor: pointer;
-    appearance: none; /* removes default arrow */
+    appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 14px center;
@@ -230,6 +230,7 @@ body {
 }
 
 .close-modal:hover { color: #fca5a5; }
+
 </style>
 
 <div class="main-content-view">
@@ -251,6 +252,7 @@ body {
 
         <div class="request-detail-wrapper">
             
+            <!-- Equipment & Request Details -->
             <div class="content-card">
                 <h2 class="section-title">Equipment Maintenance Details</h2>
                 
@@ -261,27 +263,33 @@ body {
                     </div>
                     <div class="info-item">
                         <span class="info-label">Equipment</span>
-                        <div class="info-box">{{ $request->itemInfo->itemName ?? 'N/A' }}</div>
+                        @foreach($request->itemMaintenances as $item)
+                        <div class="info-box">{{ $item->itemInfo->itemName ?? 'N/A' }}</div>
+                        @endforeach
                     </div>
                     <div class="info-item">
                         <span class="info-label">Date Submitted</span>
-                        <div class="info-box">{{ $request->maintenanceRequest->dateSubmitted->format('d/m/Y h:i A') }}</div>
+                        <div class="info-box">{{ $request->dateSubmitted->format('d/m/Y h:i A') }}</div>
                     </div>
                     <div class="info-item">
                         <span class="info-label">Issue</span>
-                        <div class="info-box">{{ $request->itemIssue }}</div>
+                        @foreach($request->itemMaintenances as $item)
+                        <div class="info-box">{{ $item->itemIssue ?? 'N/A' }}</div>
+                        @endforeach
                     </div>
                 </div>
 
                 <div style="margin-bottom: 25px;">
                     <span class="info-label">Details</span>
-                    <div class="info-box large">{{ $request->detailsMaintenance ?? 'No details provided.' }}</div>
+                    @foreach($request->itemMaintenances as $item)
+                    <div class="info-box large">{{ $item->detailsMaintenance ?? 'No details provided.' }}</div>
+                    @endforeach
                 </div>
 
                 <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; border: 1px solid #bae6fd;">
                     <span class="info-label" style="color: #0369a1;">Update Status</span>
                     <select name="status" class="status-dropdown">
-                        @php $currentStatus = $request->maintenanceRequest->status; @endphp
+                        @php $currentStatus = $request->status; @endphp
                         <option value="Pending" {{ $currentStatus == 'Pending' ? 'selected' : '' }}>Pending</option>
                         <option value="In Progress" {{ $currentStatus == 'In Progress' ? 'selected' : '' }}>In Progress</option>
                         <option value="Completed" {{ $currentStatus == 'Completed' ? 'selected' : '' }}>Completed</option>
@@ -296,39 +304,43 @@ body {
                 <div class="info-grid">
                     <div class="info-item">
                         <span class="info-label">User ID</span>
-                        <div class="info-box">{{ $request->maintenanceRequest->userID }}</div>
+                        <div class="info-box">{{ $request->userID }}</div>
                     </div>
                     <div class="info-item">
                         <span class="info-label">User Name</span>
-                        <div class="info-box">{{ $request->maintenanceRequest->user->name ?? 'Unknown' }}</div>
+                        <div class="info-box">{{ $request->user->name ?? 'Unknown' }}</div>
                     </div>
                 </div>
             </div>
 
+            <!-- Images -->
             <div class="content-card">
                 <h3 class="section-title">Equipment Images</h3>
                 
                 @php 
-                    $images = $request->maintenanceRequest->images;
-                    $mainImg = $images->first() ? asset('storage/' . $images->first()->imagePath) : asset('images/placeholder.jpg');
+                    $images = $request->images;
+                    $mainImg = $images->first() 
+                        ? asset('storage/' . $images->first()->imagePath) 
+                        : asset('images/placeholder.jpg');
                 @endphp
 
                 <div class="main-img-container">
                     <img src="{{ $mainImg }}" id="main-preview-img" onclick="viewImage(this.src)" alt="Main Image">
                 </div>
-                
+
                 @if($images->count() > 1)
                     <span class="info-label">Additional Images</span>
                     <div class="thumbnail-grid">
                         @foreach($images as $img)
-                            <img src="{{ asset('storage/' . $img->imagePath) }}" 
-                                 class="thumbnail-img" 
-                                 onclick="swapImage(this.src)">
+                                <img src="{{ asset('storage/' . $img->imagePath) }}" 
+                                class="thumbnail-img" 
+                                onclick="swapImage(this.src)">
                         @endforeach
                     </div>
                 @else
                     <p style="color: #9ca3af; font-style: italic; font-size: 14px;">No additional images.</p>
                 @endif
+
             </div>
 
         </div>

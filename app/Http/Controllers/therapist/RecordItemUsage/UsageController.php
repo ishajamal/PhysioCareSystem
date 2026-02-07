@@ -202,7 +202,7 @@ public function submitUsageRecord()
 
         DB::commit();
 
-        return redirect()->route('therapist.inventory.list')
+        return redirect()->route('therapist.usage.history')
                          ->with('success', 'Usage record submitted successfully!');
 
     } catch (\Exception $e) {

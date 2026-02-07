@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'Admin Dashboard')
-
 @section('page-title', 'Report & Analytics')
 
 @section('content')
@@ -219,6 +218,7 @@
     }
 </style>
 
+
 <!-- Stats Cards -->
 <div class="stats-grid">
     <div class="stat-card">
@@ -226,7 +226,7 @@
             <i class="fas fa-file-alt"></i>
         </div>
         <div class="stat-content">
-            <h3>6,569</h3>
+            <h3>{{ number_format($newRequests ?? 0) }}</h3>
             <p>New Maintenance<br>Request</p>
         </div>
     </div>
@@ -236,7 +236,7 @@
             <i class="fas fa-clock"></i>
         </div>
         <div class="stat-content">
-            <h3>3,569</h3>
+            <h3>{{ number_format($pendingRequests ?? 0) }}</h3>
             <p>Maintenance Request<br>Pending</p>
         </div>
     </div>
@@ -246,7 +246,7 @@
             <i class="fas fa-check-circle"></i>
         </div>
         <div class="stat-content">
-            <h3>9,569</h3>
+            <h3>{{ number_format($completedRequests ?? 0) }}</h3>
             <p>Maintenance Request<br>Completed</p>
         </div>
     </div>
@@ -268,25 +268,19 @@
         <div class="inventory-status">
             <div class="status-header">
                 <span>Low in stock</span>
-                <span>3 items</span>
+                <span>{{ $lowStockCount ?? 0 }} items</span>
             </div>
-            <div class="warning">This item is low of stock, please order it soon!</div>
-            
-            <div class="inventory-item">
-                <div>
-                    <div class="item-name">Massage Oil</div>
-                    <div class="item-stock">Available: 8</div>
-                </div>
-                <a href="#" class="item-action">Order now !!</a>
-            </div>
+            <div class="warning">These items are low in stock, please order them soon!</div>
 
+            @foreach($lowStockItems as $item)
             <div class="inventory-item">
                 <div>
-                    <div class="item-name">Hot Gel</div>
-                    <div class="item-stock">Available: 3</div>
+                    <div class="item-name">{{ $item->itemName }}</div>
+                    <div class="item-stock">Available: {{ $item->quantity }}</div>
                 </div>
-                <a href="#" class="item-action">Order now !!</a>
+                <span class="item-action">Order now !!</span>
             </div>
+            @endforeach
         </div>
     </div>
 
@@ -305,26 +299,16 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>quantity</th>
+                    <th>Quantity Used</th>
                 </tr>
             </thead>
             <tbody>
+                @foreach($topItems as $item)
                 <tr>
-                    <td>Mask</td>
-                    <td>101</td>
+                    <td>{{ $item->itemName }}</td>
+                    <td>{{ $item->itemUsages->sum('quantityUsed') }}</td>
                 </tr>
-                <tr>
-                    <td>Massage Oil</td>
-                    <td>199</td>
-                </tr>
-                <tr>
-                    <td>Hot Gel</td>
-                    <td>125</td>
-                </tr>
-                <tr>
-                    <td>Hand Sanitizer</td>
-                    <td>105</td>
-                </tr>
+                @endforeach
             </tbody>
         </table>
     </div>

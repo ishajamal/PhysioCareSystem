@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\admin\ManageUser\ManageUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\therapist\ManageUsageHistory\UsageHistoryController;
 use App\Http\Controllers\therapist\RecordItemUsage\UsageController;
 use App\Http\Controllers\admin\ManageMaintenanceRequest\ManageMaintenanceController;
+use App\Http\Controllers\therapist\therapistDashboardController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -48,9 +50,8 @@ Route::middleware('auth')->group(function () {
     */
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         // Dashboard
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+       Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
         /*
     |--------------------------------------------------------------------------
     | MANAGE USER ROUTES
@@ -91,9 +92,8 @@ Route::middleware('auth')->group(function () {
     */
     Route::middleware('role:therapist')->prefix('therapist')->name('therapist.')->group(function () {
         // Dashboard
-        Route::get('/dashboard', function () {
-            return view('therapist.dashboard');
-        })->name('dashboard');
+            Route::get('/dashboard', [therapistDashboardController::class, 'index'])->name('dashboard');
+
 
         //Usage Record
         Route::get('inventory-list', [UsageController::class, 'inventoryList'])->name('inventory.list');

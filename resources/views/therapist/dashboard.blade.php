@@ -205,6 +205,9 @@
             padding: 10px 8px;
         }
     }
+    .center-text {
+    text-align: center;
+}
 </style>
 
 <div class="analytics-section">
@@ -215,7 +218,7 @@
             <div class="stat-icon">
                 <i class="bi bi-clipboard-check"></i>
             </div>
-            <div class="stat-number">120</div>
+            <div class="stat-number">{{ $totalMaintenance }}</div>
             <div class="stat-label">Maintenance Submitted</div>
         </div>
 
@@ -223,7 +226,7 @@
             <div class="stat-icon">
                 <i class="bi bi-clipboard-data"></i>
             </div>
-            <div class="stat-number">310</div>
+            <div class="stat-number">{{ $totalUsage }}</div>
             <div class="stat-label">Usage Recorded</div>
         </div>
     </div>
@@ -231,84 +234,80 @@
 
 <div class="history-section">
     <!-- History Usage Record -->
-    <div class="history-card">
-        <div class="history-header">
-            <h3 class="history-title">History Usage Record</h3>
-            <select class="filter-dropdown">
-                <option>This month</option>
-                <option>Last month</option>
-                <option>Last 3 months</option>
-                <option>This year</option>
-            </select>
-        </div>
-
-        <table class="history-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th style="text-align: center;">Quantity</th>
-                    <th style="text-align: right;">Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Glove</td>
-                    <td style="text-align: center;">3</td>
-                    <td style="text-align: right;">27.9.2024</td>
-                </tr>
-                <tr>
-                    <td>Bed Sheet</td>
-                    <td style="text-align: center;">1</td>
-                    <td style="text-align: right;">27.9.2024</td>
-                </tr>
-                <tr>
-                    <td>Essential Oil</td>
-                    <td style="text-align: center;">2</td>
-                    <td style="text-align: right;">26.9.2024</td>
-                </tr>
-                <tr>
-                    <td>Kinesiology Tape</td>
-                    <td style="text-align: center;">1</td>
-                    <td style="text-align: right;">26.9.2024</td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Top Used Equipment -->
+<div class="history-card">
+    <div class="history-header">
+        <h3 class="history-title">Top Used Equipment</h3>
     </div>
+
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>Equipment Name</th>
+                <th style="text-align:right;">Total Used</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($topUsedItems as $item)
+<tr>
+    <td>{{ $item['itemName'] }}</td>
+    <td style="text-align:right;">
+        <span  class="center-text">
+            {{ $item['total_used'] }}
+        </span>
+    </td>
+</tr>
+@empty
+<tr>
+    <td colspan="2" class="empty-state">
+        <i class="bi bi-bar-chart"></i><br>
+        No usage data found.
+    </td>
+</tr>
+@endforelse
+
+        </tbody>
+    </table>
+</div>
+
 
     <!-- History Maintenance Request -->
-    <div class="history-card">
-        <div class="history-header">
-            <h3 class="history-title">History Maintenance Request</h3>
-            <select class="filter-dropdown">
-                <option>This month</option>
-                <option>Last month</option>
-                <option>Last 3 months</option>
-                <option>This year</option>
-            </select>
-        </div>
-
-        <table class="history-table">
-            <thead>
-                <tr>
-                    <th>Equipment Name</th>
-                    <th style="text-align: right;">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Treadmill</td>
-                    <td style="text-align: right;">
-                        <span class="status-badge status-repaired">Repaired</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Dumbell</td>
-                    <td style="text-align: right;">
-                        <span class="status-badge status-ongoing">On Going</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- History Maintenance Request -->
+<div class="history-card">
+    <div class="history-header">
+        <h3 class="history-title">History Maintenance Request</h3>
     </div>
+
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>Equipment Name</th>
+                <th style="text-align:right;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($latestMaintenanceRequests as $request)
+                <tr>
+                    <td>{{ $request->itemInfo->itemName ?? '-' }}</td>
+                    <td style="text-align:right;">
+                        <span class="status-badge
+                            {{ $request->maintenanceRequest->status === 'repaired'
+                                ? 'status-repaired'
+                                : 'status-ongoing' }}">
+                            {{ ucfirst($request->maintenanceRequest->status ?? 'ongoing') }}
+                        </span>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="2" class="empty-state">
+                        <i class="bi bi-tools"></i><br>
+                        No maintenance requests found.
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
 </div>
 @endsection
