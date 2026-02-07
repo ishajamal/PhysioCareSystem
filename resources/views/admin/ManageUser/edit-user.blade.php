@@ -14,14 +14,15 @@
                     {{-- HEADER --}}
                     <div class="text-center mb-5">
                         <h2 class="mb-2">{{ $user->name }}</h2>
+                        <br>
                         <p class="text-muted mb-3">{{ $user->email }}</p>
                         <span class="badge badge-primary px-4 py-2">
                             {{ ucfirst($user->role) }}
                         </span>
                     </div>
-
+                    <br>
                     <hr class="my-5">
-
+                    <br>
                     {{-- FORM --}}
                     <form method="POST" action="{{ route('admin.manage.user.update', $user->userID) }}">
                         @csrf
@@ -72,7 +73,7 @@
                         </div>
                             <br>
                         <hr class="my-5">
-
+                            <br>
                         {{-- BUTTONS --}}
                         <div class="text-center mt-4">
                             <a href="{{ route('admin.manage.user') }}"

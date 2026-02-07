@@ -17,15 +17,15 @@
     <!-- Search Area -->
     <form method="GET" action="{{ route('admin.manage.user') }}" style="margin-bottom:30px;">
         <div class="row align-items-center">
-            <div class="col-md-5">
+            <div class="col-md-7">
                 <input type="text" name="search"
                        class="form-control form-control-lg"
                        placeholder="Search ID or Name"
                        value="{{ $search }}">
             </div>
 
-            <div class="col-md-2">
-                <button class="btn btn-primary btn-lg w-100">
+            <div class="col-md-5">
+                <button class="btn btn-primary btn-lg w-10000">
                     <i class="fas fa-search"></i> Search
                 </button>
             </div>
