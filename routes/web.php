@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\admin\ManageUser\ManageUserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\therapist\ManageUsageHistory\UsageHistoryController;
 use App\Http\Controllers\therapist\RecordItemUsage\UsageController;
 use Illuminate\Support\Facades\Route;
 
@@ -90,6 +92,24 @@ Route::middleware('auth')->group(function () {
         Route::post('cart/cancel', [UsageController::class, 'cancelUsage'])->name('cart.cancel');
 
 
+        //Usage History
+        Route::get('/usage-history', [UsageHistoryController::class, 'index'])
+        ->name('usage.history');
+        Route::get('/usage-history/{usageID}', [UsageHistoryController::class, 'show'])
+        ->name('view.history.details');
+        Route::get('/usage-history/{usageID}/item/{itemID}', [UsageHistoryController::class, 'viewItemDetails'])
+        ->name('view.history.item.details');
+        Route::get('/usage-history-edit/{usageID}/item/{itemID}', [UsageHistoryController::class, 'edit'])
+        ->name('usage.edit');
+        Route::put('/usage-history-edit/{usageID}/item/{itemID}', [UsageHistoryController::class, 'update'])
+        ->name('usage.update');
+        Route::delete('/usage-history/{usageID}/item/{itemID}/delete', [UsageHistoryController::class, 'destroy'])
+        ->name('usage.delete');
+
+        // Route::get('/usage-history',[UsageHistoryController::class, 'index'])->name('usage.history');
+        // Route::put('/usage-history/{id}',[UsageHistoryController::class, 'update'])->name('usage.update');
+
+        //
     });
     
     // Logout (must be POST for security)

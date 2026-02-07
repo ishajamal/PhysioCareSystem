@@ -919,7 +919,10 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="{{ request()->routeIs('admin.manage-user') ? 'active' : '' }}" onclick="showComingSoon(event, 'Users')">
+                        <a href="{{route('admin.manage.user')}}" class="{{ in_array(request()->route()->getName(), [
+                                'admin.manage.user',
+                                'admin.manage.user.edit'
+                            ]) ? 'active' : '' }}">
                             <i class="bi bi-person-gear"></i>
                             <span>Users</span>
                         </a>

@@ -932,6 +932,15 @@
                             <span>Usage record</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('therapist.usage.history') }}"  
+                        class="{{ in_array(request()->route()->getName(), [
+                                'therapist.usage.history',
+                            ]) ? 'active' : '' }}">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Record Usage History</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
