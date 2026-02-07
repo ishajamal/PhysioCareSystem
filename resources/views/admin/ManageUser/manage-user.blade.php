@@ -8,24 +8,18 @@
     <!-- Page Heading -->
     <h1 class="h3 text-gray-800" style="margin-bottom:25px;">Manage Users</h1>
 
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <!-- Search Area -->
     <form method="GET" action="{{ route('admin.manage.user') }}" style="margin-bottom:30px;">
         <div class="row align-items-center">
-            <div class="col-md-7">
-                <input type="text" name="search" style="height:45px; width:300px; font-size:16px;"
+            <div class="col-md-5">
+                <input type="text" name="search"  style="height:45px; width:300px; font-size:16px;"
                        class="form-control form-control-lg"
-                       placeholder="Search ID or Name"
+                       placeholder=" Search ID or Name"
                        value="{{ $search }}">
             </div>
             <br>
-            <div class="col-md-5">
-                <button class="btn btn-primary btn-lg w-10000" style="height:45px; width:120px; font-size:16px;">
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-lg w-100" style="height:45px; width:120px; font-size:16px;">
                     <i class="fas fa-search"></i> Search
                 </button>
             </div>
@@ -35,7 +29,7 @@
     <!-- User Table -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h2 class="m-0 font-weight-bold text-primary">User List</h2>
+            <h3 class="m-0 font-weight-bold text-primary">User List</h3>
         </div>
         <br>
         <div class="card-body">
@@ -58,7 +52,7 @@
                         @foreach($users as $u)
                         <tr style="height:80px;">
                             <!-- ID CENTER -->
-                            <td class="text-center py-3">{{ $u->userID }}</td>
+                            <td class="text-center allign middle py-3">{{ $u->userID }}</td>
 
                             <td class="py-3">{{ $u->name }}</td>
                             <td class="py-3">{{ $u->email }}</td>

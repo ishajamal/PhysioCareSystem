@@ -16,6 +16,7 @@
                         <h2 class="mb-2">{{ $user->name }}</h2>
                         <br>
                         <p class="text-muted mb-3">{{ $user->email }}</p>
+                        <br>
                         <span class="badge badge-primary px-4 py-2">
                             {{ ucfirst($user->role) }}
                         </span>
@@ -78,13 +79,13 @@
                          <button class="btn btn-primary btn-lg">
                         Save Changes
                     </button>
-                
-
+                    <br>
+                    <br>
                         <div class="text-center mt-4">
-                    <a href="{{ route('admin.manage.user') }}" 
+                    <button><a href="{{ route('admin.manage.user') }}" 
                     class="btn btn-secondary btn-lg mr-3">
                     Back
-                    </a>
+                    </a></button>
                 </div>    
                    
 
