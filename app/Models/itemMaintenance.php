@@ -14,6 +14,7 @@ class itemMaintenance extends Model
     
     protected $fillable = [
         'requestID',
+        'itemID',
         'itemIssue',
         'detailsMaintenance',
     ];
@@ -21,5 +22,9 @@ class itemMaintenance extends Model
     public function maintenanceRequest()
     {
         return $this->belongsTo(MaintenanceRequest::class, 'requestID', 'requestID');
+    }
+    public function itemInfo()
+    {
+        return $this->belongsTo(ItemMaintenanceInfo::class, 'itemID', 'itemID');
     }
 }
