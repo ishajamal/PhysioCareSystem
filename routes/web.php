@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\ManageUser\ManageUserController;
+use App\Http\Controllers\Admin\ManageUserController as AdminManageUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\therapist\ManageUsageHistory\UsageHistoryController;
 use App\Http\Controllers\therapist\RecordItemUsage\UsageController;
@@ -54,16 +55,16 @@ Route::middleware('auth')->group(function () {
     | MANAGE USER ROUTES
     |--------------------------------------------------------------------------
     */
-    Route::get('/manage-user', [ManageUserController::class, 'index'])
+    Route::get('/manage-user', [AdminManageUserController::class, 'index'])
         ->name('manage.user');
 
-    Route::get('/manage-user/edit/{id}', [ManageUserController::class, 'edit'])
+    Route::get('/manage-user/edit/{id}', [AdminManageUserController::class, 'edit'])
         ->name('manage.user.edit');
 
-    Route::post('/manage-user/update/{id}', [ManageUserController::class, 'update'])
+    Route::post('/manage-user/update/{id}', [AdminManageUserController::class, 'update'])
         ->name('manage.user.update');
 
-    Route::delete('/manage-user/delete/{id}', [ManageUserController::class, 'destroy'])
+    Route::delete('/manage-user/delete/{id}', [AdminManageUserController::class, 'destroy'])
         ->name('manage.user.delete');
                
     });
