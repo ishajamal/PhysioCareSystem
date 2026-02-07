@@ -35,9 +35,9 @@
     <!-- User Table -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">User List</h6>
+            <h3 class="m-0 font-weight-bold text-primary">User List</h3>
         </div>
-
+        <br>
         <div class="card-body">
             <div class="table-responsive">
 
