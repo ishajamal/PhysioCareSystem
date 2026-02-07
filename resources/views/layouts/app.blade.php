@@ -343,6 +343,7 @@
             transition: var(--transition);
             position: relative;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-decoration: none;
         }
 
         .header-icon:hover {
@@ -704,182 +705,180 @@
         }
 
         .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
 
-.modal-overlay.hidden {
-    display: none;
-}
+        .modal-overlay.hidden {
+            display: none;
+        }
 
-.delete-modal {
-    background: #f3e1e1;
-    padding: 40px;
-    border-radius: 20px;
-    width: 420px;
-    text-align: center;
-    position: relative;
-    animation: pop .25s ease;
-}
+        .delete-modal {
+            background: #f3e1e1;
+            padding: 40px;
+            border-radius: 20px;
+            width: 420px;
+            text-align: center;
+            position: relative;
+            animation: pop .25s ease;
+        }
 
-@keyframes pop {
-    from { transform: scale(.95); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
+        @keyframes pop {
+            from { transform: scale(.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
 
-.icon-circle {
-    width: 70px;
-    height: 70px;
-    background: #b42318;
-    border-radius: 50%;
-    margin: 0 auto 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            background: #b42318;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.icon-circle i {
-    color: white;
-    font-size: 32px;
-}
+        .icon-circle i {
+            color: white;
+            font-size: 32px;
+        }
 
-.modal-title {
-    font-size: 22px;
-    font-weight: 800;
-    margin-bottom: 10px;
-}
+        .modal-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
 
-.modal-text {
-    color: #444;
-    margin-bottom: 20px;
-}
+        .modal-text {
+            color: #444;
+            margin-bottom: 20px;
+        }
 
-.confirm-check {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 25px;
-    font-size: 14px;
-}
+        .confirm-check {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
 
-.modal-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
 
-.btn-cancel {
-    background: white;
-    border: none;
-    padding: 10px 22px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-}
+        .btn-cancel {
+            background: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
 
-.btn-delete {
-    background: #d92d20;
-    color: white;
-    border: none;
-    padding: 10px 22px;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    opacity: .5;
-}
+        .btn-delete {
+            background: #d92d20;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            opacity: .5;
+        }
 
-.btn-delete:enabled {
-    opacity: 1;
-}
+        .btn-delete:enabled {
+            opacity: 1;
+        }
 
-.close-btn {
-    position: absolute;
-    top: 15px;
-    right: 18px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-}
-.modal-box {
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 20px;
-    width: 420px;
-    text-align: center;
-    position: relative;
-}
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 18px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .modal-box {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            width: 420px;
+            text-align: center;
+            position: relative;
+        }
 
 
-  @keyframes fadeInScale {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
+        @keyframes fadeInScale {
+            from {
+            opacity: 0;
+            transform: scale(0.95);
+            }
+            to {
+            opacity: 1;
+            transform: scale(1);
+            }
+        }
 
-  .modal-icon {
-    font-size: 60px;
-    color: #ffc107;
-    margin-bottom: 15px;
-  }
+        .modal-icon {
+            font-size: 60px;
+            color: #ffc107;
+            margin-bottom: 15px;
+        }
 
-  .modal-title {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 25px;
-    color: #333;
-    font-family: "Segoe UI", sans-serif;
-  }
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #333;
+            font-family: "Segoe UI", sans-serif;
+        }
 
-  .modal-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-  }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
 
-  .modal-buttons .btn {
-    padding: 10px 25px;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-  }
+        .modal-buttons .btn {
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+        }
 
-  .modal-buttons .cancel {
-    background: #f0f0f0;
-    color: #333;
-  }
+        .modal-buttons .cancel {
+            background: #f0f0f0;
+            color: #333;
+        }
 
-  .modal-buttons .submit {
-    background: #4caf50;
-    color: white;
-  }
+        .modal-buttons .submit {
+            background: #4caf50;
+            color: white;
+        }
 
-  .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    color: #888;
-  }
-  
-
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #888;
+        }
     </style>
     @stack('styles')
 </head>
@@ -926,7 +925,12 @@
                         </a>
                     </li>
                     <li>
-                        <a href="manage-user" class="{{ request()->routeIs('admin.manage-user') ? 'active' : '' }}" onclick="showComingSoon(event, 'Users')">
+                        <a href="{{ route('admin.manage.user') }}" 
+                        class="{{ in_array(request()->route()->getName(), [
+                            'admin.manage.user', 
+                            'admin.manage.user.edit'
+                        ]) ? 'active' : '' }}">
+                            
                             <i class="bi bi-person-gear"></i>
                             <span>Users</span>
                         </a>
@@ -983,9 +987,9 @@
                         </ul>
                     </div>
                 </div>
-                <div class="header-icon" onclick="showComingSoon(event, 'Profile Settings')">
+                <a href="{{ route('admin.manage.user') }}" class="header-icon" style="text-decoration: none;">
                     <i class="far fa-user-circle"></i>
-                </div>
+                </a>
             </div>
         </header>
 

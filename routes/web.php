@@ -5,7 +5,6 @@ use App\Http\Controllers\therapist\RecordItemUsage\UsageController;
 use App\Http\Controllers\admin\ManageMaintenanceRequest\ManageMaintenanceController;
 use App\Http\Controllers\Admin\ManageUser\ManageUserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\ManageUser\ManageUserController;
 
 
 /*
@@ -76,6 +75,7 @@ Route::middleware('auth')->group(function () {
     */
         Route::get('/maintenance', [ManageMaintenanceController::class, 'index'])->name('maintenance.index');
         Route::get('/api/maintenance/notifications', [ManageMaintenanceController::class, 'getNotifications']);
+        Route::get('/api/maintenance/count', [ManageMaintenanceController::class, 'getNewCount']);
         Route::post('/api/maintenance/mark-read', [ManageMaintenanceController::class, 'markAsRead']);
         Route::delete('/maintenance/{requestID}', [ManageMaintenanceController::class, 'destroy'])->name('maintenance.destroy');
         Route::get('/maintenance/view/{requestID}', [ManageMaintenanceController::class, 'show'])->name('maintenance.view');
