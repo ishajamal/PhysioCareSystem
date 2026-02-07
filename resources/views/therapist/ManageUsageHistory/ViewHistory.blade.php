@@ -363,26 +363,6 @@ body {
         font-size: 14px;
     }
 }
-.modal-overlay {
-    position: fixed;
-    inset: 0; /* top:0 left:0 right:0 bottom:0 */
-    background: rgba(0, 0, 0, 0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.delete-modal {
-    background: #f8eaea;
-    width: 420px;
-    max-width: 90%;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    animation: pop .25s ease;
-}
-
 </style>
 
 <div class="details-container">
@@ -400,7 +380,6 @@ body {
     <!-- INFO CARD -->
     <div class="info-card">
         <div class="info-grid">
-
             <div class="info-item">
                 <div class="info-label">Usage ID</div>
                 <div class="info-value">
@@ -428,10 +407,8 @@ body {
                     {{ $usage->usedByUser->name }}
                 </div>
             </div>
-
         </div>
     </div>
-
 
     <!-- ITEMS TABLE -->
     <div class="table-container">
@@ -439,7 +416,7 @@ body {
             <div class="table-title">
                 <i class="bi bi-list-ul"></i> Items Used
             </div>
-            <a href="#" class="btn-add-item">
+            <a href="{{ route('therapist.inventory.list') }}" class="btn-add-item">
                 <i class="bi bi-plus-circle"></i> Add New Item
             </a>
         </div>
@@ -458,26 +435,20 @@ body {
                 @forelse($usage->itemUsages as $index => $itemUsage)
                     <tr>
                         <td>{{ $index + 1 }}</td>
-
                         <td class="product-code">
                             ITM-{{ str_pad($itemUsage->itemMaintenanceInfo->itemID, 3, '0', STR_PAD_LEFT) }}
                         </td>
-
                         <td class="product-name">
                             {{ $itemUsage->itemMaintenanceInfo->itemName }}
                         </td>
-
                         <td>
                             {{ $itemUsage->itemMaintenanceInfo->category }}
                         </td>
-
                         <td class="quantity-value">
                             {{ $itemUsage->quantityUsed }}
                         </td>
-
                         <td>
                             <div class="action-buttons">
-
                                 {{-- VIEW --}}
                                 <a href="{{ route('therapist.view.history.item.details', [$usage->usageID, $itemUsage->itemMaintenanceInfo->itemID]) }}" class="btn-view" title="View Details">
                                     <i class="bi bi-eye"></i>
@@ -489,24 +460,22 @@ body {
                                 </a>
 
                                 {{-- DELETE --}}
-                                <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $itemUsage->itemMaintenanceInfo->itemID }}" title="Delete">
+                                <button type="button" class="btn-delete" onclick="openModal('deleteModal{{ $itemUsage->itemMaintenanceInfo->itemID }}')" title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
-
-                                
-
                             </div>
-                            <!-- Delete modal component -->
-                                <x-delete-modal
-                                    id="deleteModal{{ $itemUsage->itemMaintenanceInfo->itemID }}"
-                                    title="ARE YOU SURE YOU WANT TO DELETE THIS RECORD?"
-                                    message="This action cannot be undone."
-                                    route="{{ route('therapist.usage.delete', [$usage->usageID, $itemUsage->itemMaintenanceInfo->itemID]) }}"
-                                    method="DELETE"
-                                />
                         </td>
                     </tr>
-                    @empty
+
+                    <!-- Delete Modal -->
+                    <x-delete-modal
+                        id="deleteModal{{ $itemUsage->itemMaintenanceInfo->itemID }}"
+                        title="ARE YOU SURE YOU WANT TO DELETE THIS RECORD?"
+                        message="This action cannot be undone."
+                        route="{{ route('therapist.usage.delete', [$usage->usageID, $itemUsage->itemMaintenanceInfo->itemID]) }}"
+                        method="DELETE"
+                    />
+                @empty
                     <tr>
                         <td colspan="6">
                             <div class="no-data">
@@ -517,12 +486,62 @@ body {
                             </div>
                         </td>
                     </tr>
-                    @endforelse
-
+                @endforelse
             </tbody>
-
         </table>
     </div>
 </div>
+
+<script>
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        
+        // Reset checkbox and button
+        const checkbox = document.getElementById('confirmCheck' + modalId);
+        const deleteBtn = document.getElementById('deleteBtn' + modalId);
+        
+        if (checkbox) checkbox.checked = false;
+        if (deleteBtn) deleteBtn.disabled = true;
+    }
+}
+
+function toggleDeleteBtn(modalId) {
+    const checkbox = document.getElementById('confirmCheck' + modalId);
+    const deleteBtn = document.getElementById('deleteBtn' + modalId);
+    
+    if (checkbox && deleteBtn) {
+        deleteBtn.disabled = !checkbox.checked;
+    }
+}
+
+// Close modal when clicking on overlay (outside modal box)
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+        const modalId = e.target.id;
+        closeModal(modalId);
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const openModals = document.querySelectorAll('.modal-overlay[style*="display: flex"]');
+        openModals.forEach(modal => {
+            closeModal(modal.id);
+        });
+    }
+});
+</script>
 
 @endsection

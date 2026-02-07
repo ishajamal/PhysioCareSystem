@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\itemMaintenanceInfo;
 use App\Models\itemUsage;
 use App\Models\usageRecord;
+use Illuminate\Support\Facades\DB;
 
 class UsageHistoryController extends Controller
 {
@@ -101,31 +102,120 @@ class UsageHistoryController extends Controller
                         ->with('success', 'Usage record updated successfully.');
     }
     public function edit($usageID, $itemID)
-{
-    $itemUsage = ItemUsage::with([
-        'usageRecord.usedByUser',
-        'itemMaintenanceInfo.images'
-    ])
-    ->where('usageID', $usageID)
-    ->where('itemID', $itemID)
-    ->firstOrFail();
+    {
+        $itemUsage = ItemUsage::with([
+            'usageRecord.usedByUser',
+            'itemMaintenanceInfo.images'
+        ])
+        ->where('usageID', $usageID)
+        ->where('itemID', $itemID)
+        ->firstOrFail();
 
-    return view('therapist.ManageUsageHistory.EditHistoryDetails', compact('itemUsage'));
-}
-public function destroy($usageID, $itemID)
-{
-    $itemUsage = ItemUsage::where('usageID', $usageID)
-                          ->where('itemID', $itemID)
-                          ->firstOrFail();
+        return view('therapist.ManageUsageHistory.EditHistoryDetails', compact('itemUsage'));
+    }
+    public function destroy($usageID, $itemID)
+    {
+        $itemUsage = ItemUsage::where('usageID', $usageID)
+                            ->where('itemID', $itemID)
+                            ->firstOrFail();
 
-    $itemUsage->delete();
+        $itemUsage->delete();
 
-    // Optionally, update the usageRecord total items or other logic here
+        // Optionally, update the usageRecord total items or other logic here
 
-    return redirect()->route('therapist.usage.history')
-                     ->with('success', 'Item deleted successfully.');
-}
+        return redirect()->route('therapist.usage.history')
+                        ->with('success', 'Item deleted successfully.');
+    }
 
+    protected function getTherapistId()
+    {
+        return Auth::id();
+    }
+
+    public function inventoryList()
+    {
+        $items = itemMaintenanceInfo::with('images')
+                ->where('category','therapy supplies')
+                ->where('status','available')
+                ->get();
+
+        return view('therapist.RecordItemUsage.InventoryList', compact('items'));
+    }
+
+    public function selectItem($itemID)
+    {
+        $item = itemMaintenanceInfo::with('images')
+                ->where('itemID', $itemID)
+                ->firstOrFail();
+        
+        return view('therapist.RecordItemUsage.AddUsageRecord', compact('item'));
+    }
+    
+    public function addUsageRecord($itemID)
+    {
+        $item = itemMaintenanceInfo::with('images')
+                ->where('itemID', $itemID)
+                ->firstOrFail();
+        
+        return view('therapist.RecordItemUsage.AddUsageRecord', compact('item'));
+    }
+
+    public function storeUsage(Request $request)
+    {
+        $validated = $request->validate([
+            'item_id' => 'required|exists:item_maintenance_infos,itemID',
+            'quantity' => 'required|integer|min:1',
+            'usage_date' => 'required|date',
+        ]);
+
+        $item = itemMaintenanceInfo::findOrFail($request->item_id);
+
+        DB::beginTransaction();
+        try {
+            $usageID = session('current_usage_id');
+
+            // Create usage record if it doesn't exist
+            if (!$usageID || !usageRecord::where('usageID', $usageID)->exists()) {
+                $usageRecord = usageRecord::create([
+                    'usedBy' => $this->getTherapistId(),
+                    'usageDate' => $request->usage_date,
+                ]);
+                $usageID = $usageRecord->usageID;
+                session(['current_usage_id' => $usageID]);
+            }
+
+            // Check if item already exists in the cart
+            $existingCartItem = itemUsage::where('usageID', $usageID)
+                                        ->where('itemID', $request->item_id)
+                                        ->first();
+
+            if ($existingCartItem) {
+                // Increment quantityUsed instead of creating new row
+                $existingCartItem->quantityUsed += $request->quantity;
+                $existingCartItem->save();
+            } else {
+                // Create new cart item
+                itemUsage::create([
+                    'usageID' => $usageID,
+                    'itemID' => $request->item_id,
+                    'quantityUsed' => $request->quantity,
+                ]);
+            }
+
+            $item->quantity -= $request->quantity;
+            $item->save();
+
+            DB::commit();
+
+            return redirect()->route('therapist.usage.record')
+                            ->with('success', 'Item added to cart successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Failed to save usage record: ' . $e->getMessage()])
+                        ->withInput();
+        }
+    }
 
 
 }
