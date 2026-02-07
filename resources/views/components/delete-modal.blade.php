@@ -1,3 +1,46 @@
+<style>
+    /* Pastikan gaya ini ada supaya butang modal tidak 'naked' */
+    .modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 25px;
+    }
+
+    .modal-actions .btn {
+        padding: 10px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .btn-light {
+        background-color: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-danger {
+        background-color: #ef4444;
+        color: white;
+    }
+
+    /* Gaya apabila butang di-disable (checkbox belum ditanda) */
+    .btn-danger:disabled {
+        background-color: #fca5a5;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .modal-title {
+        color: #111827;
+        font-size: 1.25rem;
+        margin-bottom: 10px;
+    }
+</style>
+
 <div id="{{ $id }}" class="modal-overlay hidden">
     <div class="delete-modal">
         <button class="close-btn" onclick="closeModal('{{ $id }}')">&times;</button>

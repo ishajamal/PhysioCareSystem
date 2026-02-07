@@ -8,6 +8,8 @@ class maintenanceRequest extends Model
 {
     protected $table = 'maintenance_requests';
     
+    protected $primaryKey = 'requestID';
+
     protected $fillable = [
         'userID',
         'dateSubmitted',
