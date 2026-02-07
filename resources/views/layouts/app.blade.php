@@ -702,6 +702,7 @@
         .content-wrapper::-webkit-scrollbar-thumb:hover {
             background: var(--gray-400);
         }
+
         .modal-overlay {
     position: fixed;
     inset: 0;
@@ -878,6 +879,7 @@
     color: #888;
   }
   
+
     </style>
     @stack('styles')
 </head>
@@ -899,7 +901,7 @@
             <nav>
                 <ul>
                     <li>
-                        <a href="#" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" onclick="showComingSoon(event, 'Dashboard')">
+                        <a href="dashboard" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" onclick="showComingSoon(event, 'Dashboard')">
                             <i class="bi bi-clipboard2-data-fill"></i>
                             <span>Dashboard</span>
                             <span class="badge pulse">5</span>
@@ -912,10 +914,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="{{ request()->routeIs('admin.maintenance-request') ? 'active' : '' }}" onclick="showComingSoon(event, 'Maintenance')">
+                        <a href="{{ route('admin.maintenance.index') }}"  
+                        class="{{ in_array(request()->route()->getName(), [
+                                'admin.maintenance.index',
+                                'admin.maintenance.view',
+                                'admin.maintenance.edit'
+                            ]) ? 'active' : '' }}">
                             <i class="bi bi-journal-check"></i>
                             <span>Maintenance</span>
-                            <span class="badge">3</span>
+                            <span class="badge" id="sidebarMaintenanceBadge" style="display: none;">0</span>
                         </a>
                     </li>
                     <li>
@@ -964,18 +971,15 @@
                     <i class="fas fa-chevron-down"></i>
                 </span>
                 <div class="notification-wrapper">
-                    <div class="header-icon" onclick="toggleNotifications()">
+                    <div class="header-icon" id="notificationBell">
                         <i class="far fa-bell"></i>
-                        <span id="notificationCount">3</span>
+                        <span id="notificationCount" style="display: none;">0</span>
                     </div>
+                    
                     <div class="notification-dropdown" id="notificationDropdown">
                         <h4>Notifications</h4>
-                        <ul>
-                            <li>✅ New maintenance request #1234 received</li>
-                            <li>⚠️ Item "Massage Oil" is low in stock</li>
-                            <li>📊 Monthly report is ready for review</li>
-                            <li>🔄 Maintenance request #1228 completed</li>
-                            <li>➕ New user registered: Dr. Smith</li>
+                        <ul id="notificationList">
+                            <li style="padding:15px; text-align:center; color:#666;">Loading...</li>
                         </ul>
                     </div>
                 </div>
@@ -1155,6 +1159,112 @@
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
         }
+
+   document.addEventListener("DOMContentLoaded", function () {
+        const notifBell = document.getElementById("notificationBell");
+        const notifBadge = document.getElementById("notificationCount");
+        const notifDropdown = document.getElementById("notificationDropdown");
+        const notifList = document.getElementById("notificationList");
+        
+        // NEW: Get the sidebar badge
+        const sidebarBadge = document.getElementById("sidebarMaintenanceBadge");
+
+        if (!notifBell || !notifBadge || !notifList) return;
+
+        function fetchNotifications() {
+            // 1. Get the Count
+            fetch("/api/maintenance/count")
+                .then(res => res.json())
+                .then(data => {
+                    const count = data.newCount;
+                    
+                    // Update Bell Badge
+                    if (count > 0) {
+                        notifBadge.textContent = count;
+                        notifBadge.style.display = "flex";
+                    } else {
+                        notifBadge.style.display = "none";
+                    }
+
+                    // Update Sidebar Badge
+                    if (sidebarBadge) {
+                        if (count > 0) {
+                            sidebarBadge.textContent = count;
+                            sidebarBadge.style.display = "inline-block"; // Sidebar badges usually inline-block
+                        } else {
+                            sidebarBadge.style.display = "none";
+                        }
+                    }
+                })
+                .catch(err => console.error("Error fetching count:", err));
+
+            // 2. Get the List (Dropdown Items)
+            fetch("/api/maintenance/notifications")
+                .then(res => res.json())
+                .then(data => {
+                    notifList.innerHTML = ""; 
+                    
+                    if (data.length === 0) {
+                        notifList.innerHTML = "<li style='padding:15px; text-align:center; color:#666;'>No new notifications</li>";
+                    } else {
+                        data.forEach(item => {
+                            const li = document.createElement("li");
+                            li.style.padding = "10px 15px";
+                            li.style.borderBottom = "1px solid #f3f4f6";
+                            li.style.cursor = "pointer";
+                            
+                            li.innerHTML = `
+                                <div style="font-weight:600; font-size:14px; color:#374151;">${item.submittedBy}</div>
+                                <div style="font-size:12px; color:#6b7280;">Request for ${item.itemName}</div>
+                                <div style="font-size:11px; color:#9ca3af; margin-top:2px;">${item.date}</div>
+                            `;
+                            
+                            li.onclick = function() {
+                                window.location.href = "/maintenance/view/" + item.id;
+                            };
+                            
+                            notifList.appendChild(li);
+                        });
+                    }
+                })
+                .catch(err => console.error("Error fetching list:", err));
+        }
+
+        // Toggle Dropdown & Mark as Read
+        notifBell.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const isHidden = window.getComputedStyle(notifDropdown).display === "none";
+            
+            if (isHidden) {
+                notifDropdown.style.display = "block";
+                
+                // Mark as read in database
+                fetch("/api/maintenance/mark-read", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}", 
+                        "Content-Type": "application/json"
+                    }
+                }).then(() => {
+                    // Hide BOTH badges immediately for better UX
+                    notifBadge.style.display = "none";
+                    if(sidebarBadge) sidebarBadge.style.display = "none";
+                });
+            } else {
+                notifDropdown.style.display = "none";
+            }
+        });
+
+        // Close when clicking outside
+        window.addEventListener("click", function (e) {
+            if (!notifBell.contains(e.target) && !notifDropdown.contains(e.target)) {
+                notifDropdown.style.display = "none";
+            }
+        });
+
+        fetchNotifications();
+        setInterval(fetchNotifications, 30000);
+    });
     </script>
 
     

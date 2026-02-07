@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\therapist\RecordItemUsage\UsageController;
+use App\Http\Controllers\admin\ManageMaintenanceRequest\ManageMaintenanceController;
+use App\Http\Controllers\Admin\ManageUser\ManageUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ManageUser\ManageUserController;
 
@@ -26,7 +28,7 @@ Route::middleware('guest')->group(function () {
     // Login routes
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-    
+
     // Register routes
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
@@ -38,7 +40,7 @@ Route::middleware('guest')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
-    
+
     /*
     |--------------------------------------------------------------------------
     | ADMIN Routes
@@ -49,23 +51,36 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', function () {
             return view('admin.dashboard');
         })->name('dashboard');
-      /*
+        /*
     |--------------------------------------------------------------------------
     | MANAGE USER ROUTES
     |--------------------------------------------------------------------------
     */
-    Route::get('/manage-user', [ManageUserController::class, 'index'])
-        ->name('manage.user');
+        Route::get('/manage-user', [ManageUserController::class, 'index'])
+            ->name('manage.user');
 
-    Route::get('/manage-user/edit/{id}', [ManageUserController::class, 'edit'])
-        ->name('manage.user.edit');
+        Route::get('/manage-user/edit/{id}', [ManageUserController::class, 'edit'])
+            ->name('manage.user.edit');
 
-    Route::post('/manage-user/update/{id}', [ManageUserController::class, 'update'])
-        ->name('manage.user.update');
+        Route::post('/manage-user/update/{id}', [ManageUserController::class, 'update'])
+            ->name('manage.user.update');
 
-    Route::delete('/manage-user/delete/{id}', [ManageUserController::class, 'destroy'])
-        ->name('manage.user.delete');
-               
+        Route::delete('/manage-user/delete/{id}', [ManageUserController::class, 'destroy'])
+            ->name('manage.user.delete');
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | MANAGE MAINTENANCE Routes
+    |--------------------------------------------------------------------------
+    */
+        Route::get('/maintenance', [ManageMaintenanceController::class, 'index'])->name('maintenance.index');
+        Route::get('/api/maintenance/notifications', [ManageMaintenanceController::class, 'getNotifications']);
+        Route::post('/api/maintenance/mark-read', [ManageMaintenanceController::class, 'markAsRead']);
+        Route::delete('/maintenance/{requestID}', [ManageMaintenanceController::class, 'destroy'])->name('maintenance.destroy');
+        Route::get('/maintenance/view/{requestID}', [ManageMaintenanceController::class, 'show'])->name('maintenance.view');
+        Route::get('/maintenance/edit/{requestID}', [ManageMaintenanceController::class, 'edit'])->name('maintenance.edit');
+        Route::put('/maintenance/update/{requestID}', [ManageMaintenanceController::class, 'update'])->name('maintenance.update');
     });
 
     /*
@@ -78,7 +93,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', function () {
             return view('therapist.dashboard');
         })->name('dashboard');
-        
+
         //Usage Record
         Route::get('inventory-list', [UsageController::class, 'inventoryList'])->name('inventory.list');
         Route::get('select-item/{itemID}', [UsageController::class, 'selectItem'])->name('select.item');
@@ -90,10 +105,8 @@ Route::middleware('auth')->group(function () {
         Route::post('usage/submit', [UsageController::class, 'submitUsageRecord'])->name('cart.submit');
         Route::delete('cart/delete/{itemID}', [UsageController::class, 'deleteCartItem'])->name('cart.delete');
         Route::post('cart/cancel', [UsageController::class, 'cancelUsage'])->name('cart.cancel');
-
-
     });
-    
+
     // Logout (must be POST for security)
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
