@@ -936,6 +936,11 @@
                         <a href="{{ route('therapist.usage.history') }}"  
                         class="{{ in_array(request()->route()->getName(), [
                                 'therapist.usage.history',
+                                'therapist.add.new.record',
+                                'therapist.view.history.details',
+                                'therapist.view.history.item.details',
+                                'therapist.usage.edit',
+                                'therapist.usage.list',
                             ]) ? 'active' : '' }}">
                             <i class="bi bi-clock-history"></i>
                             <span>Record Usage History</span>

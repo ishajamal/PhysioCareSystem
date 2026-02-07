@@ -159,13 +159,15 @@
 }
 </style>
 
-<div class="page-wrapper">
+<div >
 
     <!-- Header -->
     <div class="page-header">
         <h1 class="page-title">Item Details</h1>
         <div>
-            <button class="btn-back" onclick="window.history.back()"><i class="bi bi-arrow-left"></i> Back</button>
+            <button class="btn-back" onclick="window.location.href='{{ route('therapist.view.history.details', $itemUsage->usageID) }}'">
+                <i class="bi bi-arrow-left"></i> Back
+            </button>
         </div>
     </div>
 

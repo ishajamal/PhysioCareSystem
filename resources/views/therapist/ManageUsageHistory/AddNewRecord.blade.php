@@ -241,7 +241,7 @@
 
         <!-- Left Side: Form -->
         <div class="usage-left">
-            <form id="usageForm" action="{{ route('therapist.usage.store') }}" method="POST">
+            <form id="usageForm" action="{{  route('therapist.usage.item.store', $usageID) }}" method="POST">
                 @csrf
 
                 <input type="hidden" name="item_id" value="{{ $item->itemID }}">

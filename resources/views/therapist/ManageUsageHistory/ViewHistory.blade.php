@@ -416,7 +416,7 @@ body {
             <div class="table-title">
                 <i class="bi bi-list-ul"></i> Items Used
             </div>
-            <a href="{{ route('therapist.inventory.list') }}" class="btn-add-item">
+            <a href="{{ route('therapist.usage.list', ['usageID' => $usage->usageID]) }}" class="btn-add-item">
                 <i class="bi bi-plus-circle"></i> Add New Item
             </a>
         </div>
@@ -473,7 +473,7 @@ body {
                         title="ARE YOU SURE YOU WANT TO DELETE THIS RECORD?"
                         message="This action cannot be undone."
                         route="{{ route('therapist.usage.delete', [$usage->usageID, $itemUsage->itemMaintenanceInfo->itemID]) }}"
-                        method="DELETE"
+                        method="delete"
                     />
                 @empty
                     <tr>

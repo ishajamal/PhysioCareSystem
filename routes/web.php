@@ -121,11 +121,11 @@ Route::middleware('auth')->group(function () {
         ->name('usage.update');
         Route::delete('/usage-history/{usageID}/item/{itemID}/delete', [UsageHistoryController::class, 'destroy'])
         ->name('usage.delete');
+        Route::get('/list-item/{usageID}',[UsageHistoryController::class,'inventoryList'])
+        ->name('usage.list');
+        Route::get('add-new-record/{usageID}/item/{itemID}', [UsageHistoryController::class, 'addNewRecord'])->name('add.new.record');
+        Route::post('usage/{usageID}/store-item',[UsageHistoryController::class, 'storeNewUsage'])->name('usage.item.store');
 
-        // Route::get('/usage-history',[UsageHistoryController::class, 'index'])->name('usage.history');
-        // Route::put('/usage-history/{id}',[UsageHistoryController::class, 'update'])->name('usage.update');
-
-        //
     });
 
     // Logout (must be POST for security)
