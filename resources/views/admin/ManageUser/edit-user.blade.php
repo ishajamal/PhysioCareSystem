@@ -221,76 +221,69 @@ body {
     <form method="POST" action="{{ route('admin.manage.user.update', $user->userID) }}">
         @csrf
 
-        <div class="header-title-wrapper">
-            <div>
-                <div class="user-title">Edit User</div>
-                <div class="user-subtitle">Update user details and permissions</div>
-            </div>
-            <div class="btn-holder">
-                <a href="{{ route('admin.manage.user') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-            </div>
-        </div>
+                        <div class="row g-5"> {{-- g-5 = big vertical spacing --}}
 
-        <div class="user-detail-wrapper">
-            
-            <div class="content-card">
-                <div class="user-header">
-                    <h2>{{ $user->name }}</h2>
-                    <div class="user-email">{{ $user->email }}</div>
-                    <div class="role-badge">{{ ucfirst($user->role) }}</div>
-                </div>
+                            {{-- FULL NAME --}}
+                            <div class="col-12">
+                                <label class="font-weight-bold mb-2">Full Name</label>
+                                <input type="text"
+                                       name="name"
+                                       value="{{ $user->name }}"
+                                       class="form-control form-control-lg py-3">
+                            </div>
+                            <br>
+                            {{-- EMAIL --}}
+                            <div class="col-12">
+                                <label class="font-weight-bold mb-2">Email Address</label>
+                                <input type="email"
+                                       name="email"
+                                       value="{{ $user->email }}"
+                                       class="form-control form-control-lg py-3">
+                            </div>
+                            <br>
+                            {{-- ROLE --}}
+                            <div class="col-12">
+                                <label class="font-weight-bold mb-2">Role</label>
+                                <select name="role" class="form-control form-control-lg py-3">
+                                    <option value="admin" {{ $user->role=='admin'?'selected':'' }}>Admin</option>
+                                    <option value="therapist" {{ $user->role=='therapist'?'selected':'' }}>Therapist</option>
+                                    <option value="manager" {{ $user->role=='manager'?'selected':'' }}>Manager</option>
+                                    <option value="technician" {{ $user->role=='technician'?'selected':'' }}>Technician</option>
+                                    <option value="staff" {{ $user->role=='staff'?'selected':'' }}>Staff</option>
+                                </select>
+                            </div>
+                            <br>
+                            {{-- PASSWORD --}}
+                            <div class="col-12">
+                                <label class="font-weight-bold mb-2">
+                                    Password <span class="text-muted">(Optional)</span>
+                                </label>
+                                <input type="password"
+                                       name="password"
+                                       class="form-control form-control-lg py-3"
+                                       placeholder="Leave blank if no change">
+                            </div>
 
-                <h2 class="section-title">User Information</h2>
+                        </div>
+                            <br>
+                        <hr class="my-5">
+                            <br>
+                        {{-- BUTTONS --}}
+                         <button class="btn btn-primary btn-lg">
+                        Save Changes
+                    </button>
                 
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-label">Full Name</span>
-                        <input type="text"
-                               name="name"
-                               value="{{ $user->name }}"
-                               class="form-control-lg"
-                               required>
-                    </div>
-                    
-                    <div class="info-item">
-                        <span class="info-label">Email Address</span>
-                        <input type="email"
-                               name="email"
-                               value="{{ $user->email }}"
-                               class="form-control-lg"
-                               required>
-                    </div>
-                    
-                    <div class="info-item">
-                        <span class="info-label">Role</span>
-                        <select name="role" class="role-select">
-                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                            <option value="therapist" {{ $user->role == 'therapist' ? 'selected' : '' }}>Therapist</option>
-                            <option value="manager" {{ $user->role == 'manager' ? 'selected' : '' }}>Manager</option>
-                            <option value="technician" {{ $user->role == 'technician' ? 'selected' : '' }}>Technician</option>
-                            <option value="staff" {{ $user->role == 'staff' ? 'selected' : '' }}>Staff</option>
-                        </select>
-                    </div>
-                    
-                    <div class="info-item">
-                        <span class="info-label">Password <span style="color: #9ca3af; font-weight: normal;">(Optional)</span></span>
-                        <input type="password"
-                               name="password"
-                               class="form-control-lg"
-                               placeholder="Leave blank to keep current password">
-                    </div>
-                </div>
 
-                <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; border: 1px solid #bae6fd; margin-top: 30px;">
-                    <span class="info-label" style="color: #0369a1;">Security Note</span>
-                    <p style="color: #374151; font-size: 14px; margin-top: 8px; line-height: 1.5;">
-                        Changing a user's role will affect their access permissions. Only update the password field if you want to change the user's password.
-                    </p>
+                        <div class="text-center mt-4">
+                    <a href="{{ route('admin.manage.user') }}" 
+                    class="btn btn-secondary btn-lg mr-3">
+                    Back
+                    </a>
+                </div>    
+                   
+
+                    </form>
+
                 </div>
             </div>
 
