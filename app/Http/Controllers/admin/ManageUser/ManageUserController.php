@@ -1,6 +1,6 @@
-<?php
+<?php 
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\ManageUser;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,17 +15,17 @@ class ManageUserController extends Controller
 
         $users = User::when($search, function ($query) use ($search) {
             $query->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('id', $search);
+                  ->orWhere('UserID', $search);
         })->paginate(10);
 
-        return view('admin.manage-user', compact('users', 'search'));
+        return view('admin.ManageUser.manage-user', compact('users', 'search'));
     }
 
     // Show edit form
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view('admin.edit-user', compact('user'));
+        return view('admin.ManageUser.edit-user', compact('user'));
     }
 
     // Update user
@@ -33,7 +33,7 @@ class ManageUserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'email' => 'required|email|unique:users,email,' . $id . ',userID',
             'role' => 'required'
         ]);
 
@@ -49,7 +49,7 @@ class ManageUserController extends Controller
 
         $user->save();
 
-        return redirect()->route('manage.user')
+        return redirect()->route('admin.manage.user')
             ->with('success', 'User updated successfully');
     }
 
@@ -59,7 +59,7 @@ class ManageUserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->route('manage.user')
+        return redirect()->route('admin.manage.user')
             ->with('success', 'User deleted successfully');
     }
 }
