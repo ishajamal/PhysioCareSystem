@@ -75,16 +75,18 @@
                         <hr class="my-5">
                             <br>
                         {{-- BUTTONS --}}
-                        <div class="text-center mt-4">
-                            <a href="{{ route('admin.manage.user') }}"
-                               class="btn btn-outline-secondary btn-lg px-5 mr-3">
-                                Back
-                            </a>
+                         <button class="btn btn-primary btn-lg">
+                        Save Changes
+                    </button>
+                
 
-                            <button class="btn btn-primary btn-lg px-5">
-                                Save Changes
-                            </button>
-                        </div>
+                        <div class="text-center mt-4">
+                    <a href="{{ route('admin.manage.user') }}" 
+                    class="btn btn-secondary btn-lg mr-3">
+                    Back
+                    </a>
+                </div>    
+                   
 
                     </form>
 
