@@ -926,7 +926,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="{{ request()->routeIs('admin.manage-user') ? 'active' : '' }}" onclick="showComingSoon(event, 'Users')">
+                        <a href="manage-user" class="{{ request()->routeIs('admin.manage-user') ? 'active' : '' }}" onclick="showComingSoon(event, 'Users')">
                             <i class="bi bi-person-gear"></i>
                             <span>Users</span>
                         </a>

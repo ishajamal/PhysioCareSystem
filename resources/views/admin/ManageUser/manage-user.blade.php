@@ -17,15 +17,15 @@
     <!-- Search Area -->
     <form method="GET" action="{{ route('admin.manage.user') }}" style="margin-bottom:30px;">
         <div class="row align-items-center">
-            <div class="col-md-5">
-                <input type="text" name="search"
+            <div class="col-md-7">
+                <input type="text" name="search" style="height:45px; width:300px; font-size:16px;"
                        class="form-control form-control-lg"
                        placeholder="Search ID or Name"
                        value="{{ $search }}">
             </div>
-
-            <div class="col-md-2">
-                <button class="btn btn-primary btn-lg w-100">
+            <br>
+            <div class="col-md-5">
+                <button class="btn btn-primary btn-lg w-10000" style="height:45px; width:120px; font-size:16px;">
                     <i class="fas fa-search"></i> Search
                 </button>
             </div>
@@ -35,9 +35,9 @@
     <!-- User Table -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">User List</h6>
+            <h2 class="m-0 font-weight-bold text-primary">User List</h2>
         </div>
-
+        <br>
         <div class="card-body">
             <div class="table-responsive">
 
