@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\therapist\RecordItemUsage\UsageController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ManageUser\ManageUserController;
+
 
 /*
 |--------------------------------------------------------------------------
