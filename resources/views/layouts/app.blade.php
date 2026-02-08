@@ -907,7 +907,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="{{ request()->routeIs('admin.manage-item') ? 'active' : '' }}" onclick="showComingSoon(event, 'Manage Items')">
+                        <a href="{{ route('admin.inventory.dashboard')}}" class="{{ request()->routeIs('admin.inventory.dashboard') ? 'active' : '' }}" onclick="showComingSoon(event, 'Manage Items')">
                             <i class="bi bi-archive"></i>
                             <span>Manage Items</span>
                         </a>

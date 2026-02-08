@@ -10,7 +10,7 @@ use App\Http\Controllers\therapist\therapistDashboardController;
 use App\Http\Controllers\therapist\ItemDetails\ItemDetailsController;
 use App\Http\Controllers\therapist\SubmitMaintenanceRequest\MaintenanceRequestController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\admin\InventoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +54,34 @@ Route::middleware('auth')->group(function () {
         // Dashboard
        Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+
+        Route::prefix('inventory')->name('inventory.')->group(function () {
+
+    // Dashboard / List
+    Route::get('/', [InventoryController::class, 'index'])
+        ->name('dashboard');
+
+    // Create
+    Route::get('/create', [InventoryController::class, 'create'])
+        ->name('create');
+    Route::post('/store', [InventoryController::class, 'store'])
+        ->name('store');
+
+    // View
+    Route::get('/{id}', [InventoryController::class, 'show'])
+        ->name('show');
+
+    // Edit
+    Route::get('/{id}/edit', [InventoryController::class, 'edit'])
+        ->name('edit');
+    Route::put('/{id}', [InventoryController::class, 'update'])
+        ->name('update');
+
+    // Delete
+    Route::delete('/{id}', [InventoryController::class, 'destroy'])
+        ->name('destroy');
+
+        });
         /*
     |--------------------------------------------------------------------------
     | MANAGE USER ROUTES
