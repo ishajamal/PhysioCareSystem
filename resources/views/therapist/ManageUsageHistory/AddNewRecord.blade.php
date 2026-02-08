@@ -249,12 +249,12 @@
                 <div class="form-grid">
 
                     <div class="form-group">
-                        <label class="form-label">Product Code</label>
+                        <label class="form-label">Item ID</label>
                         <input type="text" class="form-control readonly" value="{{ $item->itemID }}" readonly>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Product Name</label>
+                        <label class="form-label">Item Name</label>
                         <input type="text" class="form-control readonly" value="{{ $item->itemName }}" readonly>
                     </div>
 

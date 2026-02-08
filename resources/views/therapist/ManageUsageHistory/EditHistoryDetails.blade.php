@@ -164,13 +164,13 @@
                 <div class="form-grid">
 
                     <div class="form-group">
-                        <label class="form-label">Product Code</label>
+                        <label class="form-label">Item ID</label>
                         <input type="text" class="form-control readonly" 
                                value="ITM-{{ str_pad($itemUsage->itemMaintenanceInfo->itemID, 3, '0', STR_PAD_LEFT) }}" readonly>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Product Name</label>
+                        <label class="form-label">Item Name</label>
                         <input type="text" class="form-control readonly" 
                                value="{{ $itemUsage->itemMaintenanceInfo->itemName }}" readonly>
                     </div>

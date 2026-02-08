@@ -182,8 +182,8 @@
             <thead>
                 <tr>
                     <th>No.</th>
-                    <th>Product Code</th>
-                    <th>Product Name</th>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
                     <th>Quantity</th>
                     <th>Action</th>
                 </tr>

@@ -424,8 +424,8 @@ body {
             <thead>
                 <tr>
                     <th>No.</th>
-                    <th>Product Code</th>
-                    <th>Product Name</th>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
                     <th>Category</th>
                     <th>Quantity Used</th>
                     <th>Action</th>
@@ -436,7 +436,7 @@ body {
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td class="product-code">
-                            ITM-{{ str_pad($itemUsage->itemMaintenanceInfo->itemID, 3, '0', STR_PAD_LEFT) }}
+                            {{ $itemUsage->itemMaintenanceInfo->itemID }}
                         </td>
                         <td class="product-name">
                             {{ $itemUsage->itemMaintenanceInfo->itemName }}

@@ -179,14 +179,14 @@
             <div class="info-grid">
 
                 <div class="info-group">
-                    <label class="info-label">Product Code</label>
+                    <label class="info-label">Item ID</label>
                     <div class="info-value">
                         ITM-{{ str_pad($itemUsage->itemMaintenanceInfo->itemID, 3, '0', STR_PAD_LEFT) }}
                     </div>
                 </div>
 
                 <div class="info-group">
-                    <label class="info-label">Product Name</label>
+                    <label class="info-label">Item Name</label>
                     <div class="info-value">{{ $itemUsage->itemMaintenanceInfo->itemName }}</div>
                 </div>
 

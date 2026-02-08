@@ -430,8 +430,8 @@ body {
         <table class="records-table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Record ID</th>
+                    <th>No</th>
+                    <th>Usage ID</th>
                     <th>Date</th>
                     <th>Items Used</th>
                     <th>View</th>
