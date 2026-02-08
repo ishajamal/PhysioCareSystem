@@ -908,13 +908,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="{{ request()->routeIs('manage-item') ? 'active' : '' }}">
+                        <a href="{{ route('therapist.items.index') }}"
+                        class="{{ request()->routeIs('therapist.items.*') ? 'active' : '' }}">
                             <i class="bi bi-archive"></i>
                             <span>Inventory Items</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="{{ request()->routeIs('maintenance-request') ? 'active' : '' }}">
+                        <a href="{{ route('therapist.maintenance.index') }}"
+                        class="{{ request()->routeIs('therapist.maintenance.*') ? 'active' : '' }}">
                             <i class="bi bi-journal-check"></i>
                             <span>Maintenance Request</span>
                         </a>

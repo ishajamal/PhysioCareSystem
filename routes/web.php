@@ -6,7 +6,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\therapist\ManageUsageHistory\UsageHistoryController;
 use App\Http\Controllers\therapist\RecordItemUsage\UsageController;
 use App\Http\Controllers\admin\ManageMaintenanceRequest\ManageMaintenanceController;
+<<<<<<< HEAD
 use App\Http\Controllers\therapist\therapistDashboardController;
+=======
+use App\Http\Controllers\therapist\ItemDetails\ItemDetailsController;
+use App\Http\Controllers\therapist\SubmitMaintenanceRequest\MaintenanceRequestController;
+>>>>>>> 559dcb3 (Therapist: item details + maintenance request + sidebar/pagination fixes (remove unused files))
 use Illuminate\Support\Facades\Route;
 
 
@@ -107,6 +112,15 @@ Route::middleware('auth')->group(function () {
         Route::delete('cart/delete/{itemID}', [UsageController::class, 'deleteCartItem'])->name('cart.delete');
         Route::post('cart/cancel', [UsageController::class, 'cancelUsage'])->name('cart.cancel');
 
+        // View Item Details
+        Route::get('items', [ItemDetailsController::class, 'index'])->name('items.index');
+        Route::get('items/{itemID}', [ItemDetailsController::class, 'show'])->name('items.show');
+
+        // Maintenance Request (History + Submit)
+        Route::get('maintenance-request', [MaintenanceRequestController::class, 'index'])->name('maintenance.index');
+        Route::get('maintenance-request/create', [MaintenanceRequestController::class, 'create'])->name('maintenance.create');
+        Route::post('maintenance-request', [MaintenanceRequestController::class, 'store'])->name('maintenance.store');
+        Route::get('maintenance-request/{requestID}', [MaintenanceRequestController::class, 'show'])->name('maintenance.show');
 
         //Usage History
         Route::get('/usage-history', [UsageHistoryController::class, 'index'])
