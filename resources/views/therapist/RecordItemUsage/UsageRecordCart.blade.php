@@ -158,7 +158,7 @@
     <!-- Header -->
     <div class="page-header">
         <!-- Cancel Button -->
-        <button class="btn btn-cancel" onclick="openModal('cancelModal')">
+        <button class="btn btn-cancel" onclick="openModal('cancelDeleteModal')">
             <i class="fas fa-arrow-left"></i> Cancel
         </button>
 
@@ -182,8 +182,8 @@
             <thead>
                 <tr>
                     <th>No.</th>
-                    <th>Product Code</th>
-                    <th>Product Name</th>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
                     <th>Quantity</th>
                     <th>Action</th>
                 </tr>
@@ -230,15 +230,12 @@
 </div>
 
 <!-- Cancel Modal -->
-<x-modal
-  id="cancelModal"
-  title="Are you sure you want to cancel?"
-  icon="fas fa-exclamation-circle"
-  route="{{ route('therapist.cart.cancel') }}"
-  method="POST"
-  buttonText="Yes, Cancel"
-  buttonIcon="fas fa-trash"
-  :danger="true"
+<x-delete-modal
+    id="cancelDeleteModal"
+    title="Are you sure you want to cancel this usage record?"
+    message="All items in this cart will be removed. This action cannot be undone."
+    route="{{ route('therapist.cart.cancel') }}"
+    method="POST"
 />
 
 <!-- Submit Modal -->

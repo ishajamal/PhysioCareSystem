@@ -98,29 +98,68 @@ body {
 }
 
 /* ================= TABLE ================= */
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
 .inventory-table {
     width: 100%;
     border-collapse: collapse;
 }
 
+/* Set specific widths for each column */
+.inventory-table th:nth-child(1),
+.inventory-table td:nth-child(1) {
+    width: 60px; /* No. */
+    min-width: 60px;
+}
+
+.inventory-table th:nth-child(2),
+.inventory-table td:nth-child(2) {
+    width: 100px; /* Request ID */
+    min-width: 100px;
+}
+
+.inventory-table th:nth-child(3),
+.inventory-table td:nth-child(3) {
+    width: 80px; /* User ID */
+    min-width: 80px;
+}
+
+.inventory-table th:nth-child(4),
+.inventory-table td:nth-child(4) {
+    width: 150px; /* User Name */
+    min-width: 150px;
+}
+
+.inventory-table th:nth-child(5),
+.inventory-table td:nth-child(5) {
+    width: 120px; /* Status */
+    min-width: 120px;
+}
+
+.inventory-table th:nth-child(6),
+.inventory-table td:nth-child(6) {
+    width: 150px; /* Equipment */
+    min-width: 150px;
+}
+
+.inventory-table th:nth-child(7),
+.inventory-table td:nth-child(7) {
+    width: 120px; /* Action - FIXED WIDTH */
+    min-width: 120px;
+    text-align: center; /* Center align for action column */
+}
+
 .inventory-table th {
-    text-align: left;
-    padding: 16px 14px;
+    padding: 16px 10px;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.6px;
     color: #6b7280;
     background: #f9fafb;
     border-bottom: 2px solid #e5e7eb;
+    text-align: left;
 }
 
 .inventory-table td {
-    padding: 16px 14px;
+    padding: 16px 10px;
     font-size: 14px;
     color: #374151;
     border-bottom: 1px solid #f1f5f9;
@@ -172,13 +211,16 @@ table {
 
 /* ================= STATUS BADGES ================= */
 .status-badge {
-    padding: 6px 14px;
+    padding: 6px 12px;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.3px;
     display: inline-block;
     vertical-align: middle;
+    text-align: center;
+    min-width: 90px;
+    box-sizing: border-box;
 }
 
 .status-pending-badge {
@@ -211,17 +253,13 @@ table {
     color: #6b7280;
 }
 
-.status-text {
-    font-size: 14px;
-    color: #374151;
-}
-
 /* ================= ACTION BUTTONS ================= */
 .action-buttons {
     display: flex;
     gap: 10px;
     justify-content: center;
     align-items: center;
+    width: 100%;
 }
 
 .btn-edit, .btn-delete, .btn-view {
@@ -236,6 +274,7 @@ table {
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none;
+    flex-shrink: 0;
 }
 
 .btn-view {
@@ -300,12 +339,32 @@ table {
     padding: 40px;
 }
 
-/* ================= CURSOR POINTER ================= */
-.cursor-pointer {
-    cursor: pointer;
+/* ================= RESPONSIVE ================= */
+@media (max-width: 992px) {
+    .inventory-table th:nth-child(1),
+    .inventory-table td:nth-child(1),
+    .inventory-table th:nth-child(2),
+    .inventory-table td:nth-child(2),
+    .inventory-table th:nth-child(3),
+    .inventory-table td:nth-child(3),
+    .inventory-table th:nth-child(4),
+    .inventory-table td:nth-child(4),
+    .inventory-table th:nth-child(5),
+    .inventory-table td:nth-child(5),
+    .inventory-table th:nth-child(6),
+    .inventory-table td:nth-child(6),
+    .inventory-table th:nth-child(7),
+    .inventory-table td:nth-child(7) {
+        width: auto;
+        min-width: auto;
+    }
+    
+    .inventory-table {
+        display: block;
+        overflow-x: auto;
+    }
 }
 
-/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
     .main-content-maintenance {
         padding: 20px 15px;
@@ -315,8 +374,15 @@ table {
         font-size: 22px;
     }
 
+    .table-title {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
     .search-container {
         width: 100%;
+        min-width: auto;
     }
 
     .table-container {
@@ -325,7 +391,7 @@ table {
 
     .inventory-table th,
     .inventory-table td {
-        padding: 12px 10px;
+        padding: 12px 8px;
         font-size: 13px;
     }
     
@@ -337,6 +403,35 @@ table {
         width: 32px;
         height: 32px;
         font-size: 14px;
+    }
+    
+    .status-badge {
+        font-size: 11px;
+        padding: 5px 8px;
+        min-width: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .inventory-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .action-buttons {
+        gap: 6px;
+    }
+    
+    .btn-view, .btn-edit, .btn-delete, .delete-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
+    }
+    
+    .status-badge {
+        font-size: 10px;
+        padding: 4px 6px;
+        min-width: 70px;
     }
 }
 </style>
@@ -381,13 +476,13 @@ table {
                     <td>{{ $row->itemInfo->itemName ?? 'N/A' }}</td>
                     <td>
                         <div class="action-buttons">
-                            <a href="{{ route('admin.maintenance.view', $row->requestID) }}" class="btn-view">
+                            <a href="{{ route('admin.maintenance.view', $row->requestID) }}" class="btn-view" title="View Details">
                                 <i class="fa fa-eye"></i>
                             </a>
-                            <a href="{{ route('admin.maintenance.edit', $row->requestID) }}" class="btn-edit">
+                            <a href="{{ route('admin.maintenance.edit', $row->requestID) }}" class="btn-edit" title="Edit Request">
                                 <i class="fa fa-pencil"></i>
                             </a>
-                            <button class="delete-btn" onclick="openModal('deleteModal{{ $row->requestID }}')">
+                            <button class="delete-btn" onclick="openModal('deleteModal{{ $row->requestID }}')" title="Delete Request">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </div>

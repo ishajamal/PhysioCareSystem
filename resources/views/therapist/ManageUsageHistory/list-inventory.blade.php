@@ -258,7 +258,7 @@ body {
                             </span>
                         </td>
                         <td>
-                            <button class="select-btn" onclick="window.location.href='{{ route('therapist.add.usage.record', ['itemID' => $item->itemID]) }}'">
+                            <button class="select-btn" onclick="window.location.href='{{ route('therapist.add.new.record', [ 'usageID' => $usageID, 'itemID' => $item->itemID]) }}'">
                                 Select
                             </button>
                         </td>

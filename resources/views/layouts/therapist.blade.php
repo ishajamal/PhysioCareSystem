@@ -908,13 +908,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="{{ request()->routeIs('manage-item') ? 'active' : '' }}">
+                        <a href="{{ route('therapist.items.index') }}"
+                        class="{{ request()->routeIs('therapist.items.*') ? 'active' : '' }}">
                             <i class="bi bi-archive"></i>
                             <span>Inventory Items</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="{{ request()->routeIs('maintenance-request') ? 'active' : '' }}">
+                        <a href="{{ route('therapist.maintenance.index') }}"
+                        class="{{ request()->routeIs('therapist.maintenance.*') ? 'active' : '' }}">
                             <i class="bi bi-journal-check"></i>
                             <span>Maintenance Request</span>
                         </a>
@@ -932,16 +934,30 @@
                             <span>Usage record</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('therapist.usage.history') }}"  
+                        class="{{ in_array(request()->route()->getName(), [
+                                'therapist.usage.history',
+                                'therapist.add.new.record',
+                                'therapist.view.history.details',
+                                'therapist.view.history.item.details',
+                                'therapist.usage.edit',
+                                'therapist.usage.list',
+                            ]) ? 'active' : '' }}">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Record Usage History</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
         <ul class="bottom-menu">
-            <li>
+            {{-- <li>
                 <a href="#" class="{{ request()->routeIs('settings') ? 'active' : '' }}">
                     <i class="bi bi-gear"></i>
                     <span>Settings</span>
                 </a>
-            </li>
+            </li> --}}
             <li>
                 <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                     @csrf

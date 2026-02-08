@@ -71,19 +71,16 @@ class ManageMaintenanceController extends Controller
 
     public function edit($id)
     {
-        // 🟢 CORRECT: We query the Child 'itemMaintenance'
-        // This allows $request->maintenanceRequest in your view to work properly.
-        $request = itemMaintenance::with([
-                'maintenanceRequest.user',   // Load Parent -> User
-                'itemInfo',                  // Load Equipment Info
-                'maintenanceRequest.images'  // Load Parent -> Images
-            ])
-            ->where('requestID', $id) // Assuming requestID links them
-            ->firstOrFail();
+        $request = MaintenanceRequest::with([
+        'user',                         
+        'images',                       
+        'itemMaintenances.itemInfo'     
+    ])->where('requestID', $id)->firstOrFail();
 
-        return view('admin.ManageMaintenanceRequest.EditMaintenanceRequest', compact('request'));
+    // // Debug: check the images
+    // dd($request->images->map(fn($img) => $img->imagePath));
+    return view('admin.ManageMaintenanceRequest.EditMaintenanceRequest', compact('request'));
     }
-
     // Handle the Save
     public function update(Request $httpRequest, $id)
     {

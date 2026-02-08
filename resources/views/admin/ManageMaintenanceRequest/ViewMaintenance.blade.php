@@ -54,6 +54,7 @@ body {
     border: none;
     transition: all 0.3s ease;
     text-decoration: none;
+    font-size: 14px;
 }
 
 .btn-secondary {
@@ -61,24 +62,48 @@ body {
     color: #333;
 }
 
-.btn-danger {
-    background-color: #fee2e2;
-    color: #b91c1c;
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
 }
 
-/* ================= CONTENT CARD ================= */
+.btn-primary:hover {
+    background-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* ================= LAYOUT GRID ================= */
+.request-detail-wrapper {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 900px) {
+    .request-detail-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ================= CONTENT CARDS ================= */
 .content-card {
     background: white;
     border-radius: 20px;
-    padding: 40px 30px;
+    padding: 30px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-    margin-bottom: 30px;
 }
 
-/* ================= INFO GRID ================= */
+.section-title {
+    font-weight: 700; 
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+    color: #1f2937;
+}
+
+/* ================= INFO ITEMS ================= */
 .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
     margin-bottom: 25px;
 }
@@ -94,66 +119,118 @@ body {
 
 .info-box {
     background: #f9fafb;
-    padding: 16px;
-    border-radius: 12px;
+    padding: 14px 16px;
+    border-radius: 10px;
     border: 1px solid #e5e7eb;
     font-size: 14px;
     color: #374151;
 }
 
-/* ================= STATUS STYLES ================= */
-.status-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
+.info-box.large {
+    min-height: 100px;
+    line-height: 1.6;
 }
 
-.status-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-
-.status-pending { background-color: #f59e0b; }
-.status-in-progress { background-color: #3b82f6; }
-.status-completed { background-color: #10b981; }
-
-/* ================= IMAGE SECTION ================= */
-.main-img img {
+/* ================= STATUS DROPDOWN ================= */
+.status-dropdown {
     width: 100%;
-    max-height: 400px;
-    object-fit: contain;
-    border-radius: 16px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    background-color: white;
+    font-size: 14px;
+    color: #1f2937;
     cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+}
+
+.status-dropdown:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ================= IMAGES ================= */
+.main-img-container {
+    margin-bottom: 20px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+}
+
+.main-img-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.main-img-container img:hover {
+    transform: scale(1.02);
+}
+
+.thumbnail-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .thumbnail-img {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
-    border: 2px solid #e5e7eb;
+    border: 2px solid transparent;
+    transition: all 0.2s;
 }
 
-/* ================= IMAGE MODAL ================= */
-#imgModal {
+.thumbnail-img:hover {
+    border-color: #3b82f6;
+}
+
+/* ================= MODAL ================= */
+.modal-overlay {
     display: none;
     position: fixed;
-    z-index: 9998;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.85);
     align-items: center;
     justify-content: center;
+    backdrop-filter: blur(5px);
 }
 
-#imgModal.show {
-    display: flex !important;
+.modal-overlay.show { display: flex; }
+
+.modal-img {
+    max-width: 90%;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-modal:hover { color: #fca5a5; }
+
 </style>
 
 <div class="main-content-view">
@@ -169,79 +246,85 @@ body {
         </div>
     </div>
 
-    <div class="content-card">
-        <h3 style="font-weight: 700; margin-bottom: 20px;">Equipment Maintenance Details</h3>
-        
-        <div class="info-grid">
-            <div class="info-item">
-                <span class="info-label">Request ID</span>
-                <div class="info-box">{{ $request->requestID }}</div>
+    <!-- FLEX WRAPPER FOR CARDS -->
+    <div class="content-cards-wrapper" style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <!-- LEFT CARD: Details -->
+        <div class="content-card" style="flex: 2 1 0;">
+            <h3 class="section-title">Equipment Maintenance Details</h3>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Request ID</span>
+                    <div class="info-box">{{ $request->requestID }}</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Equipment</span>
+                    <div class="info-box">{{ $request->itemInfo->itemName ?? 'N/A' }}</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Date Submitted</span>
+                    <div class="info-box">{{ $request->maintenanceRequest->dateSubmitted->format('d/m/Y h:i A') }}</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Issue</span>
+                    <div class="info-box">{{ $request->itemIssue }}</div>
+                </div>
             </div>
-            <div class="info-item">
-                <span class="info-label">Equipment</span>
-                <div class="info-box">{{ $request->itemInfo->itemName ?? 'N/A' }}</div>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Date Submitted</span>
-                <div class="info-box">{{ $request->maintenanceRequest->dateSubmitted->format('d/m/Y h:i A') }}</div>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Issue</span>
-                <div class="info-box">{{ $request->itemIssue }}</div>
-            </div>
-        </div>
 
-        <div class="info-item">
-            <span class="info-label">Details</span>
-            <div class="info-box" style="min-height: 100px;">{{ $request->detailsMaintenance ?? 'No additional details.' }}</div>
-        </div>
+            <div class="info-item">
+                <span class="info-label">Details</span>
+                <div class="info-box large">{{ $request->detailsMaintenance ?? 'No additional details.' }}</div>
+            </div>
 
-        <div style="margin-top: 25px;">
-            <span class="info-label">Status</span>
-            <div style="padding: 15px 20px; background: #f9fafb; border-radius: 12px; display: inline-flex; align-items: center;">
-                @php $statusClass = strtolower(str_replace(' ', '-', $request->maintenanceRequest->status)); @endphp
-                <div class="status-label">
-                    <span class="status-dot status-{{ $statusClass }}"></span> 
-                    {{ ucfirst($request->maintenanceRequest->status) }}
+            <div style="margin-top: 25px;">
+                <span class="info-label">Status</span>
+                <div style="padding: 15px 20px; background: #f9fafb; border-radius: 12px; display: inline-flex; align-items: center;">
+                    @php $statusClass = strtolower(str_replace(' ', '-', $request->maintenanceRequest->status)); @endphp
+                    <div class="status-label">
+                        <span class="status-dot status-{{ $statusClass }}"></span> 
+                        {{ ucfirst($request->maintenanceRequest->status) }}
+                    </div>
+                </div>
+            </div>
+
+            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #e5e7eb;">
+
+            <h3 class="section-title">Submitted By</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">User ID</span>
+                    <div class="info-box">{{ $request->maintenanceRequest->userID }}</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">User Name</span>
+                    <div class="info-box">{{ $request->maintenanceRequest->user->name ?? 'Unknown' }}</div>
                 </div>
             </div>
         </div>
 
-        <hr style="margin: 30px 0; border: 0; border-top: 1px solid #e5e7eb;">
-
-        <h3 style="font-weight: 700; margin-bottom: 20px;">Submitted By</h3>
-        <div class="info-grid">
-            <div class="info-item">
-                <span class="info-label">User ID</span>
-                <div class="info-box">{{ $request->maintenanceRequest->userID }}</div>
+        <!-- RIGHT CARD: Images -->
+        <div class="content-card" style="flex: 1 1 0;">
+            <h3 class="section-title">Equipment Images</h3>
+            <div class="main-img-container">
+                @php 
+                    $images = $request->maintenanceRequest->images;
+                    $mainImg = $images->first() ? asset('storage/' . $images->first()->imagePath) : asset('images/placeholder.jpg');
+                @endphp
+                <img src="{{ $mainImg }}" id="equipment-img" onclick="viewImage(this.src)" alt="Main Image">
             </div>
-            <div class="info-item">
-                <span class="info-label">User Name</span>
-                <div class="info-box">{{ $request->maintenanceRequest->user->name ?? 'Unknown' }}</div>
+            
+            <span class="info-label" style="margin-top: 20px;">Additional Images</span>
+            <div class="thumbnail-grid">
+                @forelse($images as $img)
+                    <img src="{{ asset('storage/' . $img->imagePath) }}" class="thumbnail-img" onclick="viewImage(this.src)">
+                @empty
+                    <span style="color: #9ca3af; font-style: italic;">No additional images uploaded</span>
+                @endforelse
             </div>
-        </div>
-    </div>
-
-    <div class="content-card">
-        <h3 style="font-weight: 700; margin-bottom: 20px;">Equipment Images</h3>
-        <div class="main-img">
-            @php 
-                $images = $request->maintenanceRequest->images;
-                $mainImg = $images->first() ? asset('storage/' . $images->first()->imagePath) : asset('images/placeholder.jpg');
-            @endphp
-            <img src="{{ $mainImg }}" id="equipment-img" onclick="viewImage(this.src)" alt="Main Image">
-        </div>
-        
-        <span class="info-label" style="margin-top: 20px;">Additional Images</span>
-        <div class="thumbnail" style="display: flex; gap: 10px; margin-top: 10px;">
-            @forelse($images as $img)
-                <img src="{{ asset('storage/' . $img->imagePath) }}" class="thumbnail-img" onclick="viewImage(this.src)">
-            @empty
-                <span style="color: #9ca3af; font-style: italic;">No additional images uploaded</span>
-            @endforelse
         </div>
     </div>
 </div>
+
 
 <!-- IMAGE VIEWER MODAL -->
 <div id="imgModal" onclick="closeImageModal()">
