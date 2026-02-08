@@ -243,27 +243,75 @@ body {
     border-radius: 50%;
 }
 
-/* Action Button */
-.action-btn {
+.action-buttons {
+    justify-content: center !important;        /* center horizontally */
+    align-items: center !important;            /* center vertically */
+    gap: 10px;                      /* spacing between buttons */
+}
+
+
+/* View Button */
+.btn-view {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%);
-    color: #3730a3;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 16px;
     border: none;
-    font-size: 18px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: 0.2s ease;
+    background-color: #dbeafe;
+    color: #1e40af;
     text-decoration: none;
 }
 
-.action-btn:hover {
-    background: linear-gradient(135deg, #c7d2fe 0%, #bfdbfe 100%);
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(55, 48, 163, 0.15);
+.btn-view:hover {
+    background-color: #bfdbfe;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(30, 64, 175, 0.2);
+}
+
+/* Edit Button */
+.btn-edit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+    background-color: #fef3c7;
+    color: #b45309;
+    text-decoration: none;
+}
+
+.btn-edit:hover {
+    background-color: #fde68a;
+}
+
+/* Delete Button */
+.btn-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.btn-delete:hover {
+    background-color: #fca5a5;
 }
 
 /* ================= EMPTY STATE ================= */
@@ -300,6 +348,26 @@ body {
     margin: 0 auto;
     line-height: 1.5;
 }
+
+.btn-edit, .btn-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-edit { background-color: #fef3c7; color: #b45309; }
+.btn-edit:hover { background-color: #fde68a; }
+
+.btn-delete { background-color: #fee2e2; color: #b91c1c; }
+.btn-delete:hover { background-color: #fca5a5; }
+
 
 /* ================= FOOTER ================= */
 .table-footer {
@@ -434,7 +502,7 @@ body {
                     <th>Usage ID</th>
                     <th>Date</th>
                     <th>Items Used</th>
-                    <th>View</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -456,13 +524,26 @@ body {
                                     {{ $record['totalItems'] }}
                                 </span>
                             </td>
-                            <td>
-                                <a href="{{ route('therapist.view.history.details', $record['usageID']) }}"
-                                   class="action-btn"
-                                   title="View Details">
+                            <td class="action-buttons">
+                                <button type="button"
+                                        class="btn-view"
+                                        title="View Details"
+                                        onclick="window.location='{{ route('therapist.view.history.details', $record['usageID']) }}'">
                                     <i class="bi bi-eye"></i>
-                                </a>
+                                </button>
+
+                                <button class="btn-delete" onclick="openModal('deleteModal{{ $record['usageID'] }}')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </td>
+                            <x-delete-modal
+                                id="deleteModal{{ $record['usageID'] }}"
+                                title="ARE YOU SURE YOU WANT TO DELETE THIS RECORD?"
+                                message="This action cannot be undone."
+                                route="{{ route('therapist.delete.usage', $record['usageID']) }}"
+                                method="DELETE"
+                            />
+
                         </tr>
                     @endforeach
                 @else
@@ -478,6 +559,7 @@ body {
                         </td>
                     </tr>
                 @endif
+                
             </tbody>
         </table>
 

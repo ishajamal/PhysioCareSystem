@@ -123,8 +123,9 @@ Route::middleware('auth')->group(function () {
         ->name('usage.delete');
         Route::get('/list-item/{usageID}',[UsageHistoryController::class,'inventoryList'])
         ->name('usage.list');
-        Route::get('add-new-record/{usageID}/item/{itemID}', [UsageHistoryController::class, 'addNewRecord'])->name('add.new.record');
-        Route::post('usage/{usageID}/store-item',[UsageHistoryController::class, 'storeNewUsage'])->name('usage.item.store');
+        Route::get('/add-new-record/{usageID}/item/{itemID}', [UsageHistoryController::class, 'addNewRecord'])->name('add.new.record');
+        Route::post('/usage/{usageID}/store-item',[UsageHistoryController::class, 'storeNewUsage'])->name('usage.item.store');
+        Route::delete('/usage/{id}/delete', [UsageHistoryController::class, 'delete'])->name('delete.usage');
 
     });
 

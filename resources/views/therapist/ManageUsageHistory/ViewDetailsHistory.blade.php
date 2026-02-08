@@ -181,7 +181,7 @@
                 <div class="info-group">
                     <label class="info-label">Item ID</label>
                     <div class="info-value">
-                        ITM-{{ str_pad($itemUsage->itemMaintenanceInfo->itemID, 3, '0', STR_PAD_LEFT) }}
+                       {{ $itemUsage->itemMaintenanceInfo->itemID}}
                     </div>
                 </div>
 

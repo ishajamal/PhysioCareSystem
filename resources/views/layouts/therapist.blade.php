@@ -950,12 +950,12 @@
             </nav>
         </div>
         <ul class="bottom-menu">
-            <li>
+            {{-- <li>
                 <a href="#" class="{{ request()->routeIs('settings') ? 'active' : '' }}">
                     <i class="bi bi-gear"></i>
                     <span>Settings</span>
                 </a>
-            </li>
+            </li> --}}
             <li>
                 <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                     @csrf

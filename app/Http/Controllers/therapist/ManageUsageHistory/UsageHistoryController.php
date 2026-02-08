@@ -226,6 +226,24 @@ class UsageHistoryController extends Controller
         }
     }
 
+    public function delete($id) {
+       DB::beginTransaction();
+        try {
+            itemUsage::where('usageID', $id)->delete();
+            usageRecord::where('usageID', $id)->delete();
+
+            DB::commit();
+
+            return redirect()->route('therapist.usage.history')
+                            ->with('success', 'Usage record deleted successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->route('therapist.usage.history')
+                            ->withErrors(['error' => 'Failed to delete usage record']);
+        }
+    }
 
 
 }
