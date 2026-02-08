@@ -6,14 +6,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\therapist\ManageUsageHistory\UsageHistoryController;
 use App\Http\Controllers\therapist\RecordItemUsage\UsageController;
 use App\Http\Controllers\admin\ManageMaintenanceRequest\ManageMaintenanceController;
-<<<<<<< HEAD
 use App\Http\Controllers\therapist\therapistDashboardController;
-=======
 use App\Http\Controllers\therapist\ItemDetails\ItemDetailsController;
 use App\Http\Controllers\therapist\SubmitMaintenanceRequest\MaintenanceRequestController;
->>>>>>> 559dcb3 (Therapist: item details + maintenance request + sidebar/pagination fixes (remove unused files))
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\ManageUser\ManageUserController;
 
 
 /*
