@@ -174,3 +174,4 @@ class InventoryController extends Controller
             ->with('success', 'Item deleted successfully.');
     }
 }
+
