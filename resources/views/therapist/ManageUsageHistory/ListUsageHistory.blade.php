@@ -211,13 +211,11 @@ body {
 /* Table Cell Variations */
 .record-id {
     font-weight: 700;
-    color: #1a1a1a;
+    color: #475569;
     font-size: 15px;
     display: inline-block;
     padding: 6px 15px;
-    background: linear-gradient(135deg, #f0f4ff 0%, #e6eeff 100%);
     border-radius: 10px;
-    border-left: 4px solid #4f46e5;
 }
 
 .record-date {
@@ -234,20 +232,13 @@ body {
 
 .total-count {
     font-weight: 700;
-    color: #2563eb;
+    color: #475569;
     font-size: 16px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
 }
 
-.total-count::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    background: #2563eb;
-    border-radius: 50%;
-}
 
 
 
@@ -336,12 +327,26 @@ body {
     line-height: 1.5;
 }
 
+/* ================= ACTION BUTTONS ================= */
+.records-table th:nth-child(5) {
+    width: 150px;
+    min-width: 150px;
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.records-table td:nth-child(5) {
+    width: 150px;
+    min-width: 150px;
+    text-align: center;
+    padding: 22px 10px;
+}
+
 .action-buttons {
-    display: flex;
+    display: inline-flex;
     gap: 10px;
     justify-content: center;
     align-items: center;
-    width: 100%;
 }
 
 .btn-edit, .btn-delete, .btn-view {
@@ -534,7 +539,7 @@ body {
                             <td>{{ $index + 1 }}</td>
                             <td>
                                 <span class="record-id">
-                                    UHG-{{ str_pad($record['usageID'], 3, '0', STR_PAD_LEFT) }}
+                                    {{ $record['usageID'] }}
                                 </span>
                             </td>
                             <td class="record-date">
