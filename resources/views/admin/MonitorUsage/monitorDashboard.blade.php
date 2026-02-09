@@ -153,6 +153,63 @@ body {
     color: #9ca3af;
 }
 .no-data-icon { font-size: 40px; margin-bottom: 15px; display: block; opacity: 0.5; }
+
+/* Summary Card Styles */
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .summary-card {
+        background: white;
+        padding: 20px 25px;
+        border-radius: 20px;
+        border: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .summary-icon {
+        width: 54px;
+        height: 54px;
+        background: #eff6ff;
+        color: #26599F;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .summary-info h3 {
+        margin: 0;
+        font-size: 13px;
+        text-transform: uppercase;
+        color: #6b7280;
+        letter-spacing: 0.05em;
+    }
+
+    .summary-info .value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        margin: 4px 0;
+    }
+
+    .summary-info .sub-text {
+        font-size: 13px;
+        color: #059669;
+        font-weight: 500;
+    }
 </style>
 
 <div class="inventory-container">
@@ -164,6 +221,23 @@ body {
             <i class="fas fa-sync-alt"></i> Refresh Data
         </button>
     </div>
+
+    @if($mostUsedToday && $mostUsedToday->itemMaintenanceInfo)
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="fas fa-fire"></i>
+            </div>
+            <div class="summary-info">
+                <h3>Most Used Item Today</h3>
+                <div class="value">{{ $mostUsedToday->itemMaintenanceInfo->itemName }}</div>
+                <div class="sub-text">
+                    <i class="fas fa-arrow-up"></i> {{ $mostUsedToday->total_qty }} units used today
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
     {{-- Filter Card --}}
     <div class="filter-card">
