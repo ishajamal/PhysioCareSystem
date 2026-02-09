@@ -133,6 +133,55 @@
     font-size: 48px;
     margin-bottom: 15px;
 }
+.report-container {
+    width: 100%;
+    max-width: 1200px; /* Increased for wider tables */
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Responsive Table Wrapper */
+.report-content {
+    background: white;
+    border-radius: 18px;
+    padding: clamp(15px, 3vw, 30px); /* Responsive padding */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    min-height: 400px;
+    overflow-x: auto; /* Enables horizontal scroll on small screens */
+    -webkit-overflow-scrolling: touch;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Prevents squishing */
+}
+
+.report-table th {
+    background: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
+    padding: 16px 14px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+.report-table td {
+    padding: 16px 14px;
+    color: #374151;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+}
+
+/* Helper class for JS to hide columns */
+.column-hidden {
+    display: none !important;
+}
 </style>
 
 <div class="report-container">
@@ -177,38 +226,32 @@
     </div> -->
 <!--  -->
     <div class="report-content">
-        @if(strtolower($report->reportType) === 'usage')
-            <!-- USAGE REPORT TABLE -->
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
+            @if(strtolower($report->reportType) === 'usage')
+                <table class="report-table" id="usageTable">
                     <thead>
-                        <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">No</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Usage ID</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Item ID</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Item Name</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Quantity</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Used By</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Used Date</th>
+                        <tr>
+                            <th>No</th>
+                            <th>Usage ID</th>
+                            <th>Item ID</th>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                            <th>Used By</th>
+                            <th>Used Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($reportData as $record)
                             @foreach($record->itemUsages as $index => $usage)
-    <tr style="border-bottom: 1px solid #f1f5f9;">
-        <td style="padding: 16px 14px; color: #374151;">{{ $loop->parent->iteration }}.{{ $index + 1 }}</td>
-        <td style="padding: 16px 14px; color: #374151;">#{{ $record->usageID }}</td>
-        <td style="padding: 16px 14px; color: #374151;">{{ $usage->itemID ?? 'N/A' }}</td>
-        
-        <td style="padding: 16px 14px; color: #374151;">
-            {{ $usage->itemMaintenanceInfo->itemName ?? 'N/A' }}
-        </td>
-        
-        <td style="padding: 16px 14px; color: #374151;">{{ $usage->quantityUsed ?? 'N/A' }}</td>
-        <td style="padding: 16px 14px; color: #374151;">{{ $record->usedByUser->name ?? 'N/A' }}</td>
-        <td style="padding: 16px 14px; color: #374151;">{{ $record->usageDate?->format('Y-m-d') ?? 'N/A' }}</td>
-    </tr>
-@endforeach
+                                <tr>
+                                    <td>{{ $loop->parent->iteration }}</td>
+                                    <td>{{ $record->usageID }}</td>
+                                    <td>{{ $usage->item->itemID ?? 'N/A' }}</td>
+                                    <td>{{ $usage->item->product_name ?? 'N/A' }}</td>
+                                    <td>{{ $usage->quantity ?? 'N/A' }}</td>
+                                    <td>{{ $record->user->name ?? 'N/A' }}</td>
+                                    <td>{{ $record->usageDate?->format('Y-m-d H:i') ?? 'N/A' }}</td>
+                                </tr>
+                            @endforeach
                         @empty
                             <tr>
                                 <td colspan="7" style="padding: 50px 20px; text-align: center; color: #6b7280;">
@@ -219,51 +262,44 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
 
-        @elseif(strtolower($report->reportType) === 'maintenance')
-            <!-- MAINTENANCE REPORT TABLE -->
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
+            @elseif(strtolower($report->reportType) === 'maintenance')
+                <table class="report-table" id="maintenanceTable">
                     <thead>
-                        <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">No</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Request ID</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Item ID</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Equipment Name</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Item Issue</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Submitted By</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Status</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Date Submitted</th>
-                            <th style="padding: 16px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280;">Details Maintenance</th>
+                        <tr>
+                            <th>No</th>
+                            <th>Request ID</th>
+                            <th>Item ID</th>
+                            <th>Equipment Name</th>
+                            <th>Item Issue</th>
+                            <th>Submitted By</th>
+                            <th>Status</th>
+                            <th>Date Submitted</th>
+                            <th>Details Maintenance</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($reportData as $request)
                             @forelse($request->itemMaintenances as $index => $maintenance)
-                                <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $loop->parent->iteration }}.{{ $index + 1 }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">#{{ $request->requestID }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $maintenance->itemInfo->itemID ?? 'N/A' }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $maintenance->itemInfo->product_name ?? 'N/A' }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $maintenance->itemIssue ?? 'N/A' }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $request->submitter->name ?? 'N/A' }}</td>
-                                    <td style="padding: 16px 14px;">
-                                        <span style="padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600;
-                                            @if(strtolower($request->status) === 'completed') background: #ecfdf5; color: #059669;
-                                            @elseif(strtolower($request->status) === 'pending') background: #fef3c7; color: #d97706;
-                                            @elseif(strtolower($request->status) === 'in-progress') background: #dbeafe; color: #0369a1;
-                                            @else background: #fee2e2; color: #dc2626; @endif">
+                                <tr>
+                                    <td>{{ $loop->parent->iteration }}</td>
+                                    <td>{{ $request->requestID }}</td>
+                                    <td>{{ $maintenance->itemInfo->itemID ?? 'N/A' }}</td>
+                                    <td>{{ $maintenance->itemInfo->product_name ?? 'N/A' }}</td>
+                                    <td>{{ $maintenance->itemIssue ?? 'N/A' }}</td>
+                                    <td>{{ $request->submitter->name ?? 'N/A' }}</td>
+                                    <td>
+                                        <span>
                                             {{ ucfirst($request->status) }}
                                         </span>
                                     </td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $request->dateSubmitted?->format('Y-m-d H:i') ?? 'N/A' }}</td>
-                                    <td style="padding: 16px 14px; color: #374151; max-width: 250px; word-break: break-word;">{{ $maintenance->detailsMaintenance ?? 'N/A' }}</td>
+                                    <td>{{ $request->dateSubmitted?->format('Y-m-d H:i') ?? 'N/A' }}</td>
+                                    <td style="max-width: 250px; word-break: break-word;">{{ $maintenance->detailsMaintenance ?? 'N/A' }}</td>
                                 </tr>
                             @empty
-                                <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $loop->parent->iteration }}</td>
-                                    <td colspan="8" style="padding: 16px 14px; color: #6b7280; font-style: italic;">No maintenance items for this request</td>
+                                <tr>
+                                    <td>{{ $loop->parent->iteration }}</td>
+                                    <td colspan="8" style="color: #6b7280; font-style: italic;">No maintenance items for this request</td>
                                 </tr>
                             @endforelse
                         @empty
@@ -276,16 +312,14 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-
-        @else
-            <div class="empty-state">
-                <div class="empty-state-icon">❓</div>
-                <h3>Unknown Report Type</h3>
-                <p>This report type is not recognized.</p>
-            </div>
-        @endif
-    </div>
+            @else
+                <div class="empty-state">
+                    <div class="empty-state-icon">❓</div>
+                    <h3>Unknown Report Type</h3>
+                    <p>This report type is not recognized.</p>
+                </div>
+            @endif
+        </div>
 </div>
 
 <!-- Printable template (hidden) -->
@@ -336,5 +370,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     } catch (e) { /* ignore */ }
 });
+
+/**
+ * Scans a table and hides any column where EVERY row contains "N/A"
+ */
+function hideEmptyColumns() {
+    const tables = document.querySelectorAll('.report-table');
+    
+    tables.forEach(table => {
+        const rows = table.querySelectorAll('tbody tr');
+        if (rows.length === 0 || (rows.length === 1 && rows[0].cells.length === 1)) return;
+
+        const colCount = table.querySelectorAll('thead th').length;
+
+        for (let i = 0; i < colCount; i++) {
+            let allNA = true;
+            let hasData = false;
+
+            rows.forEach(row => {
+                const cell = row.cells[i];
+                if (cell) {
+                    hasData = true;
+                    const text = cell.textContent.trim();
+                    // If even one row has something other than N/A, we show the column
+                    if (text !== 'N/A' && text !== '') {
+                        allNA = false;
+                    }
+                }
+            });
+
+            if (allNA && hasData) {
+                // Hide header
+                table.querySelectorAll('thead th')[i].classList.add('column-hidden');
+                // Hide all cells in this column
+                rows.forEach(row => {
+                    if (row.cells[i]) row.cells[i].classList.add('column-hidden');
+                });
+            }
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', hideEmptyColumns);
 </script>
 @endsection
