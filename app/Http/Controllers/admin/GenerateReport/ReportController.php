@@ -93,7 +93,7 @@ class ReportController extends Controller
         elseif (strtolower($report->reportType) === 'maintenance') {
             // Fetch maintenance requests with related data
             $query = maintenanceRequest::with('submitter', 'itemMaintenances.itemInfo');
-            
+            // 
             // Filter by date range if available
             if ($report->dateStart) {
                 $query->whereDate('dateSubmitted', '>=', $report->dateStart);
