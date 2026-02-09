@@ -287,7 +287,7 @@ body {
 
                             <div class="form-group">
                                 <label>Stock Level <span class="required">*</label>
-                                <input class="form-control" name="stockLevel" id="stockLevelInput" value="{{ old('stockLevel') }}" placeholder="e.g., low / adequate / high">
+                                <input class="form-control" name="stockLevel" id="stockLevelInput" value="{{ old('stockLevel') }}" placeholder="e.g., 20">
                             </div>
                         </div>
                     </div>
