@@ -9,6 +9,8 @@ use App\Http\Controllers\admin\ManageMaintenanceRequest\ManageMaintenanceControl
 use App\Http\Controllers\therapist\therapistDashboardController;
 use App\Http\Controllers\therapist\ItemDetails\ItemDetailsController;
 use App\Http\Controllers\therapist\SubmitMaintenanceRequest\MaintenanceRequestController;
+use App\Http\Controllers\admin\GenerateReport\ReportController;
+use App\Http\Controllers\admin\MonitorUsage\monitorUsageController;  
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\InventoryController;
 
@@ -114,6 +116,34 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/maintenance/count', [ManageMaintenanceController::class, 'getNotificationCount']);
         Route::get('/api/maintenance/notifications', [ManageMaintenanceController::class, 'getNotifications']);
         Route::post('/api/maintenance/mark-read', [ManageMaintenanceController::class, 'markAsRead']);
+
+    
+    /*
+    |--------------------------------------------------------------------------
+    | GENERATE REPORT Routes
+    |--------------------------------------------------------------------------
+    */
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/', [ReportController::class, 'index'])->name('dashboard');
+            Route::get('/create', [ReportController::class, 'create'])->name('create');
+            Route::post('/store', [ReportController::class, 'store'])->name('store');
+            Route::get('/{id}', [ReportController::class, 'show'])->name('show');
+            Route::get('/{id}/download', [ReportController::class, 'download'])->name('download');
+            Route::get('/{id}/printable', [ReportController::class, 'printable'])->name('printable');
+        });
+
+        /*
+    |--------------------------------------------------------------------------
+    | MONITOR USAGE Routes
+    |--------------------------------------------------------------------------
+    */
+        Route::prefix('usage')->name('usage.')->group(function () {
+            Route::get('/', [monitorUsageController::class, 'retrieveUsagerecord'])->name('dashboard');
+            Route::post('/filter', [monitorUsageController::class, 'displayfilteredsearh'])->name('filter');
+            Route::get('/refresh', [monitorUsageController::class, 'refreshMonitoringdata'])->name('refresh');
+            Route::get('/{usageID}', [monitorUsageController::class, 'showusagedetails'])->name('details');
+        });
+
     });
 
     /*
