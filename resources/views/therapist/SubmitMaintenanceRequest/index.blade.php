@@ -172,7 +172,6 @@
     text-align: center;
     min-width: 90px;
     box-sizing: border-box;
-    text-transform: lowercase;
 }
 
 .status-pending-badge { background: #fffbeb; color: #d97706; }
@@ -279,37 +278,37 @@
                             $equipmentName = $r->equipmentName ?? '-';
                             $issueText = $r->itemIssue ?? '-';
 
-                            $statusRaw = trim($r->status ?? 'pending');
+                            $statusRaw = trim($r->status ?? 'Pending');
                             $status = strtolower($statusRaw);
 
                             $dotClass = 'status-pending';
                             $badgeClass = 'status-badge status-pending-badge';
-                            $label = 'pending';
+                            $label = 'Pending';
 
                             if (in_array($status, ['pending'])) {
                                 $dotClass = 'status-pending';
                                 $badgeClass = 'status-badge status-pending-badge';
-                                $label = 'pending';
+                                $label = 'Pending';
                             } elseif (in_array($status, ['in progress','in-progress','in_progress','processing'])) {
                                 $dotClass = 'status-in-progress';
                                 $badgeClass = 'status-badge status-in-progress-badge';
-                                $label = 'in progress';
+                                $label = 'In Progress';
                             } elseif (in_array($status, ['approved','accept','accepted'])) {
                                 $dotClass = 'status-approved';
                                 $badgeClass = 'status-badge status-approved-badge';
-                                $label = 'approved';
+                                $label = 'Approved';
                             } elseif (in_array($status, ['rejected','reject','declined'])) {
                                 $dotClass = 'status-rejected';
                                 $badgeClass = 'status-badge status-rejected-badge';
-                                $label = 'rejected';
+                                $label = 'Rejected';
                             } elseif (in_array($status, ['completed','done'])) {
                                 $dotClass = 'status-completed';
                                 $badgeClass = 'status-badge status-completed-badge';
-                                $label = 'completed';
+                                $label = 'Completed';
                             } elseif (in_array($status, ['cancelled','canceled'])) {
                                 $dotClass = 'status-cancelled';
                                 $badgeClass = 'status-badge status-cancelled-badge';
-                                $label = 'cancelled';
+                                $label = 'Cancelled';
                             }
 
                             $dateText = '-';
