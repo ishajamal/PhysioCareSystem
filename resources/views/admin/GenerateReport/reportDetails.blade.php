@@ -68,6 +68,36 @@
     width: fit-content;
 }
 
+/* ================= BUTTONS ================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
 .badge-usage {
     background: #dbeafe;
     color: #0369a1;
@@ -84,46 +114,6 @@
     margin-top: 20px;
 }
 
-.btn-primary {
-    background: #26599F;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-    background: #1a4070;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(38, 89, 159, 0.3);
-}
-
-.btn-secondary {
-    background: #f3f4f6;
-    color: #374151;
-    border: 1px solid #e5e7eb;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
-}
-
-.btn-secondary:hover {
-    background: #e5e7eb;
-    transform: translateY(-2px);
-}
 
 .report-content {
     background: white;
@@ -167,16 +157,25 @@
             </div>
         </div>
 
-        <div class="action-buttons-group" style="flex-direction: column; margin-top: 0;">
-            <button type="button" class="btn-primary" onclick="printReport()">
+        <div class="btn-holder">
+                <a href="{{ route('admin.reports.dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <button type="submit" class="btn btn-primary" onclick="printReport()">
+                    <i class="fas fa-print"></i> Print Report
+                </button>
+            </div>
+
+        <!-- <div class="action-buttons-group" style="flex-direction: column; margin-top: 0;">
+            <button type="button" class="btn btn-primary" onclick="printReport()">
                 <i class="fas fa-download"></i> Export / Print
             </button>
-            <a href="{{ route('admin.reports.dashboard') }}" class="btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Reports
+            <a href="{{ route('admin.reports.dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back 
             </a>
         </div>
-    </div>
-
+    </div> -->
+<!--  -->
     <div class="report-content">
         @if(strtolower($report->reportType) === 'usage')
             <!-- USAGE REPORT TABLE -->

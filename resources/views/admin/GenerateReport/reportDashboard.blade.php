@@ -224,6 +224,41 @@
     color: white;
 }
 
+
+/* ================= BUTTONS ================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background-color: #e5e5e5;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
 /* ================= ALERTS ================= */
 .alert-message {
     padding: 12px 20px;
@@ -412,7 +447,7 @@
 
     {{-- ✅ ACTION BUTTONS TOP RIGHT --}}
     <div class="top-actions">
-        <a href="{{ route('admin.reports.create') }}" class="add-btn">
+        <a href="{{ route('admin.reports.create') }}" class="btn btn-primary">
             <i class="fas fa-plus-circle"></i> Generate New Report
         </a>
     </div>
@@ -496,7 +531,7 @@
         </div>
     </div>
 </div>
-
+<!--  -->
 {{-- DELETE CONFIRMATION MODAL --}}
 <div class="modal fade delete-modal" id="deleteModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
