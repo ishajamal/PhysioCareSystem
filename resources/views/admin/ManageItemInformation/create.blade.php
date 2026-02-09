@@ -1,300 +1,310 @@
 @extends('layouts.app')
 
-@section('title', 'Add Inventory')
+@section('title', 'Add Inventory Item / Equipment')
 
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
-.page-wrap{
+body {
+    background: linear-gradient(180deg, #f4f6fb 0%, #eef2ff 100%);
     font-family: 'Inter', sans-serif;
-    padding: 25px 10px;
 }
 
-.top-bar{
-    display:flex;
+.main-content-view {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    min-height: 80vh;
+}
+
+.header-title-wrapper {
+    display: flex;
     justify-content: space-between;
-    align-items:center;
-    gap: 12px;
-    margin-bottom: 18px;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
-.page-title{
-    font-size: 22px;
-    font-weight: 800;
-    color: #111827;
+.maintenance-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
-.btn-back{
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    color:#111827;
-    font-weight:600;
-    border-radius: 10px;
-    padding: 10px 14px;
-    text-decoration:none;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
+.btn-holder {
+    display: flex;
+    gap: 12px;
+    align-items: center;
 }
 
-.btn-save{
-    background:#26599F;
-    color:#fff;
-    border:none;
-    font-weight:700;
-    border-radius: 10px;
-    padding: 10px 16px;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns: 1.8fr 1fr;
-    gap: 18px;
-}
-
-.cardx{
-    background:#fff;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    padding: 18px;
-}
-
-.card-title{
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
     font-size: 14px;
-    font-weight: 800;
-    color:#111827;
-    margin-bottom: 12px;
 }
 
-.label{
+.btn-secondary {
+    background: #f3f4f6;
+    color: #111827;
+}
+.btn-secondary:hover { background: #e5e7eb; }
+
+.btn-primary {
+    background: #26599F;
+    color: white;
+    box-shadow: 0 6px 14px rgba(38, 89, 159, 0.25);
+}
+.btn-primary:hover { background: #1a4070; transform: translateY(-1px); }
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr;
+    gap: 20px;
+}
+
+.card-box {
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 14px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.form-group label {
     font-size: 11px;
-    font-weight: 800;
-    color:#6b7280;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: 0.6px;
     text-transform: uppercase;
-    letter-spacing: .6px;
     margin-bottom: 6px;
+    display: block;
 }
 
-.inputx, .selectx, .textareax{
-    width:100%;
-    border:1px solid #e5e7eb;
-    background:#f9fafb;
+.form-control, .form-select, textarea {
+    width: 100%;
     border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
     padding: 10px 12px;
-    outline:none;
+    font-size: 14px;
+    outline: none;
+}
+
+.form-control:focus, .form-select:focus, textarea:focus {
+    background: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.full { grid-column: 1 / -1; }
+
+.image-preview-box {
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.image-preview-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: none;
+}
+
+.image-preview-box .placeholder {
+    color: #6b7280;
     font-size: 13px;
 }
 
-.inputx:focus, .selectx:focus, .textareax:focus{
-    background:#fff;
-    border-color:#26599F;
-    box-shadow: 0 0 0 3px rgba(38, 89, 159, .12);
-}
-
-.row2{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.img-box{
-    border:1px solid #e5e7eb;
-    border-radius: 14px;
-    padding: 14px;
-    background:#fff;
-}
-
-.img-preview{
-    width: 100%;
-    height: 220px;
-    border-radius: 12px;
-    border: 1px solid #eef2f7;
-    background: #f8fafc;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-}
-
-.img-preview img{
-    width:100%;
-    height:100%;
-    object-fit: contain;
-}
-
-.small-note{
+.small-note {
     font-size: 12px;
-    color:#6b7280;
-    margin-top: 10px;
+    color: #6b7280;
+    margin-top: 8px;
 }
 
-@media(max-width: 992px){
-    .grid{ grid-template-columns: 1fr; }
+@media (max-width: 900px) {
+    .content-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
 }
 </style>
 
-<div class="page-wrap">
-    <div class="top-bar">
-        <div>
-            <h1 class="page-title">Add Inventory Item / Equipment</h1>
-        </div>
+<div class="main-content-view">
+    <div class="header-title-wrapper">
+        <h1 class="maintenance-title">Add Inventory Item / Equipment</h1>
 
-        <div class="d-flex gap-2">
-            <a href="{{ route('admin.inventory.dashboard') }}" class="btn-back">
+        <div class="btn-holder">
+            <a href="{{ route('admin.inventory.dashboard') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back
             </a>
 
-            {{-- Save button triggers submit --}}
-            <button type="submit" form="inventoryForm" class="btn-save">
+            <button type="submit" form="inventoryCreateForm" class="btn btn-primary">
                 <i class="fas fa-save"></i> Save Changes
             </button>
         </div>
     </div>
 
-    <form id="inventoryForm" action="{{ route('admin.inventory.store') }}" method="POST" enctype="multipart/form-data">
+    @if($errors->any())
+        <div class="alert alert-danger" style="border-radius:12px;">
+            <strong>Fix the errors below:</strong>
+            <ul style="margin: 10px 0 0 18px;">
+                @foreach($errors->all() as $e)
+                    <li>{{ $e }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form id="inventoryCreateForm" action="{{ route('admin.inventory.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <div class="grid">
-            {{-- LEFT: DETAILS --}}
-            <div class="cardx">
+        <div class="content-grid">
+            <!-- LEFT: DETAILS -->
+            <div class="card-box">
                 <div class="card-title">Item / Equipment Details</div>
 
-                <div class="row2">
-                    <div>
-                        <div class="label">Product Code *</div>
-                        <input class="inputx" name="product_code" value="{{ old('product_code') }}" placeholder="e.g., C023" required>
-                        @error('product_code') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Product Code *</label>
+                        <input class="form-control" name="product_code" value="{{ old('product_code') }}" placeholder="e.g., C023" required>
                     </div>
-                    <div>
-                        <div class="label">Product Name *</div>
-                        <input class="inputx" name="product_name" value="{{ old('product_name') }}" placeholder="e.g., Hot Gel" required>
-                        @error('product_name') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
-                    </div>
-                </div>
 
-                <div class="row2 mt-3">
-                    <div>
-                        <div class="label">Category *</div>
-                        <select class="selectx" name="category" required>
-                            <option value="">Select Category</option>
-                            <option value="Item" {{ old('category')==='Item' ? 'selected' : '' }}>Item</option>
-                            <option value="Equipment" {{ old('category')==='Equipment' ? 'selected' : '' }}>Equipment</option>
+                    <div class="form-group">
+                        <label>Product Name *</label>
+                        <input class="form-control" name="product_name" value="{{ old('product_name') }}" placeholder="e.g., Hot Gel" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select class="form-select" name="category" required>
+                            <option value="" disabled {{ old('category') ? '' : 'selected' }}>Select Category</option>
+                            <option value="item" {{ old('category') === 'item' ? 'selected' : '' }}>Item</option>
+                            <option value="equipment" {{ old('category') === 'equipment' ? 'selected' : '' }}>Equipment</option>
                         </select>
-                        @error('category') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                     </div>
 
-                    <div>
-                        <div class="label">Status *</div>
-                        <select class="selectx" name="status" required>
-                            <option value="available" {{ old('status','available')==='available' ? 'selected' : '' }}>available</option>
-                            <option value="in-use" {{ old('status')==='in-use' ? 'selected' : '' }}>in-use</option>
-                            <option value="maintenance" {{ old('status')==='maintenance' ? 'selected' : '' }}>maintenance</option>
-                            <option value="out-of-stock" {{ old('status')==='out-of-stock' ? 'selected' : '' }}>out-of-stock</option>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-select" name="status">
+                            <option value="available" {{ old('status','available') === 'available' ? 'selected' : '' }}>available</option>
+                            <option value="under maintenance" {{ old('status') === 'under maintenance' ? 'selected' : '' }}>under maintenance</option>
+                            <option value="unavailable" {{ old('status') === 'unavailable' ? 'selected' : '' }}>unavailable</option>
                         </select>
-                        @error('status') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                     </div>
-                </div>
 
-                <div class="row2 mt-3">
-                    <div>
-                        <div class="label">Quantity</div>
-                        <input type="number" class="inputx" name="quantity" value="{{ old('quantity') }}" min="0" placeholder="e.g., 10">
-                        @error('quantity') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input class="form-control" name="quantity" value="{{ old('quantity') }}" placeholder="e.g., 10">
                     </div>
-                    <div>
-                        <div class="label">Unit</div>
-                        <input class="inputx" name="unit" value="{{ old('unit') }}" placeholder="e.g., bottle / unit / piece">
-                        @error('unit') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
-                    </div>
-                </div>
 
-                <div class="row2 mt-3">
-                    <div>
-                        <div class="label">Brand</div>
-                        <input class="inputx" name="brand" value="{{ old('brand') }}" placeholder="e.g., PhysioCare">
-                        @error('brand') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    <div class="form-group">
+                        <label>Unit</label>
+                        <input class="form-control" name="unit" value="{{ old('unit') }}" placeholder="e.g., bottle / unit / piece">
                     </div>
-                    <div>
-                        <div class="label">Model</div>
-                        <input class="inputx" name="model" value="{{ old('model') }}" placeholder="e.g., HG-200">
-                        @error('model') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
-                    </div>
-                </div>
 
-                <div class="row2 mt-3">
-                    <div>
-                        <div class="label">Serial Number</div>
-                        <input class="inputx" name="serial_number" value="{{ old('serial_number') }}" placeholder="(Optional)">
-                        @error('serial_number') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    <div class="form-group">
+                        <label>Brand</label>
+                        <input class="form-control" name="brand" value="{{ old('brand') }}" placeholder="e.g., PhysioCare">
                     </div>
-                    <div>
-                        <div class="label">Location</div>
-                        <input class="inputx" name="location" value="{{ old('location') }}" placeholder="e.g., Storage Room">
-                        @error('location') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+
+                    <div class="form-group">
+                        <label>Model</label>
+                        <input class="form-control" name="model" value="{{ old('model') }}" placeholder="e.g., HG-200">
                     </div>
-                </div>
 
-                <div class="mt-3">
-                    <div class="label">Description</div>
-                    <textarea class="textareax" name="description" rows="3" placeholder="Description...">{{ old('description') }}</textarea>
-                    @error('description') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
-                </div>
+                    <div class="form-group">
+                        <label>Serial Number</label>
+                        <input class="form-control" name="serial_number" value="{{ old('serial_number') }}" placeholder="(Optional)">
+                    </div>
 
-                <div class="mt-3">
-                    <div class="label">Notes</div>
-                    <textarea class="textareax" name="notes" rows="3" placeholder="Notes...">{{ old('notes') }}</textarea>
-                    @error('notes') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input class="form-control" name="location" value="{{ old('location') }}" placeholder="e.g., Storage Room">
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Description</label>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Description...">{{ old('description') }}</textarea>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Notes</label>
+                        <textarea class="form-control" name="notes" rows="3" placeholder="Notes...">{{ old('notes') }}</textarea>
+                    </div>
                 </div>
             </div>
 
-            {{-- RIGHT: IMAGE --}}
-            <div class="cardx">
+            <!-- RIGHT: IMAGE -->
+            <div class="card-box">
                 <div class="card-title">Item / Equipment Image</div>
 
-                <div class="img-box">
-                    <div class="img-preview" id="imgPreview">
-                        <span class="small-note">No image selected</span>
-                    </div>
-
-                    <div class="mt-3">
-                        <div class="label">Upload Image</div>
-                        <input class="inputx" type="file" name="image" id="imageInput" accept="image/*">
-                        @error('image') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
-                        <div class="small-note">Allowed: JPG / PNG / WEBP (max 2MB)</div>
-                    </div>
+                <div class="image-preview-box" id="previewBox">
+                    <div class="placeholder" id="previewPlaceholder">No image selected</div>
+                    <img id="previewImage" alt="Preview">
                 </div>
 
-                <div class="small-note mt-3">Tip: Upload a clear picture for easier identification.</div>
+                <div style="margin-top:14px;">
+                    <label style="font-size:11px;font-weight:700;color:#6b7280;letter-spacing:0.6px;text-transform:uppercase;margin-bottom:6px;display:block;">
+                        Upload Image
+                    </label>
+                    <input class="form-control" type="file" name="image" accept=".jpg,.jpeg,.png,.webp" id="imageInput">
+                    <div class="small-note">Allowed: JPG / PNG / WEBP (max 2MB)</div>
+                    <div class="small-note" style="margin-top:6px;">Tip: Upload a clear picture for easier identification.</div>
+                </div>
             </div>
         </div>
     </form>
 </div>
 
 <script>
-const input = document.getElementById('imageInput');
-const preview = document.getElementById('imgPreview');
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('imageInput');
+    const img = document.getElementById('previewImage');
+    const placeholder = document.getElementById('previewPlaceholder');
 
-if (input) {
+    if (!input) return;
+
     input.addEventListener('change', function () {
         const file = this.files && this.files[0];
         if (!file) {
-            preview.innerHTML = '<span class="small-note">No image selected</span>';
+            img.style.display = 'none';
+            placeholder.style.display = 'block';
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-        };
-        reader.readAsDataURL(file);
+        const url = URL.createObjectURL(file);
+        img.src = url;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
     });
-}
+});
 </script>
 @endsection
