@@ -160,11 +160,19 @@ body {
     border-radius: 16px;
     overflow: hidden;
     border: 1px solid #e5e7eb;
+    /* Added for centering placeholder */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    background-color: #f9fafb;
 }
 
 .main-img-container img {
     width: 100%;
     height: auto;
+    max-height: 400px; 
+    object-fit: contain;
     display: block;
     cursor: pointer;
     transition: transform 0.3s ease;
@@ -252,7 +260,6 @@ body {
 
         <div class="request-detail-wrapper">
             
-            <!-- Equipment & Request Details -->
             <div class="content-card">
                 <h2 class="section-title">Equipment Maintenance Details</h2>
                 
@@ -313,34 +320,38 @@ body {
                 </div>
             </div>
 
-            <!-- Images -->
             <div class="content-card">
                 <h3 class="section-title">Equipment Images</h3>
                 
-                @php 
-                    $images = $request->images;
-                    $mainImg = $images->first() 
-                        ? asset('storage/' . $images->first()->imagePath) 
-                        : asset('images/placeholder.jpg');
-                @endphp
-
                 <div class="main-img-container">
-                    <img src="{{ $mainImg }}" id="main-preview-img" onclick="viewImage(this.src)" alt="Main Image">
+                    @php 
+                        $images = $request->images;
+                    @endphp
+
+                    @if($images->isNotEmpty())
+                        @php 
+                            $mainImg = asset('storage/' . $images->first()->imagePath);
+                        @endphp
+                        <img src="{{ $mainImg }}" id="main-preview-img" onclick="viewImage(this.src)" alt="Main Image">
+                    @else
+                        <div style="text-align: center; color: #9ca3af; padding: 40px;">
+                            <i class="fas fa-image" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <p style="font-weight: 500; font-size: 16px; margin: 0;">No attachment image</p>
+                            <span style="font-size: 13px; opacity: 0.7;">The requester did not upload any photos.</span>
+                        </div>
+                    @endif
                 </div>
 
-                @if($images->count() > 1)
-                    <span class="info-label">Additional Images</span>
+                @if($images->isNotEmpty())
+                    <span class="info-label" style="margin-top: 20px;">Additional Images</span>
                     <div class="thumbnail-grid">
                         @foreach($images as $img)
-                                <img src="{{ asset('storage/' . $img->imagePath) }}" 
-                                class="thumbnail-img" 
-                                onclick="swapImage(this.src)">
+                            <img src="{{ asset('storage/' . $img->imagePath) }}" 
+                                 class="thumbnail-img" 
+                                 onclick="swapImage(this.src)">
                         @endforeach
                     </div>
-                @else
-                    <p style="color: #9ca3af; font-style: italic; font-size: 14px;">No additional images.</p>
                 @endif
-
             </div>
 
         </div>
@@ -353,18 +364,15 @@ body {
 </div>
 
 <script>
-    // Swap main preview image when clicking thumbnail
     function swapImage(src) {
         document.getElementById('main-preview-img').src = src;
     }
 
-    // Open Modal
     function viewImage(src) {
         document.getElementById("modalImage").src = src;
         document.getElementById("imgModal").classList.add("show");
     }
 
-    // Close Modal
     function closeModal() {
         document.getElementById("imgModal").classList.remove("show");
     }

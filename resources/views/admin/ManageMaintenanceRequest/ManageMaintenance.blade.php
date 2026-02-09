@@ -489,7 +489,6 @@ body {
                     </td>
                 </tr>
                 
-                <!-- Delete modal component for each row -->
                 <x-delete-modal
                         id="deleteModal{{ $row->requestID }}"
                         title="ARE YOU SURE YOU WANT TO DELETE THIS RECORD?"
@@ -509,7 +508,6 @@ body {
 </div>
 
 <script>
-    // Function to OPEN delete modal
     function openModal(modalId) {
         var modal = document.getElementById(modalId);
         
@@ -533,7 +531,6 @@ body {
         }
     }
 
-    // Function to CLOSE delete modal
     function closeModal(modalId) {
         var modal = document.getElementById(modalId);
         if (modal) {
@@ -542,7 +539,6 @@ body {
         }
     }
 
-    // Close modal when clicking outside (on the dark overlay)
     window.onclick = function(event) {
         if (event.target.classList.contains('modal-overlay') && 
             event.target.id && event.target.id.startsWith('deleteModal')) {
@@ -554,7 +550,6 @@ body {
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("search-input");
 
-    // Search Logic
     searchInput.addEventListener("input", function () {
         const query = this.value.toLowerCase();
         const rows = document.querySelectorAll("#maintenance-table-body tr:not(#noResultsRow)");

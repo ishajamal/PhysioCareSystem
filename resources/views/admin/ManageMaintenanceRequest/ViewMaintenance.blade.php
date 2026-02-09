@@ -72,6 +72,16 @@ body {
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
+.btn-danger {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
 /* ================= LAYOUT GRID ================= */
 .request-detail-wrapper {
     display: grid;
@@ -131,28 +141,26 @@ body {
     line-height: 1.6;
 }
 
-/* ================= STATUS DROPDOWN ================= */
-.status-dropdown {
-    width: 100%;
-    padding: 12px 16px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    background-color: white;
-    font-size: 14px;
-    color: #1f2937;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    background-size: 16px;
+/* ================= STATUS STYLES ================= */
+.status-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #374151;
 }
 
-.status-dropdown:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.status-dot {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: inline-block;
 }
+
+.status-pending { background-color: #f59e0b; box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2); }
+.status-in-progress { background-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); }
+.status-completed { background-color: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2); }
+.status-rejected { background-color: #ef4444; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2); }
 
 /* ================= IMAGES ================= */
 .main-img-container {
@@ -160,11 +168,19 @@ body {
     border-radius: 16px;
     overflow: hidden;
     border: 1px solid #e5e7eb;
+    /* Added for centering the 'No Image' text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    background-color: #f9fafb;
 }
 
 .main-img-container img {
     width: 100%;
     height: auto;
+    max-height: 400px; /* Limit height */
+    object-fit: contain; /* Ensure image fits nicely */
     display: block;
     cursor: pointer;
     transition: transform 0.3s ease;
@@ -246,10 +262,9 @@ body {
         </div>
     </div>
 
-    <!-- FLEX WRAPPER FOR CARDS -->
-    <div class="content-cards-wrapper" style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <!-- LEFT CARD: Details -->
-        <div class="content-card" style="flex: 2 1 0;">
+    <div class="content-cards-wrapper" style="display: flex; gap: 30px; flex-wrap: wrap;">
+        
+        <div class="content-card" style="flex: 2 1 400px;">
             <h3 class="section-title">Equipment Maintenance Details</h3>
             
             <div class="info-grid">
@@ -302,35 +317,47 @@ body {
             </div>
         </div>
 
-        <!-- RIGHT CARD: Images -->
-        <div class="content-card" style="flex: 1 1 0;">
+        <div class="content-card" style="flex: 1 1 300px;">
             <h3 class="section-title">Equipment Images</h3>
+            
             <div class="main-img-container">
                 @php 
                     $images = $request->maintenanceRequest->images;
-                    $mainImg = $images->first() ? asset('storage/' . $images->first()->imagePath) : asset('images/placeholder.jpg');
                 @endphp
-                <img src="{{ $mainImg }}" id="equipment-img" onclick="viewImage(this.src)" alt="Main Image">
+
+                @if($images->isNotEmpty())
+                    {{-- Scenario 1: Images Exist --}}
+                    @php 
+                        $mainImg = asset('storage/' . $images->first()->imagePath);
+                    @endphp
+                    <img src="{{ $mainImg }}" id="equipment-img" onclick="viewImage(this.src)" alt="Main Image">
+                @else
+                    {{-- Scenario 2: No Images --}}
+                    <div style="text-align: center; color: #9ca3af; padding: 40px;">
+                        <i class="fas fa-image" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p style="font-weight: 500; font-size: 16px; margin: 0;">No attachment image</p>
+                        <span style="font-size: 13px; opacity: 0.7;">The requester did not upload any photos.</span>
+                    </div>
+                @endif
             </div>
             
-            <span class="info-label" style="margin-top: 20px;">Additional Images</span>
-            <div class="thumbnail-grid">
-                @forelse($images as $img)
-                    <img src="{{ asset('storage/' . $img->imagePath) }}" class="thumbnail-img" onclick="viewImage(this.src)">
-                @empty
-                    <span style="color: #9ca3af; font-style: italic;">No additional images uploaded</span>
-                @endforelse
-            </div>
+            {{-- Only show thumbnail section if there are images --}}
+            @if($images->isNotEmpty())
+                <span class="info-label" style="margin-top: 20px;">Additional Images</span>
+                <div class="thumbnail-grid">
+                    @foreach($images as $img)
+                        <img src="{{ asset('storage/' . $img->imagePath) }}" class="thumbnail-img" onclick="viewImage(this.src)">
+                    @endforeach
+                </div>
+            @endif
         </div>
     </div>
 </div>
 
 
-<!-- IMAGE VIEWER MODAL -->
-<div id="imgModal" onclick="closeImageModal()">
-    <div style="position: relative; max-width: 90%; max-height: 90vh;" onclick="event.stopPropagation()">
-        <img id="modalImage" style="max-width: 100%; border-radius: 12px;">
-    </div>
+<div id="imgModal" class="modal-overlay" onclick="closeImageModal()">
+    <span class="close-modal">&times;</span>
+    <img class="modal-img" id="modalImage">
 </div>
 
 <x-delete-modal
@@ -374,20 +401,30 @@ body {
         }
     }
 
+    // 2. Image Modal Functions
     function viewImage(src) {
-        document.getElementById("modalImage").src = src;
-        document.getElementById("imgModal").classList.add("show");
+        var modal = document.getElementById("imgModal");
+        var modalImg = document.getElementById("modalImage");
+        modal.style.display = "flex";
+        modalImg.src = src;
     }
 
     function closeImageModal() {
-        document.getElementById("imgModal").classList.remove("show");
+        document.getElementById("imgModal").style.display = "none";
     }
 
+    // Close Modals on Outside Click
     window.onclick = function(event) {
-        if (event.target.classList.contains('modal-overlay') && 
-            event.target.id && event.target.id.startsWith('deleteModal')) {
-            event.target.classList.remove('show');
-            event.target.classList.add('hidden');
+        if (event.target.classList.contains('modal-overlay')) {
+            // Close delete modals
+            if(event.target.id && event.target.id.startsWith('deleteModal')) {
+                event.target.classList.remove('show');
+                event.target.classList.add('hidden');
+            }
+            // Close image modal
+            if(event.target.id === 'imgModal') {
+                event.target.style.display = "none";
+            }
         }
     }
 </script>
