@@ -97,28 +97,26 @@ body {
         0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* ================= TABLE ================= */
 .inventory-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-/* Set specific widths for each column */
 .inventory-table th:nth-child(1),
 .inventory-table td:nth-child(1) {
-    width: 60px; /* No. */
+    width: 60px;
     min-width: 60px;
 }
 
 .inventory-table th:nth-child(2),
 .inventory-table td:nth-child(2) {
-    width: 100px; /* Request ID */
+    width: 100px;
     min-width: 100px;
 }
 
 .inventory-table th:nth-child(3),
 .inventory-table td:nth-child(3) {
-    width: 80px; /* User ID */
+    width: 80px; 
     min-width: 80px;
 }
 
@@ -130,21 +128,21 @@ body {
 
 .inventory-table th:nth-child(5),
 .inventory-table td:nth-child(5) {
-    width: 120px; /* Status */
+    width: 120px; 
     min-width: 120px;
 }
 
 .inventory-table th:nth-child(6),
 .inventory-table td:nth-child(6) {
-    width: 150px; /* Equipment */
+    width: 150px;
     min-width: 150px;
 }
 
 .inventory-table th:nth-child(7),
 .inventory-table td:nth-child(7) {
-    width: 120px; /* Action - FIXED WIDTH */
+    width: 120px;
     min-width: 120px;
-    text-align: center; /* Center align for action column */
+    text-align: center;
 }
 
 .inventory-table th {
@@ -489,7 +487,6 @@ body {
                     </td>
                 </tr>
                 
-                <!-- Delete modal component for each row -->
                 <x-delete-modal
                         id="deleteModal{{ $row->requestID }}"
                         title="ARE YOU SURE YOU WANT TO DELETE THIS RECORD?"
@@ -509,7 +506,6 @@ body {
 </div>
 
 <script>
-    // Function to OPEN delete modal
     function openModal(modalId) {
         var modal = document.getElementById(modalId);
         
@@ -533,7 +529,6 @@ body {
         }
     }
 
-    // Function to CLOSE delete modal
     function closeModal(modalId) {
         var modal = document.getElementById(modalId);
         if (modal) {
@@ -542,7 +537,6 @@ body {
         }
     }
 
-    // Close modal when clicking outside (on the dark overlay)
     window.onclick = function(event) {
         if (event.target.classList.contains('modal-overlay') && 
             event.target.id && event.target.id.startsWith('deleteModal')) {
@@ -554,7 +548,6 @@ body {
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("search-input");
 
-    // Search Logic
     searchInput.addEventListener("input", function () {
         const query = this.value.toLowerCase();
         const rows = document.querySelectorAll("#maintenance-table-body tr:not(#noResultsRow)");

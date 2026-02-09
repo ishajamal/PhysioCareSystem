@@ -3,150 +3,196 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ManageItemInformation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use App\Models\ItemMaintenanceInfo;
 
 class InventoryController extends Controller
 {
+    // LIST
     public function index()
     {
-        $items = ManageItemInformation::orderBy('created_at', 'desc')->paginate(10);
+        $items = ItemMaintenanceInfo::orderByDesc('itemID')->paginate(10);
         return view('admin.ManageItemInformation.dashboard', compact('items'));
     }
 
+    // CREATE FORM
     public function create()
     {
         return view('admin.ManageItemInformation.create');
     }
 
+    // STORE
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'product_code' => 'required|string|max:100|unique:inventory_items,product_code',
-            'product_name' => 'required|string|max:255',
+        // ✅ Conditional validation (no new attributes)
+        $baseRules = [
+            'itemName'     => ['required', 'string', 'max:255'],
+            'category'     => ['required', 'in:item,equipment'],
+            'status'       => ['nullable', 'string', 'max:50'],
+            'description'  => ['nullable', 'string'],
+            'image'        => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ];
 
-            // ✅ category is now dropdown Item/Equipment
-            'category' => 'required|in:Item,Equipment',
+        if ($request->category === 'item') {
+            $extraRules = [
+                'quantity'   => ['required', 'numeric'],
+                'stockLevel' => ['required', 'string', 'max:50'],
+                'condition'  => ['nullable', 'string', 'max:50'],
+            ];
+        } else {
+            $extraRules = [
+                'condition'  => ['required', 'string', 'max:50'],
+                'quantity'   => ['nullable', 'numeric'],
+                'stockLevel' => ['nullable', 'string', 'max:50'],
+            ];
+        }
 
-            'description' => 'nullable|string',
-            'quantity' => 'nullable|integer|min:0',
-            'unit' => 'nullable|string|max:50',
-            'brand' => 'nullable|string|max:100',
-            'model' => 'nullable|string|max:100',
-            'serial_number' => 'nullable|string|max:100',
-            'purchase_date' => 'nullable|date',
-            'purchase_price' => 'nullable|numeric|min:0',
-            'supplier' => 'nullable|string|max:200',
-            'warranty_period' => 'nullable|string|max:100',
-            'last_maintenance_date' => 'nullable|date',
-            'next_maintenance_date' => 'nullable|date',
-            'status' => 'required|string|in:available,maintenance,in-use,out-of-stock',
-            'location' => 'nullable|string|max:200',
-            'notes' => 'nullable|string',
+        $validated = $request->validate($baseRules + $extraRules);
 
-            // ✅ image upload
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        // ✅ Clean irrelevant fields
+        if ($validated['category'] === 'item') {
+            $validated['condition'] = null;
+        } else {
+            $validated['quantity'] = null;
+            $validated['stockLevel'] = null;
+        }
+
+        // ✅ Insert into item_maintenance_infos (ItemMaintenanceInfo model)
+        $item = ItemMaintenanceInfo::create([
+            'itemName'     => $validated['itemName'],
+            'category'     => $validated['category'],
+            'status'       => $validated['status'] ?? 'available',
+            'quantity'     => $validated['quantity'] ?? null,
+            'stockLevel'   => $validated['stockLevel'] ?? null,
+            'condition'    => $validated['condition'] ?? null,
+            'description'  => $validated['description'] ?? null,
         ]);
 
-        $validated['last_updated_by'] = auth()->user()->name;
-        $validated['last_updated_date'] = now();
-
-        // ✅ handle image upload
+        // ✅ Image upload -> item_images table
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('inventory', 'public');
-            $validated['image_path'] = $path;
+            $file = $request->file('image');
+
+            $base = Str::slug($validated['itemName']);
+            $ext  = $file->getClientOriginalExtension();
+            $filename = $base . '-' . time() . '.' . $ext;
+
+            $path = $file->storeAs('items', $filename, 'public'); // items/xxx.jpg
+           
+            DB::table('item_images')->updateOrInsert(
+                ['itemID' => $item->itemID],
+                [
+                    'imagePath'  => $path,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         }
 
-        try {
-            $item = ManageItemInformation::create($validated);
-
-            return redirect()->route('admin.inventory.show', $item->id)
-                ->with('success', 'Item created successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Error creating item: ' . $e->getMessage());
-        }
+        return redirect()->route('admin.inventory.dashboard')->with('success', 'Item created successfully.');
     }
 
+    // SHOW
     public function show($id)
     {
-        $item = ManageItemInformation::findOrFail($id);
-        return view('admin.ManageItemInformation.show', compact('item'));
+        $item = ItemMaintenanceInfo::where('itemID', $id)->firstOrFail();
+
+        $imageRow = DB::table('item_images')->where('itemID', $item->itemID)->first();
+        $imageUrl = $imageRow ? asset('storage/' . $imageRow->imagePath) : null;
+
+        return view('admin.ManageItemInformation.show', compact('item', 'imageUrl'));
     }
 
+    // EDIT FORM
     public function edit($id)
     {
-        $item = ManageItemInformation::findOrFail($id);
-        return view('admin.ManageItemInformation.edit', compact('item'));
+        $item = ItemMaintenanceInfo::where('itemID', $id)->firstOrFail();
+
+        $imageRow = DB::table('item_images')->where('itemID', $item->itemID)->first();
+        $imageUrl = $imageRow ? asset('storage/' . $imageRow->imagePath) : null;
+
+        return view('admin.ManageItemInformation.edit', compact('item', 'imageUrl'));
     }
 
+    // UPDATE
     public function update(Request $request, $id)
     {
-        $item = ManageItemInformation::findOrFail($id);
+        $item = ItemMaintenanceInfo::where('itemID', $id)->firstOrFail();
 
-        $validated = $request->validate([
-            'product_code' => 'required|string|max:100',
-            'product_name' => 'required|string|max:255',
-            'category' => 'required|in:Item,Equipment',
+        $baseRules = [
+            'itemName'     => ['required', 'string', 'max:255'],
+            'category'     => ['required', 'in:item,equipment'],
+            'status'       => ['nullable', 'string', 'max:50'],
+            'description'  => ['nullable', 'string'],
+            'image'        => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ];
 
-            'description' => 'nullable|string',
-            'quantity' => 'nullable|integer|min:0',
-            'unit' => 'nullable|string|max:50',
-            'brand' => 'nullable|string|max:100',
-            'model' => 'nullable|string|max:100',
-            'serial_number' => 'nullable|string|max:100',
-            'purchase_date' => 'nullable|date',
-            'purchase_price' => 'nullable|numeric|min:0',
-            'supplier' => 'nullable|string|max:200',
-            'warranty_period' => 'nullable|string|max:100',
-            'last_maintenance_date' => 'nullable|date',
-            'next_maintenance_date' => 'nullable|date',
-            'status' => 'required|string|in:available,maintenance,in-use,out-of-stock',
-            'location' => 'nullable|string|max:200',
-            'notes' => 'nullable|string',
+        if ($request->category === 'item') {
+            $extraRules = [
+                'quantity'   => ['required', 'numeric'],
+                'stockLevel' => ['required', 'string', 'max:50'],
+                'condition'  => ['nullable', 'string', 'max:50'],
+            ];
+        } else {
+            $extraRules = [
+                'condition'  => ['required', 'string', 'max:50'],
+                'quantity'   => ['nullable', 'numeric'],
+                'stockLevel' => ['nullable', 'string', 'max:50'],
+            ];
+        }
 
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        $validated = $request->validate($baseRules + $extraRules);
+
+        // clean irrelevant fields
+        if ($validated['category'] === 'item') {
+            $validated['condition'] = null;
+        } else {
+            $validated['quantity'] = null;
+            $validated['stockLevel'] = null;
+        }
+
+        $item->update([
+            'itemName'    => $validated['itemName'],
+            'category'    => $validated['category'],
+            'status'      => $validated['status'] ?? $item->status,
+            'quantity'    => $validated['quantity'],
+            'stockLevel'  => $validated['stockLevel'],
+            'condition'   => $validated['condition'],
+            'description' => $validated['description'] ?? null,
         ]);
 
-        $validated['last_updated_by'] = auth()->user()->name;
-        $validated['last_updated_date'] = now();
-
-        // ✅ handle new image (replace old)
+        // replace image (optional)
         if ($request->hasFile('image')) {
-            if ($item->image_path && Storage::disk('public')->exists($item->image_path)) {
-                Storage::disk('public')->delete($item->image_path);
-            }
+            $file = $request->file('image');
 
-            $path = $request->file('image')->store('inventory', 'public');
-            $validated['image_path'] = $path;
+            $base = Str::slug($validated['itemName']);
+            $ext  = $file->getClientOriginalExtension();
+            $filename = $base . '-' . time() . '.' . $ext;
+
+            $path = $file->storeAs('items', $filename, 'public');
+
+            DB::table('item_images')->updateOrInsert(
+                ['itemID' => $item->itemID],
+                [
+                    'imagePath'  => $path,
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
         }
 
-        $item->update($validated);
-
-        return redirect()->route('admin.inventory.show', $item->id)
-            ->with('success', 'Item updated successfully!');
+        return redirect()->route('admin.inventory.show', $item->itemID)->with('success', 'Item updated successfully.');
     }
 
+    // DELETE
     public function destroy($id)
     {
-        try {
-            $item = ManageItemInformation::findOrFail($id);
+        $item = ItemMaintenanceInfo::where('itemID', $id)->firstOrFail();
 
-            // delete image too
-            if ($item->image_path && Storage::disk('public')->exists($item->image_path)) {
-                Storage::disk('public')->delete($item->image_path);
-            }
+        DB::table('item_images')->where('itemID', $item->itemID)->delete();
+        $item->delete();
 
-            $itemName = $item->product_name;
-            $item->delete();
-
-            return redirect()->route('admin.inventory.dashboard')
-                ->with('success', 'Item "' . $itemName . '" deleted successfully!');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.inventory.dashboard')
-                ->with('error', 'Error deleting item: ' . $e->getMessage());
-        }
+        return redirect()->route('admin.inventory.dashboard')->with('success', 'Item deleted successfully.');
     }
 }

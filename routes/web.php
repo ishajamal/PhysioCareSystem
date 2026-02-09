@@ -10,7 +10,7 @@ use App\Http\Controllers\therapist\therapistDashboardController;
 use App\Http\Controllers\therapist\ItemDetails\ItemDetailsController;
 use App\Http\Controllers\therapist\SubmitMaintenanceRequest\MaintenanceRequestController;
 use App\Http\Controllers\admin\GenerateReport\ReportController;
-use App\Http\Controllers\admin\MonitorUsage\monitorUsageController;
+use App\Http\Controllers\admin\MonitorUsage\monitorUsageController;  
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\InventoryController;
 
@@ -102,21 +102,23 @@ Route::middleware('auth')->group(function () {
             ->name('manage.user.delete');
 
 
+    /*
         /*
     |--------------------------------------------------------------------------
     | MANAGE MAINTENANCE Routes
     |--------------------------------------------------------------------------
     */
         Route::get('/maintenance', [ManageMaintenanceController::class, 'index'])->name('maintenance.index');
-        Route::get('/api/maintenance/notifications', [ManageMaintenanceController::class, 'getNotifications']);
-        Route::get('/api/maintenance/count', [ManageMaintenanceController::class, 'getNewCount']);
-        Route::post('/api/maintenance/mark-read', [ManageMaintenanceController::class, 'markAsRead']);
         Route::delete('/maintenance/{requestID}', [ManageMaintenanceController::class, 'destroy'])->name('maintenance.destroy');
         Route::get('/maintenance/view/{requestID}', [ManageMaintenanceController::class, 'show'])->name('maintenance.view');
         Route::get('/maintenance/edit/{requestID}', [ManageMaintenanceController::class, 'edit'])->name('maintenance.edit');
         Route::put('/maintenance/update/{requestID}', [ManageMaintenanceController::class, 'update'])->name('maintenance.update');
+        Route::get('/api/maintenance/count', [ManageMaintenanceController::class, 'getNotificationCount']);
+        Route::get('/api/maintenance/notifications', [ManageMaintenanceController::class, 'getNotifications']);
+        Route::post('/api/maintenance/mark-read', [ManageMaintenanceController::class, 'markAsRead']);
 
-        /*
+    
+    /*
     |--------------------------------------------------------------------------
     | GENERATE REPORT Routes
     |--------------------------------------------------------------------------
@@ -141,6 +143,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/refresh', [monitorUsageController::class, 'refreshMonitoringdata'])->name('refresh');
             Route::get('/{usageID}', [monitorUsageController::class, 'showusagedetails'])->name('details');
         });
+
     });
 
     /*

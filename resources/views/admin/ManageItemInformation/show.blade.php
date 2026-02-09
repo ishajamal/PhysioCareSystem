@@ -1,239 +1,174 @@
 @extends('layouts.app')
 
-@section('title', 'View Inventory Item')
+@section('title', 'Inventory Item Details')
 
 @section('content')
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
-/* ================= CONTAINER ================= */
-.view-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    min-height: 80vh;
+body {
+    background: linear-gradient(180deg, #f4f6fb 0%, #eef2ff 100%);
     font-family: 'Inter', sans-serif;
 }
 
-/* ================= HEADER ================= */
-.view-header {
+.main-content-view {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    min-height: 80vh;
+}
+
+.header-title-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 22px;
+    margin-bottom: 30px;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 20px;
 }
 
-.view-title {
+.maintenance-title {
     font-size: 28px;
-    font-weight: 800;
-    color: #111827;
+    font-weight: 700;
+    color: #1f2937;
     margin: 0;
 }
 
-.back-btn {
+.btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 14px;
-    border-radius: 10px;
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    color: #111827;
-    font-weight: 700;
+    padding: 10px 18px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    border: none;
     text-decoration: none;
-    transition: .2s ease;
+    font-size: 14px;
+    background: #f3f4f6;
+    color: #111827;
 }
+.btn:hover { background: #e5e7eb; }
 
-.back-btn:hover {
-    background: #e5e7eb;
-    transform: translateY(-1px);
-}
-
-/* ================= GRID ================= */
-.details-grid {
+.content-grid {
     display: grid;
-    grid-template-columns: 1.8fr 1fr;
-    gap: 18px;
+    grid-template-columns: 2fr 1.2fr;
+    gap: 20px;
 }
 
-@media (max-width: 992px) {
-    .details-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* ================= CARDS ================= */
-.cardx {
-    background: #fff;
+.card-box {
+    background: white;
     border-radius: 18px;
     padding: 22px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
-.section-title {
+.card-title {
     font-size: 14px;
-    font-weight: 900;
-    color: #111827;
-    margin: 0 0 14px 0;
-}
-
-/* ================= TABLE ================= */
-.details-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-.details-table th {
-    width: 35%;
-    text-align: left;
-    padding: 12px 10px;
-    color: #6b7280;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: .6px;
-    border-bottom: 1px solid #eef2f7;
-}
-
-.details-table td {
-    padding: 12px 10px;
-    color: #111827;
-    border-bottom: 1px solid #eef2f7;
-}
-
-.status-badge {
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 12px;
     font-weight: 700;
-    display: inline-block;
+    color: #111827;
+    margin-bottom: 14px;
 }
 
-.badge-item { background: #ecfdf5; color: #059669; }
-.badge-equipment { background: #e0f2fe; color: #0369a1; }
-.badge-available { background: #ecfdf5; color: #059669; }
-.badge-maintenance { background: #fef3c7; color: #d97706; }
-.badge-inuse { background: #e0e7ff; color: #3730a3; }
-.badge-out { background: #fee2e2; color: #b91c1c; }
+.details-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eef2f7;
+    gap: 14px;
+}
+.details-row:last-child { border-bottom: none; }
 
-/* ================= IMAGE ================= */
-.img-box {
-    border: 1px solid #e5e7eb;
+.label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    min-width: 140px;
+}
+.value {
+    font-size: 14px;
+    color: #111827;
+    text-align: right;
+    flex: 1;
+}
+
+.image-box {
     border-radius: 14px;
-    padding: 14px;
-    background: #fff;
-}
-
-.img-preview {
-    width: 100%;
-    height: 240px;
-    border-radius: 12px;
-    border: 1px solid #eef2f7;
-    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    height: 260px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
 }
+.image-box img { width:100%; height:100%; object-fit: contain; }
 
-.img-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
+.small-note { font-size:12px; color:#6b7280; margin-top:8px; }
 
-.small-note {
-    font-size: 12px;
-    color: #6b7280;
-    text-align: center;
+@media (max-width: 900px) {
+    .content-grid { grid-template-columns: 1fr; }
+    .value { text-align: left; }
 }
 </style>
 
-<div class="view-container">
-    <!-- HEADER -->
-    <div class="view-header">
-        <h1 class="view-title">Inventory Item Details</h1>
-        <a href="{{ route('admin.inventory.dashboard') }}" class="back-btn">
+<div class="main-content-view">
+    <div class="header-title-wrapper">
+        <h1 class="maintenance-title">Inventory Item Details</h1>
+
+        <a href="{{ route('admin.inventory.dashboard') }}" class="btn">
             <i class="fas fa-arrow-left"></i> Back
         </a>
     </div>
 
-    <div class="details-grid">
-        <!-- LEFT: DETAILS -->
-        <div class="cardx">
-            <h2 class="section-title">Item / Equipment Information</h2>
+    <div class="content-grid">
+        <div class="card-box">
+            <div class="card-title">Item / Equipment Information</div>
 
-            <table class="details-table">
-                <tr>
-                    <th>ID</th>
-                    <td>{{ $item->id }}</td>
-                </tr>
-                <tr>
-                    <th>Product Code</th>
-                    <td>{{ $item->product_code }}</td>
-                </tr>
-                <tr>
-                    <th>Product Name</th>
-                    <td>{{ $item->product_name }}</td>
-                </tr>
-                <tr>
-                    <th>Category</th>
-                    <td>
-                        @if(strtolower($item->category) == 'equipment')
-                            <span class="status-badge badge-equipment">Equipment</span>
-                        @else
-                            <span class="status-badge badge-item">Item</span>
-                        @endif
-                    </td>
-                </tr>
-                <tr>
-                    <th>Status</th>
-                    <td>
-                        @php $st = strtolower($item->status ?? ''); @endphp
-                        @if($st === 'available')
-                            <span class="status-badge badge-available">Available</span>
-                        @elseif($st === 'maintenance')
-                            <span class="status-badge badge-maintenance">Maintenance</span>
-                        @elseif($st === 'in-use' || $st === 'in use')
-                            <span class="status-badge badge-inuse">In Use</span>
-                        @elseif($st === 'out-of-stock' || $st === 'out of stock')
-                            <span class="status-badge badge-out">Out of Stock</span>
-                        @else
-                            <span class="status-badge badge-maintenance">{{ $item->status }}</span>
-                        @endif
-                    </td>
-                </tr>
+            <div class="details-row"><div class="label">ID</div><div class="value">{{ $item->itemID }}</div></div>
+            <div class="details-row"><div class="label">Name</div><div class="value">{{ $item->itemName }}</div></div>
+            <div class="details-row"><div class="label">Category</div><div class="value">{{ $item->category }}</div></div>
+            <div class="details-row"><div class="label">Status</div><div class="value">{{ $item->status }}</div></div>
 
-                <tr><th>Quantity</th><td>{{ $item->quantity ?? '-' }}</td></tr>
-                <tr><th>Unit</th><td>{{ $item->unit ?? '-' }}</td></tr>
-                <tr><th>Brand</th><td>{{ $item->brand ?? '-' }}</td></tr>
-                <tr><th>Model</th><td>{{ $item->model ?? '-' }}</td></tr>
-                <tr><th>Serial Number</th><td>{{ $item->serial_number ?? '-' }}</td></tr>
-                <tr><th>Location</th><td>{{ $item->location ?? '-' }}</td></tr>
-                <tr><th>Description</th><td>{{ $item->description ?? '-' }}</td></tr>
-                <tr><th>Notes</th><td>{{ $item->notes ?? '-' }}</td></tr>
-            </table>
+            @if(strtolower($item->category) === 'item')
+                <div class="details-row"><div class="label">Quantity</div><div class="value">{{ $item->quantity }}</div></div>
+                <div class="details-row"><div class="label">Stock Level</div><div class="value">{{ $item->stockLevel }}</div></div>
+            @else
+                <div class="details-row"><div class="label">Condition</div><div class="value">{{ $item->condition }}</div></div>
+            @endif
+
+            <div class="details-row"><div class="label">Description</div><div class="value">{{ $item->description ?? '-' }}</div></div>
+
+            <div class="info-row">
+                <span class="label">CREATED AT</span>
+                <span class="value">
+                    {{ $item->created_at ? $item->created_at->format('d M Y, h:i A') : '-' }}
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="label">UPDATED AT</span>
+                <span class="value">
+                    {{ $item->updated_at ? $item->updated_at->format('d M Y, h:i A') : '-' }}
+                </span>
+            </div>
+
         </div>
 
-        <!-- RIGHT: IMAGE -->
-        <div class="cardx">
-            <h2 class="section-title">Item / Equipment Image</h2>
+        <div class="card-box">
+            <div class="card-title">Item / Equipment Image</div>
 
-            <div class="img-box">
-                <div class="img-preview">
-                    @if(!empty($item->image_path))
-                        <img src="{{ asset('storage/' . $item->image_path) }}" alt="Item Image">
-                    @else
-                        <div class="small-note">No image uploaded</div>
-                    @endif
-                </div>
-
-                <div class="small-note" style="margin-top:10px;">
-                    Uploaded images are stored in <b>storage/app/public</b>.
-                </div>
+            <div class="image-box">
+                @if($imageUrl)
+                    <img src="{{ $imageUrl }}" alt="Item Image">
+                @else
+                    <div class="small-note">No image available</div>
+                @endif
             </div>
+
+            <div class="small-note">Uploaded images are stored in storage/app/public.</div>
         </div>
     </div>
 </div>

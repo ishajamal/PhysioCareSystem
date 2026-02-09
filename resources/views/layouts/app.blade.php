@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') | PhysioCare</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap");
+
         :root {
             --primary: #6387c2;
             --primary-light: #8aabdf;
@@ -45,7 +50,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #f6f9ff 0%, #edf2f7 100%);
@@ -55,7 +60,7 @@
             overflow-x: hidden;
         }
 
-        /* Enhanced Sidebar Styles - FIXED */
+        /* Sidebar */
         .sidebar {
             width: 280px;
             background: var(--sidebar-bg);
@@ -86,7 +91,6 @@
             border-radius: 3px;
         }
 
-        /* Logo Section */
         .logo-section {
             padding: 35px 25px;
             position: relative;
@@ -139,7 +143,6 @@
             margin-top: -5px;
         }
 
-        /* Navigation */
         .sidebar nav {
             flex: 1;
             padding: 25px 0;
@@ -242,7 +245,6 @@
             font-weight: 600;
         }
 
-        /* Bottom Menu */
         .bottom-menu {
             border-top: 1px solid var(--gray-200);
             padding: 20px 15px;
@@ -268,7 +270,6 @@
             border-color: rgba(239, 83, 80, 0.2);
         }
 
-        /* Main Content - Updated for fixed header */
         .main-content {
             flex: 1;
             margin-left: 280px;
@@ -279,7 +280,6 @@
             padding-top: 120px;
         }
 
-        /* Header - Now FIXED/STICKY */
         .header-title {
             display: flex;
             justify-content: flex-end;
@@ -418,6 +418,7 @@
             font-size: 14px;
             color: var(--gray-700);
             transition: var(--transition);
+            cursor: pointer;
         }
 
         .notification-dropdown li:hover {
@@ -429,14 +430,12 @@
             border-bottom: none;
         }
 
-        /* Content Wrapper for scrollable content */
         .content-wrapper {
             padding: 0 50px 40px 50px;
             overflow-y: auto;
             max-height: calc(100vh - 120px);
         }
 
-        /* Page Content Container */
         .page-content {
             background: white;
             padding: 40px;
@@ -445,7 +444,6 @@
             min-height: calc(100vh - 220px);
         }
 
-        /* Enhanced Alert Messages */
         .alert {
             padding: 20px 25px;
             border-radius: 15px;
@@ -635,7 +633,6 @@
             }
         }
 
-        /* Menu Toggle for Mobile */
         .menu-toggle {
             display: none;
             width: 50px;
@@ -655,7 +652,6 @@
             transform: scale(1.05);
         }
 
-        /* Animations */
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -666,7 +662,6 @@
             animation: pulse 2s infinite;
         }
 
-        /* Blue button style */
         .blue-button {
             background-color: #26599F;
             color: white;
@@ -685,7 +680,6 @@
             box-shadow: 0 4px 12px rgba(38, 89, 159, 0.3);
         }
 
-        /* Smooth scroll for content wrapper */
         .content-wrapper::-webkit-scrollbar {
             width: 8px;
         }
@@ -753,6 +747,8 @@
             font-size: 22px;
             font-weight: 800;
             margin-bottom: 10px;
+            color: #333;
+            font-family: "Segoe UI", sans-serif;
         }
 
         .modal-text {
@@ -782,6 +778,7 @@
             border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
+            color: #333;
         }
 
         .btn-delete {
@@ -807,7 +804,9 @@
             border: none;
             font-size: 24px;
             cursor: pointer;
+            color: #888;
         }
+
         .modal-box {
             background: #ffffff;
             padding: 40px;
@@ -817,15 +816,14 @@
             position: relative;
         }
 
-
         @keyframes fadeInScale {
             from {
-            opacity: 0;
-            transform: scale(0.95);
+                opacity: 0;
+                transform: scale(0.95);
             }
             to {
-            opacity: 1;
-            transform: scale(1);
+                opacity: 1;
+                transform: scale(1);
             }
         }
 
@@ -833,14 +831,6 @@
             font-size: 60px;
             color: #ffc107;
             margin-bottom: 15px;
-        }
-
-        .modal-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 25px;
-            color: #333;
-            font-family: "Segoe UI", sans-serif;
         }
 
         .modal-buttons {
@@ -868,27 +858,14 @@
             background: #4caf50;
             color: white;
         }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 24px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            color: #888;
-        }
     </style>
     @stack('styles')
 </head>
 <body>
-    <!-- Menu Toggle for Mobile -->
     <button class="menu-toggle" onclick="toggleSidebar()">
         <i class="fas fa-bars"></i>
     </button>
 
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div>
             <div class="logo-section">
@@ -900,78 +877,48 @@
             <nav>
                 <ul>
                     <li>
-                        <a href="dashboard" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" onclick="showComingSoon(event, 'Dashboard')">
-                            <i class="bi bi-clipboard2-data-fill"></i>
-                            <span>Dashboard</span>
-                            <span class="badge pulse">5</span>
+                        <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-clipboard2-data-fill"></i> <span>Dashboard</span> 
+                            <span class="badge pulse" id="dashboardMenuBadge" style="display: none;">0</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.inventory.dashboard')}}" class="{{ request()->routeIs('admin.inventory.dashboard') ? 'active' : '' }}" onclick="showComingSoon(event, 'Manage Items')">
-                            <i class="bi bi-archive"></i>
-                            <span>Manage Items</span>
+                        <a href="{{ route('admin.inventory.dashboard') }}" class="{{ request()->routeIs('admin.inventory.dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-archive"></i> <span>Manage Items</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.maintenance.index') }}"  
-                        class="{{ in_array(request()->route()->getName(), [
-                                'admin.maintenance.index',
-                                'admin.maintenance.view',
-                                'admin.maintenance.edit'
-                            ]) ? 'active' : '' }}">
-                            <i class="bi bi-journal-check"></i>
-                            <span>Maintenance</span>
+                        <a href="{{ route('admin.maintenance.index') }}" 
+                           class="{{ in_array(request()->route()->getName(), ['admin.maintenance.index','admin.maintenance.view','admin.maintenance.edit']) ? 'active' : '' }}">
+                            <i class="bi bi-journal-check"></i> <span>Maintenance</span>
                             <span class="badge" id="sidebarMaintenanceBadge" style="display: none;">0</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.manage.user') }}" 
-                        class="{{ in_array(request()->route()->getName(), [
-                            'admin.manage.user', 
-                            'admin.manage.user.edit'
-                        ]) ? 'active' : '' }}">
-                            
-                            <i class="bi bi-person-gear"></i>
-                            <span>Users</span>
+                        <a href="{{ route('admin.manage.user') }}" class="{{ request()->routeIs('admin.manage.user') ? 'active' : '' }}">
+                            <i class="bi bi-person-gear"></i> <span>Users</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.usage.dashboard') }}" 
-                        class="{{ in_array(request()->route()->getName(), [
-                            'admin.usage.dashboard',
-                            'admin.usage.show'
-                        ]) ? 'active' : '' }}">
-                            <i class="bi bi-file-earmark-text"></i>
-                            <span>Monitor Usage</span>
+                        <a href="{{ route('admin.usage.dashboard') }}" class="{{ request()->routeIs('admin.usage.dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-graph-up-arrow"></i> <span>Monitor Usage</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.reports.dashboard') }}" 
-                        class="{{ in_array(request()->route()->getName(), [
-                            'admin.reports.dashboard',
-                            'admin.reports.show'
-                        ]) ? 'active' : '' }}">
-                            <i class="bi bi-graph-up-arrow"></i>
-                            <span>Reports</span>
+                        <a href="{{ route('admin.reports.dashboard') }}" class="{{ request()->routeIs('admin.reports.dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-graph-up-arrow"></i> <span>Reports</span>
                         </a>
                     </li>
                 </ul>
             </nav>
         </div>
         <ul class="bottom-menu">
-            {{-- <li>
-                <a href="#" class="{{ request()->routeIs('admin.settings') ? 'active' : '' }}" onclick="showComingSoon(event, 'Settings')">
-                    <i class="bi bi-gear"></i>
-                    <span>Settings</span>
-                </a>
-            </li> --}}
             <li>
                 <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                     @csrf
                     <button type="submit" style="width: 100%; background: none; border: none; font-family: inherit; cursor: pointer; text-align: left; padding: 0;">
                         <a href="#" onclick="event.preventDefault(); this.closest('form').submit();" class="logout">
-                            <i class="bi bi-box-arrow-left"></i>
-                            <span>Logout</span>
+                            <i class="bi bi-box-arrow-left"></i> <span>Logout</span>
                         </a>
                     </button>
                 </form>
@@ -979,14 +926,11 @@
         </ul>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- FIXED HEADER -->
         <header class="header-title">
             <div class="header-group">
                 <span class="admin-text">
-                    <span>Admin</span>
-                    <i class="fas fa-chevron-down"></i>
+                    <span>Admin</span> <i class="fas fa-chevron-down"></i>
                 </span>
                 <div class="notification-wrapper">
                     <div class="header-icon" id="notificationBell">
@@ -1001,32 +945,26 @@
                         </ul>
                     </div>
                 </div>
-                <a href="{{ route('admin.manage.user') }}" class="header-icon" style="text-decoration: none;">
+                <a href="{{ route('admin.manage.user') }}" class="header-icon">
                     <i class="far fa-user-circle"></i>
                 </a>
             </div>
         </header>
 
-        <!-- Scrollable Content Area -->
         <div class="content-wrapper">
-            <!-- Success/Error Messages -->
             @if(session('success'))
                 <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i>
-                    <div>{{ session('success') }}</div>
+                    <i class="fas fa-check-circle"></i> <div>{{ session('success') }}</div>
                 </div>
             @endif
-
             @if(session('error'))
                 <div class="alert alert-error">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <div>{{ session('error') }}</div>
+                    <i class="fas fa-exclamation-circle"></i> <div>{{ session('error') }}</div>
                 </div>
             @endif
-
             @if($errors->any())
                 <div class="alert alert-error">
-                    <i class="fas fa-exclamation-circle"></i>
+                    <i class="fas fa-exclamation-circle"></i> 
                     <div>
                         @foreach($errors->all() as $error)
                             {{ $error }}<br>
@@ -1035,37 +973,17 @@
                 </div>
             @endif
 
-            <!-- Page Content -->
             <div class="page-content">
                 @yield('content')
             </div>
         </div>
     </div>
 
-    <!-- Coming Soon Modal -->
-    <div id="comingSoonModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
-            <i class="fas fa-tools" style="font-size: 60px; color: var(--primary); margin-bottom: 20px;"></i>
-            <h2 style="color: var(--gray-800); margin-bottom: 10px; font-family: 'Poppins', sans-serif;">Coming Soon!</h2>
-            <p id="comingSoonText" style="color: var(--gray-600); font-size: 16px; margin-bottom: 20px;">This feature is under development.</p>
-            <button onclick="closeComingSoon()" style="background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">Got it!</button>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-            
-            // Update header position when sidebar toggles
+            document.getElementById('sidebar').classList.toggle('active');
             updateHeaderPosition();
-        }
-
-        function toggleNotifications() {
-            const dropdown = document.getElementById('notificationDropdown');
-            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
         }
 
         function updateHeaderPosition() {
@@ -1086,203 +1004,113 @@
             }
         }
 
-        // Auto-hide sidebar on mobile when clicking outside
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
             const toggleBtn = document.querySelector('.menu-toggle');
-            
-            if (window.innerWidth <= 768 && 
-                !sidebar.contains(event.target) && 
-                !toggleBtn.contains(event.target) && 
-                sidebar.classList.contains('active')) {
+            if (window.innerWidth <= 768 && !sidebar.contains(event.target) && !toggleBtn.contains(event.target) && sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
                 updateHeaderPosition();
             }
-
-            // Close notifications when clicking outside
-            const dropdown = document.getElementById('notificationDropdown');
-            const bellIcon = document.querySelector('.notification-wrapper .header-icon');
-            
-            if (dropdown && dropdown.style.display === 'block') {
-                if (!dropdown.contains(event.target) && !bellIcon.contains(event.target)) {
-                    dropdown.style.display = 'none';
-                }
-            }
         });
 
-        // Close sidebar when clicking logout or settings
-        document.querySelectorAll('.sidebar a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    const sidebar = document.getElementById('sidebar');
-                    sidebar.classList.remove('active');
-                    updateHeaderPosition();
+        window.addEventListener('resize', updateHeaderPosition);
+
+        // --- NOTIFICATION LOGIC ---
+        document.addEventListener("DOMContentLoaded", function () {
+            const notifBell = document.getElementById("notificationBell");
+            const notifBadge = document.getElementById("notificationCount");
+            const notifDropdown = document.getElementById("notificationDropdown");
+            const notifList = document.getElementById("notificationList");
+            const sidebarBadge = document.getElementById("sidebarMaintenanceBadge");
+            const dashboardMenuBadge = document.getElementById("dashboardMenuBadge"); // New Element
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            if (!notifBell || !notifBadge || !notifList) return;
+
+            function fetchNotifications() {
+                fetch("/admin/api/maintenance/count")
+                    .then(res => {
+                        if (!res.ok) throw new Error("Network response was not ok");
+                        return res.json();
+                    })
+                    .then(data => {
+                        const count = data.newCount;
+                        if (count > 0) {
+                            notifBadge.textContent = count;
+                            notifBadge.style.display = "flex";
+                            
+                            if(sidebarBadge) {
+                                sidebarBadge.textContent = count;
+                                sidebarBadge.style.display = "inline-block";
+                            }
+
+                            if(dashboardMenuBadge) {
+                                dashboardMenuBadge.textContent = count;
+                                dashboardMenuBadge.style.display = "inline-block";
+                            }
+                        } else {
+                            notifBadge.style.display = "none";
+                            if(sidebarBadge) sidebarBadge.style.display = "none";
+                            if(dashboardMenuBadge) dashboardMenuBadge.style.display = "none";
+                        }
+                    })
+                    .catch(err => console.log("Error fetching count:", err));
+
+                fetch("/admin/api/maintenance/notifications")
+                    .then(res => res.json())
+                    .then(data => {
+                        notifList.innerHTML = ""; 
+                        if (data.length === 0) {
+                            notifList.innerHTML = "<li style='padding:15px; text-align:center; color:#666;'>No new notifications</li>";
+                        } else {
+                            data.forEach(item => {
+                                const li = document.createElement("li");
+                                li.innerHTML = `
+                                    <div style="font-weight:600; font-size:14px; color:#374151;">${item.submittedBy}</div>
+                                    <div style="font-size:12px; color:#6b7280;">Request for ${item.itemName}</div>
+                                    <div style="font-size:11px; color:#9ca3af; margin-top:2px;">${item.date}</div>
+                                `;
+                                li.onclick = function() {
+                                    window.location.href = "/admin/maintenance/view/" + item.id;
+                                };
+                                notifList.appendChild(li);
+                            });
+                        }
+                    })
+                    .catch(err => console.log("Error fetching list:", err));
+            }
+
+            notifBell.addEventListener("click", function (e) {
+                e.stopPropagation();
+                const isHidden = window.getComputedStyle(notifDropdown).display === "none";
+                
+                if (isHidden) {
+                    notifDropdown.style.display = "block";
+                    fetch("/admin/api/maintenance/mark-read", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": csrfToken,
+                            "Content-Type": "application/json"
+                        }
+                    }).then(() => {
+                        notifBadge.style.display = "none";
+                        if(sidebarBadge) sidebarBadge.style.display = "none";
+                        if(dashboardMenuBadge) dashboardMenuBadge.style.display = "none"; // Hide dashboard badge too
+                    });
+                } else {
+                    notifDropdown.style.display = "none";
                 }
             });
+
+            window.addEventListener("click", function (e) {
+                if (!notifBell.contains(e.target) && !notifDropdown.contains(e.target)) {
+                    notifDropdown.style.display = "none";
+                }
+            });
+
+            fetchNotifications();
+            setInterval(fetchNotifications, 30000);
         });
-
-        // Show notification count
-        document.addEventListener('DOMContentLoaded', function() {
-            const notificationCount = document.getElementById('notificationCount');
-            if (notificationCount) {
-                notificationCount.style.display = 'flex';
-            }
-        });
-
-        // Rotate chevron on click
-        document.querySelector('.admin-text').addEventListener('click', function() {
-            const chevron = this.querySelector('i');
-            chevron.style.transform = chevron.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            updateHeaderPosition();
-        });
-
-        // Initial update
-        document.addEventListener('DOMContentLoaded', function() {
-            updateHeaderPosition();
-        });
-
-        // function openModal(id) {
-        // document.getElementById(id).classList.remove('hidden');
-        // }
-
-        // function closeModal(id) {
-        // document.getElementById(id).classList.add('hidden');
-        // }
-
-        document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-            document.querySelectorAll('.modal-overlay')
-            .forEach(m => m.classList.add('hidden'));
-        }
-        });
-
-        function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
-
-            const checkbox = document.getElementById('confirmCheck' + id);
-            const deleteBtn = document.getElementById('deleteBtn' + id);
-
-            checkbox.checked = false;
-            deleteBtn.disabled = true;
-
-            checkbox.onchange = () => {
-                deleteBtn.disabled = !checkbox.checked;
-            };
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
-
-   document.addEventListener("DOMContentLoaded", function () {
-        const notifBell = document.getElementById("notificationBell");
-        const notifBadge = document.getElementById("notificationCount");
-        const notifDropdown = document.getElementById("notificationDropdown");
-        const notifList = document.getElementById("notificationList");
-        
-        // NEW: Get the sidebar badge
-        const sidebarBadge = document.getElementById("sidebarMaintenanceBadge");
-
-        if (!notifBell || !notifBadge || !notifList) return;
-
-        function fetchNotifications() {
-            // 1. Get the Count
-            fetch("/api/maintenance/count")
-                .then(res => res.json())
-                .then(data => {
-                    const count = data.newCount;
-                    
-                    // Update Bell Badge
-                    if (count > 0) {
-                        notifBadge.textContent = count;
-                        notifBadge.style.display = "flex";
-                    } else {
-                        notifBadge.style.display = "none";
-                    }
-
-                    // Update Sidebar Badge
-                    if (sidebarBadge) {
-                        if (count > 0) {
-                            sidebarBadge.textContent = count;
-                            sidebarBadge.style.display = "inline-block"; // Sidebar badges usually inline-block
-                        } else {
-                            sidebarBadge.style.display = "none";
-                        }
-                    }
-                })
-                .catch(err => console.error("Error fetching count:", err));
-
-            // 2. Get the List (Dropdown Items)
-            fetch("/api/maintenance/notifications")
-                .then(res => res.json())
-                .then(data => {
-                    notifList.innerHTML = ""; 
-                    
-                    if (data.length === 0) {
-                        notifList.innerHTML = "<li style='padding:15px; text-align:center; color:#666;'>No new notifications</li>";
-                    } else {
-                        data.forEach(item => {
-                            const li = document.createElement("li");
-                            li.style.padding = "10px 15px";
-                            li.style.borderBottom = "1px solid #f3f4f6";
-                            li.style.cursor = "pointer";
-                            
-                            li.innerHTML = `
-                                <div style="font-weight:600; font-size:14px; color:#374151;">${item.submittedBy}</div>
-                                <div style="font-size:12px; color:#6b7280;">Request for ${item.itemName}</div>
-                                <div style="font-size:11px; color:#9ca3af; margin-top:2px;">${item.date}</div>
-                            `;
-                            
-                            li.onclick = function() {
-                                window.location.href = "/maintenance/view/" + item.id;
-                            };
-                            
-                            notifList.appendChild(li);
-                        });
-                    }
-                })
-                .catch(err => console.error("Error fetching list:", err));
-        }
-
-        // Toggle Dropdown & Mark as Read
-        notifBell.addEventListener("click", function (e) {
-            e.stopPropagation();
-            const isHidden = window.getComputedStyle(notifDropdown).display === "none";
-            
-            if (isHidden) {
-                notifDropdown.style.display = "block";
-                
-                // Mark as read in database
-                fetch("/api/maintenance/mark-read", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}", 
-                        "Content-Type": "application/json"
-                    }
-                }).then(() => {
-                    // Hide BOTH badges immediately for better UX
-                    notifBadge.style.display = "none";
-                    if(sidebarBadge) sidebarBadge.style.display = "none";
-                });
-            } else {
-                notifDropdown.style.display = "none";
-            }
-        });
-
-        // Close when clicking outside
-        window.addEventListener("click", function (e) {
-            if (!notifBell.contains(e.target) && !notifDropdown.contains(e.target)) {
-                notifDropdown.style.display = "none";
-            }
-        });
-
-        fetchNotifications();
-        setInterval(fetchNotifications, 30000);
-    });
     </script>
-
-    
+</body>
+</html>

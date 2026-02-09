@@ -433,9 +433,9 @@
         <table class="inventory-table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>PRODUCT CODE</th>
-                    <th>PRODUCT NAME</th>
+                    <th>NO</th>
+                    <th>ITEM ID</th>
+                    <th>NAME</th>
                     <th>CATEGORY</th>
                     <th>ACTIONS</th>
                 </tr>
@@ -444,8 +444,8 @@
                 @forelse($items as $item)
                     <tr>
                         <td>{{ $loop->iteration + (($items->currentPage() - 1) * $items->perPage()) }}</td>
-                        <td>{{ $item->product_code }}</td>
-                        <td>{{ $item->product_name }}</td>
+                        <td>{{ $item->itemID }}</td>
+                        <td>{{ $item->itemName }}</td>
                         <td>
                             @if(strtolower($item->category) == 'item')
                                 <span class="category-badge category-item">Item</span>
@@ -457,17 +457,17 @@
                         </td>
                         <td>
                             <div class="action-buttons">
-                                <a href="{{ route('admin.inventory.show', $item->id) }}" class="action-btn view-btn" title="View Item">
+                                <a href="{{ route('admin.inventory.show', $item->itemID) }}" class="action-btn view-btn" title="View Item">
                                     <i class="fas fa-eye"></i>
                                 </a>
 
-                                <a href="{{ route('admin.inventory.edit', $item->id) }}" class="action-btn edit-btn" title="Edit Item">
+                                <a href="{{ route('admin.inventory.edit', $item->itemID) }}" class="action-btn edit-btn" title="Edit Item">
                                     <i class="fa-solid fa-pencil"></i>
                                 </a>
 
                                 <button class="action-btn delete-btn"
                                         title="Delete Item"
-                                        onclick="openDeleteModal('{{ $item->id }}', '{{ $item->product_name }}', '{{ route('admin.inventory.destroy', $item->id) }}')">
+                                        onclick="openDeleteModal('{{ $item->itemID }}', '{{ $item->itemName }}', '{{ route('admin.inventory.destroy', $item->itemID) }}')">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
