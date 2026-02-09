@@ -1,536 +1,306 @@
 @extends('layouts.app')
 
-@section('title', 'Inventory Dashboard')
+@section('title', 'Admin Dashboard')
+@section('page-title', 'Report & Analytics')
 
 @section('content')
-{{-- 1. Bootstrap Assets (NOT needed anymore for delete modal, but keep if you use elsewhere) --}}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
 
-/* ================= CONTAINER ================= */
-.inventory-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    min-height: 80vh;
-    font-family: 'Inter', sans-serif;
-}
+    .stat-card {
+        background: white;
+        padding: 30px 25px;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.3s ease;
+    }
 
-/* ================= TOP BAR (NEW) ================= */
-.top-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 14px;
-    gap: 10px;
-    flex-wrap: wrap;
-}
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
 
-/* ================= HEADER ================= */
-.inventory-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-    gap: 20px;
-}
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
 
-.inventory-title {
-    font-size: 34px;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0;
-    letter-spacing: -0.5px;
-}
+    .stat-icon.blue {
+        background: #e3f2fd;
+        color: #2196f3;
+    }
 
-.header-left {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
+    .stat-icon.orange {
+        background: #fff3e0;
+        color: #ff9800;
+    }
 
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+    .stat-icon.green {
+        background: #e8f5e9;
+        color: #4caf50;
+    }
 
-/* ================= SEARCH ================= */
-.search-box {
-    position: relative;
-    min-width: 260px;
-}
+    .stat-content h3 {
+        font-size: 2rem;
+        color: var(--dark);
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
 
-.search-icon {
-    position: absolute;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6b7280;
-    font-size: 14px;
-}
+    .stat-content p {
+        color: var(--gray);
+        font-size: 0.9rem;
+        line-height: 1.3;
+    }
 
-.search-input {
-    width: 100%;
-    padding: 11px 18px 11px 46px;
-    border-radius: 999px;
-    border: 1px solid #e5e7eb;
-    background: #f9fafb;
-    font-size: 14px;
-    transition: all 0.3s ease;
-    outline: none;
-}
+    /* Content Grid */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
 
-.search-input:focus {
-    background: #ffffff;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15), 0 8px 20px rgba(0, 0, 0, 0.05);
-}
+    .card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
 
-/* ================= TABLE CARD ================= */
-.table-container {
-    background: white;
-    border-radius: 18px;
-    padding: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
-    overflow: hidden;
-}
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-/* ================= TABLE HEADER INSIDE CARD (NEW) ================= */
-.table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
-}
+    .card-header h2 {
+        color: var(--dark);
+        font-size: 1.3rem;
+    }
 
-.table-title {
-    font-size: 28px;
-    font-weight: 800;
-    color: #111827;
-    margin: 0;
-}
+    .card-header .filter {
+        padding: 8px 15px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: var(--gray);
+        background: white;
+        cursor: pointer;
+    }
 
-/* ================= TABLE ================= */
-.inventory-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+    /* Inventory Section */
+    .inventory-status {
+        background: #fff8f0;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--secondary);
+    }
 
-.inventory-table th {
-    text-align: left;
-    padding: 16px 14px;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: #6b7280;
-    background: #f9fafb;
-    border-bottom: 2px solid #e5e7eb;
-}
+    .inventory-status .status-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
 
-.inventory-table td {
-    padding: 16px 14px;
-    font-size: 14px;
-    color: #374151;
-    border-bottom: 1px solid #f1f5f9;
-}
+    .inventory-status .status-header span:first-child {
+        color: var(--gray);
+        font-style: italic;
+    }
 
-.inventory-table tbody tr:nth-child(even) {
-    background: #fafafa;
-}
+    .inventory-status .status-header span:last-child {
+        color: var(--gray);
+        font-style: italic;
+    }
 
-.inventory-table tbody tr:hover {
-    background: #eef2ff;
-    transition: background 0.2s ease;
-}
+    .inventory-status .warning {
+        color: var(--secondary);
+        font-size: 0.85rem;
+        font-style: italic;
+        margin-bottom: 15px;
+    }
 
-/* ================= CATEGORY BADGES ================= */
-.category-badge {
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    display: inline-block;
-}
+    .inventory-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px dashed var(--border);
+    }
 
-.category-item { background: #ecfdf5; color: #059669; }
-.category-category { background: #e0f2fe; color: #0369a1; }
-.category-date { background: #fef3c7; color: #d97706; }
+    .inventory-item:last-child {
+        border-bottom: none;
+    }
 
-/* ================= ACTION BUTTONS ================= */
-.action-buttons {
-    display: flex;
-    gap: 8px;
-}
+    .inventory-item .item-name {
+        color: var(--dark);
+        font-size: 0.95rem;
+    }
 
-.action-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    cursor: pointer;
-    border: none;
-}
+    .inventory-item .item-stock {
+        color: var(--gray);
+        font-size: 0.85rem;
+    }
 
-.action-btn:hover { transform: translateY(-2px); }
+    .inventory-item .item-action {
+        color: var(--primary);
+        font-size: 0.85rem;
+        cursor: pointer;
+        text-decoration: none;
+    }
 
-.view-btn { background: #e0f2fe; color: #0369a1; }
-.view-btn:hover { background: #bae6fd; color: #075985; }
+    .inventory-item .item-action:hover {
+        text-decoration: underline;
+    }
 
-.edit-btn { background: #fef3c7; color: #d97706; }
-.edit-btn:hover { background: #fde68a; color: #b45309; }
+    /* Top Items Table */
+    .items-table {
+        width: 100%;
+    }
 
-.delete-btn { background: #fee2e2; color: #dc2626; }
-.delete-btn:hover { background: #fecaca; color: #b91c1c; }
+    .items-table thead tr {
+        border-bottom: 2px solid var(--border);
+    }
 
-/* ================= BUTTONS ================= */
-.add-btn-container { display: flex; gap: 10px; }
+    .items-table th {
+        padding: 12px 0;
+        text-align: left;
+        color: var(--gray);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
 
-.add-btn {
-    padding: 10px 22px;
-    background: #26599F;
-    color: white;
-    border: none;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 6px 14px rgba(38, 89, 159, 0.25);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-}
+    .items-table th:last-child {
+        text-align: right;
+    }
 
-.add-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 22px rgba(38, 89, 159, 0.35);
-    background: #1a4070;
-    color: white;
-}
+    .items-table td {
+        padding: 15px 0;
+        color: var(--dark);
+        border-bottom: 1px solid var(--light-gray);
+    }
 
-/* ================= ALERTS ================= */
-.alert-message {
-    padding: 12px 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    border-left: 4px solid;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    animation: slideDown 0.3s ease;
-}
+    .items-table td:last-child {
+        text-align: right;
+        font-weight: 600;
+    }
 
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+    .items-table tbody tr:last-child td {
+        border-bottom: none;
+    }
 
-.alert-error { background: #fee2e2; color: #991b1b; border-left-color: #ef4444; }
-.no-data { text-align: center; padding: 50px 20px; color: #6b7280; font-style: italic; }
-.no-data-icon { font-size: 34px; margin-bottom: 15px; color: #c7d2fe; }
-.pagination-container { margin-top: 30px; display: flex; justify-content: center; }
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 
-/* ================= RESPONSIVE ================= */
-@media (max-width: 768px) {
-    .search-box { width: 100%; }
-    .table-header { width: 100%; }
-    .top-actions { justify-content: flex-start; }
-}
-
-/* =========================================================
-   ✅ MAINTENANCE-STYLE DELETE MODAL
-   ========================================================= */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(17, 24, 39, 0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-}
-
-.modal-overlay.hidden { display: none; }
-.modal-overlay.show { display: flex; }
-
-.modal-content {
-    width: min(520px, 92vw);
-    background: #ffffff;
-    border-radius: 18px;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-    position: relative;
-    padding: 26px 28px;
-}
-
-.close-btn {
-    position: absolute;
-    right: 16px;
-    top: 12px;
-    border: none;
-    background: transparent;
-    font-size: 22px;
-    color: #6b7280;
-    cursor: pointer;
-}
-
-.icon-circle {
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fee2e2;
-    margin: 6px auto 14px;
-}
-
-.icon-circle i { color: #b91c1c; font-size: 22px; }
-
-.modal-title {
-    text-align: center;
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: 0.8px;
-    margin: 0 0 10px;
-    color: #111827;
-    text-transform: uppercase;
-}
-
-.modal-message {
-    text-align: center;
-    color: #374151;
-    margin: 0 0 14px;
-}
-
-.checkbox-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: center;
-    margin: 14px 0 18px;
-    color: #374151;
-}
-
-.checkbox-container input { width: 16px; height: 16px; }
-
-.button-container {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-.cancel-btn {
-    padding: 10px 22px;
-    border-radius: 12px;
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    color: #111827;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.delete-btn-modal {
-    padding: 10px 22px;
-    border-radius: 12px;
-    background: #dc2626;
-    border: none;
-    color: white;
-    font-weight: 700;
-    cursor: pointer;
-    opacity: 0.95;
-}
-
-.delete-btn-modal:disabled {
-    background: #fca5a5;
-    cursor: not-allowed;
-}
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<div class="inventory-container">
-    {{-- ❌ SUCCESS REMOVED HERE (leave success popup to layouts.app only) --}}
 
-    @if(session('error'))
-        <div class="alert-message alert-error">
-            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <i class="fas fa-file-alt"></i>
         </div>
-    @endif
-
-    {{-- ✅ ONE ADD BUTTON TOP RIGHT --}}
-    <div class="top-actions">
-        <a href="{{ route('admin.inventory.create') }}" class="add-btn">
-            <i class="fas fa-plus-circle"></i> Add New Item
-        </a>
+        <div class="stat-content">
+            <h3>{{ number_format($newRequests ?? 0) }}</h3>
+            <p>New Maintenance<br>Request</p>
+        </div>
     </div>
 
-    {{-- TABLE CARD --}}
-    <div class="table-container">
-        {{-- TITLE LEFT + SEARCH RIGHT --}}
-        <div class="table-header">
-            <h1 class="table-title">Inventory Summary</h1>
-
-            <div class="search-box">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" id="searchInput" class="search-input"
-                       placeholder="Search"
-                       onkeyup="searchItems()">
-            </div>
+    <div class="stat-card">
+        <div class="stat-icon orange">
+            <i class="fas fa-clock"></i>
         </div>
+        <div class="stat-content">
+            <h3>{{ number_format($pendingRequests ?? 0) }}</h3>
+            <p>Maintenance Request<br>Pending</p>
+        </div>
+    </div>
 
-        <table class="inventory-table">
-            <thead>
-                <tr>
-                    <th>NO</th>
-                    <th>ITEM ID</th>
-                    <th>NAME</th>
-                    <th>CATEGORY</th>
-                    <th>ACTIONS</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($items as $item)
-                    <tr>
-                        <td>{{ $loop->iteration + (($items->currentPage() - 1) * $items->perPage()) }}</td>
-                        <td>{{ $item->itemID }}</td>
-                        <td>{{ $item->itemName }}</td>
-                        <td>
-                            @if(strtolower($item->category) == 'item')
-                                <span class="category-badge category-item">Item</span>
-                            @elseif(strtolower($item->category) == 'equipment')
-                                <span class="category-badge category-category">Equipment</span>
-                            @else
-                                <span class="category-badge category-date">{{ $item->category }}</span>
-                            @endif
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="{{ route('admin.inventory.show', $item->itemID) }}" class="action-btn view-btn" title="View Item">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-
-                                <a href="{{ route('admin.inventory.edit', $item->itemID) }}" class="action-btn edit-btn" title="Edit Item">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </a>
-
-                                <button class="action-btn delete-btn"
-                                        title="Delete Item"
-                                        onclick="openModal('deleteModal{{ $item->itemID }}')">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </div>
-
-                            <x-delete-modal
-                                id="deleteModal{{ $item->itemID }}"
-                                title="ARE YOU SURE YOU WANT TO DELETE THIS RECORD?"
-                                message="This action cannot be undone."
-                                route="{{ route('admin.inventory.destroy', $item->itemID) }}"
-                                method="DELETE"
-                            />
-                        </td>
-                    </tr>
-                @empty
-                    <tr class="no-data-row">
-                        <td colspan="5" class="no-data">
-                            <div class="no-data-icon">📦</div>
-                            No inventory items found.
-                            <a href="{{ route('admin.inventory.create') }}" style="color: #26599F; text-decoration: none; font-weight: 600; margin-left: 5px;">
-                                Add your first item
-                            </a>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-
-        @if($items->hasPages())
-            <div class="pagination-container">
-                {{ $items->links('pagination::bootstrap-4') }}
-            </div>
-        @endif
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ number_format($completedRequests ?? 0) }}</h3>
+            <p>Maintenance Request<br>Completed</p>
+        </div>
     </div>
 </div>
 
-<script>
-    function searchItems() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const rows = document.querySelectorAll('.inventory-table tbody tr');
+<!-- Content Grid -->
+<div class="content-grid">
+    <!-- Inventory Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Inventory</h2>
+        </div>
 
-        rows.forEach(row => {
-            if (row.classList.contains('no-data-row')) return;
-            const code = row.cells[1].textContent.toLowerCase();
-            const name = row.cells[2].textContent.toLowerCase();
-            const category = row.cells[3].textContent.toLowerCase();
+        <div class="inventory-status">
+            <div class="status-header">
+                <span>Low in stock</span>
+                <span>{{ $lowStockCount ?? 0 }} items</span>
+            </div>
+            <div class="warning">These items are low in stock, please order them soon!</div>
 
-            row.style.display = (code.includes(searchTerm) || name.includes(searchTerm) || category.includes(searchTerm))
-                ? ''
-                : 'none';
-        });
-    }
+            @foreach($lowStockItems as $item)
+            <div class="inventory-item">
+                <div>
+                    <div class="item-name">{{ $item->itemName }}</div>
+                    <div class="item-stock">Available: {{ $item->quantity }}</div>
+                </div>
+                <span class="item-action">Order now !!</span>
+            </div>
+            @endforeach
+        </div>
+    </div>
 
-    // ✅ same functions as Maintenance
-    function openModal(modalId) {
-        var modal = document.getElementById(modalId);
+    <!-- Top Items Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Top Item</h2>
+        </div>
 
-        if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('show');
-
-            var checkbox = document.getElementById('confirmCheck' + modalId);
-            var deleteBtn = document.getElementById('deleteBtn' + modalId);
-
-            if (checkbox && deleteBtn) {
-                checkbox.checked = false;
-                deleteBtn.disabled = true;
-
-                checkbox.onchange = function() {
-                    deleteBtn.disabled = !this.checked;
-                };
-            }
-        } else {
-            console.error('Modal not found: ' + modalId);
-        }
-    }
-
-    function closeModal(modalId) {
-        var modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.remove('show');
-            modal.classList.add('hidden');
-        }
-    }
-
-    window.onclick = function(event) {
-        if (event.target.classList.contains('modal-overlay') &&
-            event.target.id && event.target.id.startsWith('deleteModal')) {
-            event.target.classList.remove('show');
-            event.target.classList.add('hidden');
-        }
-    }
-
-    // auto-hide ONLY local alerts (error). success is handled by layouts.app now.
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert-message');
-            alerts.forEach(alert => {
-                alert.style.opacity = '0';
-                alert.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => alert.remove(), 500);
-            });
-        }, 5000);
-    });
-</script>
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Quantity Used</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($topItems as $item)
+                <tr>
+                    <td>{{ $item->itemName }}</td>
+                    <td>{{ $item->itemUsages->sum('quantityUsed') }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 @endsection
