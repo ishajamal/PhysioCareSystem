@@ -533,5 +533,9 @@
         }, 5000);
     });
 </script>
+<<<<<<< HEAD
 @endsection
 
+=======
+@endsection
+>>>>>>> 8b28ea5d4dc401a8903820f63fa4227189cc1355
