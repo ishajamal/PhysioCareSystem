@@ -676,6 +676,7 @@
             font-family: 'Inter', sans-serif;
             font-weight: 500;
             transition: var(--transition);
+            text-decoration: none;
         }
 
         .blue-button:hover {
@@ -981,7 +982,7 @@
                     <span>Therapist</span>
                     <i class="fas fa-chevron-down"></i>
                 </span>
-                <div class="notification-wrapper">
+                {{-- <div class="notification-wrapper">
                     <div class="header-icon" id="notificationBell">
                         <i class="far fa-bell"></i>
                         <span id="notificationCount" style="display: none;">0</span>
@@ -996,7 +997,7 @@
                 </div>
                 <div class="header-icon" onclick="window.location.href='#'">
                     <i class="far fa-user-circle"></i>
-                </div>
+                </div> --}}
             </div>
         </header>
 
@@ -1152,90 +1153,6 @@
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
         }
-
-        document.addEventListener("DOMContentLoaded", function () {
-        const notifBell = document.getElementById("notificationBell");
-        const notifBadge = document.getElementById("notificationCount");
-        const notifDropdown = document.getElementById("notificationDropdown");
-        const notifList = document.getElementById("notificationList");
-
-        if (!notifBell || !notifBadge || !notifList) return;
-
-        function fetchNotifications() {
-            fetch("/api/maintenance/count")
-                .then(res => res.json())
-                .then(data => {
-                    if (data.newCount > 0) {
-                        notifBadge.textContent = data.newCount;
-                        notifBadge.style.display = "flex"; 
-                    } else {
-                        notifBadge.style.display = "none";
-                    }
-                })
-                .catch(err => console.error("Error fetching count:", err));
-
-            fetch("/api/maintenance/notifications")
-                .then(res => res.json())
-                .then(data => {
-                    notifList.innerHTML = "";
-                    
-                    if (data.length === 0) {
-                        notifList.innerHTML = "<li style='padding:15px; text-align:center; color:#666;'>No new notifications</li>";
-                    } else {
-                        data.forEach(item => {
-                            const li = document.createElement("li");
-                            li.style.padding = "10px 15px";
-                            li.style.borderBottom = "1px solid #f3f4f6";
-                            li.style.cursor = "pointer";
-                            
-                            li.innerHTML = `
-                                <div style="font-weight:600; font-size:14px; color:#374151;">${item.submittedBy}</div>
-                                <div style="font-size:12px; color:#6b7280;">Request for ${item.itemName}</div>
-                                <div style="font-size:11px; color:#9ca3af; margin-top:2px;">${item.date}</div>
-                            `;
-                            
-                            li.onclick = function() {
-                                window.location.href = "/maintenance/view/" + item.id;
-                            };
-                            
-                            notifList.appendChild(li);
-                        });
-                    }
-                })
-                .catch(err => console.error("Error fetching list:", err));
-        }
-
-        notifBell.addEventListener("click", function (e) {
-            e.stopPropagation();
-            const isHidden = window.getComputedStyle(notifDropdown).display === "none";
-            
-            if (isHidden) {
-                notifDropdown.style.display = "block";
-                
-                fetch("/api/maintenance/mark-read", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}", 
-                        "Content-Type": "application/json"
-                    }
-                }).then(() => {
-                    notifBadge.style.display = "none"; // Hide badge immediately
-                });
-            } else {
-                notifDropdown.style.display = "none";
-            }
-        });
-
-        window.addEventListener("click", function (e) {
-            if (!notifBell.contains(e.target) && !notifDropdown.contains(e.target)) {
-                notifDropdown.style.display = "none";
-            }
-        });
-
-        fetchNotifications();
-        
-        setInterval(fetchNotifications, 30000);
-    });
     </script>
     @stack('scripts')
     

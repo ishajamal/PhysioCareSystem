@@ -79,7 +79,7 @@ class InventoryController extends Controller
             $filename = $base . '-' . time() . '.' . $ext;
 
             $path = $file->storeAs('items', $filename, 'public'); // items/xxx.jpg
-
+           
             DB::table('item_images')->updateOrInsert(
                 ['itemID' => $item->itemID],
                 [

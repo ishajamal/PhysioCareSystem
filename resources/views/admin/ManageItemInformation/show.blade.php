@@ -140,6 +140,21 @@ body {
             @endif
 
             <div class="details-row"><div class="label">Description</div><div class="value">{{ $item->description ?? '-' }}</div></div>
+
+            <div class="info-row">
+                <span class="label">CREATED AT</span>
+                <span class="value">
+                    {{ $item->created_at ? $item->created_at->format('d M Y, h:i A') : '-' }}
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="label">UPDATED AT</span>
+                <span class="value">
+                    {{ $item->updated_at ? $item->updated_at->format('d M Y, h:i A') : '-' }}
+                </span>
+            </div>
+
         </div>
 
         <div class="card-box">
