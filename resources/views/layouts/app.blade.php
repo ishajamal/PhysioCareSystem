@@ -883,7 +883,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.inventory.dashboard') }}" class="{{ request()->routeIs('admin.inventory.dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('admin.inventory.dashboard') }}" 
+                            class="{{ in_array(request()->route()->getName(), ['admin.inventory.dashboard','admin.inventory.index','admin.inventory.create','admin.inventory.store','admin.inventory.show','admin.inventory.edit']) ? 'active' : '' }}">
                             <i class="bi bi-archive"></i> <span>Manage Items</span>
                         </a>
                     </li>
