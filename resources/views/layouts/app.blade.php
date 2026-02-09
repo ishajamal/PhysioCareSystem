@@ -896,7 +896,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.manage.user') }}" class="{{ request()->routeIs('admin.manage.user') ? 'active' : '' }}">
+                        <a href="{{ route('admin.manage.user') }}" class="{{ request()->routeIs('admin.manage.user','admin.manage.user.edit') ? 'active' : '' }}">
                             <i class="bi bi-person-gear"></i> <span>Users</span>
                         </a>
                     </li>
