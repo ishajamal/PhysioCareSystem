@@ -901,12 +901,16 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.usage.dashboard') }}" class="{{ request()->routeIs('admin.usage.dashboard') ? 'active' : '' }}">
-                            <i class="bi bi-graph-up-arrow"></i> <span>Monitor Usage</span>
+                        <a href="{{ route('admin.usage.dashboard') }}"                           
+                            class="{{ in_array(request()->route()->getName(), 
+                            ['admin.usage.dashboard','admin.usage.details']) ? 'active' : '' }}">
+
+                            <i class="bi bi-bar-chart-line"></i><span>Monitor Usage</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.reports.dashboard') }}" class="{{ request()->routeIs('admin.reports.dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('admin.reports.dashboard') }}"                            
+                            class="{{ in_array(request()->route()->getName(), ['admin.reports.dashboard','admin.reports.create','admin.reports.show']) ? 'active' : '' }}">
                             <i class="bi bi-graph-up-arrow"></i> <span>Reports</span>
                         </a>
                     </li>

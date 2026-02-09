@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
             [
                 'userID' => 3,
                 'name' => 'Sarah Manager',
-                'role' => 'manager',
+                'role' => 'admin',
                 'email' => 'sarah@physiocare.com',
                 'password' => Hash::make('password123'),
                 'profileImage' => 'profiles/sarah.jpg',
@@ -51,7 +51,7 @@ class UserSeeder extends Seeder
             [
                 'userID' => 4,
                 'name' => 'Mike Technician',
-                'role' => 'technician',
+                'role' => 'admin',
                 'email' => 'mike@physiocare.com',
                 'password' => Hash::make('password123'),
                 'profileImage' => 'profiles/mike.jpg',
@@ -62,7 +62,7 @@ class UserSeeder extends Seeder
             [
                 'userID' => 5,
                 'name' => 'Emma Staff',
-                'role' => 'staff',
+                'role' => 'therapist',
                 'email' => 'emma@physiocare.com',
                 'password' => Hash::make('password123'),
                 'profileImage' => 'profiles/emma.jpg',

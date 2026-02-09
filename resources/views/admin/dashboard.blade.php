@@ -226,8 +226,8 @@
             <i class="fas fa-file-alt"></i>
         </div>
         <div class="stat-content">
-            <h3>{{ number_format($newRequests ?? 0) }}</h3>
-            <p>New Maintenance<br>Request</p>
+            <h3>{{ number_format($pendingRequests ?? 0) }}</h3>
+            <p>Maintenance Request<br>Pending</p>
         </div>
     </div>
 
@@ -236,8 +236,8 @@
             <i class="fas fa-clock"></i>
         </div>
         <div class="stat-content">
-            <h3>{{ number_format($pendingRequests ?? 0) }}</h3>
-            <p>Maintenance Request<br>Pending</p>
+            <h3>{{ number_format($InProgressRequests ?? 0) }}</h3>
+            <p>In Progress Maintenance<br>Request</p>
         </div>
     </div>
 
