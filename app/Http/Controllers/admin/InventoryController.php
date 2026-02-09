@@ -162,6 +162,7 @@ class InventoryController extends Controller
             'description' => $validated['description'] ?? null,
         ]);
 
+        $item->touch();
         // replace image (optional)
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -172,12 +173,10 @@ class InventoryController extends Controller
 
             $path = $file->storeAs('items', $filename, 'public');
 
-            DB::table('item_images')->updateOrInsert(
+            DB::table('item_images')->updateOrCreate(
                 ['itemID' => $item->itemID],
                 [
                     'imagePath'  => $path,
-                    'updated_at' => now(),
-                    'created_at' => now(),
                 ]
             );
         }

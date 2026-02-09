@@ -104,18 +104,20 @@
 }
 .images-grid{
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 14px;
     margin-top: 10px;
 }
+
 .images-grid img{
     width: 100%;
-    height: 140px;
+    height: 260px;   /* BIGGER */
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid #e5e7eb;
     background:#fff;
 }
+
 
 .desc-box{
     border: 1px solid #eef2ff;
@@ -139,6 +141,30 @@
 @media (max-width: 640px){
     .images-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+.grid-layout{
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.info-card{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.images-card{
+    display: flex;
+}
+
+@media (max-width: 992px){
+    .grid-layout{
+        grid-template-columns: 1fr;
+    }
+}
+
 </style>
 
 @php
@@ -147,6 +173,11 @@
     if (($item->status ?? '') === 'low') $statusClass = 'status-low';
     if (($item->status ?? '') === 'out') $statusClass = 'status-out';
 @endphp
+
+@php
+    $isEquipment = strtolower($item->category) === 'equipment';
+@endphp
+
 
 <div class="item-container">
     <a href="{{ route('therapist.items.index') }}" class="back-btn">
@@ -158,81 +189,72 @@
         <h1 class="item-title">{{ $item->itemName }}</h1>
         <div class="item-sub">Item ID: {{ $item->itemID }}</div>
 
-        <div class="grid">
-            <div>
-                <div class="info-box">
-                    <div class="info-label">Category</div>
-                    <div class="info-value">{{ $item->category }}</div>
-                </div>
+        <div class="grid-layout">
 
-                <div class="info-box" style="margin-top:12px;">
-                    <div class="info-label">Condition</div>
-                    <div class="info-value">{{ $item->condition }}</div>
-                </div>
+            {{-- INFO CARD --}}
+            <div class="info-card">
+                <div class="grid">
+                    <div>
+                        <div class="info-box">
+                            <div class="info-label">Category</div>
+                            <div class="info-value">{{ $item->category }}</div>
+                        </div>
 
-                <div class="info-box" style="margin-top:12px;">
-                    <div class="info-label">Stock Level</div>
-                    <div class="info-value">{{ $item->stockLevel }}</div>
-                </div>
-            </div>
+                        @if($isEquipment)
+                            <div class="info-box" style="margin-top:12px;">
+                                <div class="info-label">Condition</div>
+                                <div class="info-value">{{ ucfirst($item->condition ?? 'N/A') }}</div>
+                            </div>
+                        @else
+                            <div class="info-box" style="margin-top:12px;">
+                                <div class="info-label">Stock Level</div>
+                                <div class="info-value">{{ ucfirst($item->stockLevel) }}</div>
+                            </div>
+                        @endif
+                    </div>
 
-            <div>
-                <div class="info-box">
-                    <div class="info-label">Status</div>
-                    <div class="info-value">
-                        <span class="status-badge {{ $statusClass }}">
-                            {{ ucfirst($item->status) }}
-                        </span>
+                    <div>
+                        <div class="info-box">
+                            <div class="info-label">Status</div>
+                            <div class="info-value">
+                                <span class="status-badge {{ $statusClass }}">
+                                    {{ ucfirst($item->status) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        @if(!$isEquipment)
+                            <div class="info-box" style="margin-top:12px;">
+                                <div class="info-label">Quantity</div>
+                                <div class="info-value">{{ $item->quantity }}</div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
-                <div class="info-box" style="margin-top:12px;">
-                    <div class="info-label">Quantity</div>
-                    <div class="info-value">{{ $item->quantity }}</div>
+                
+            </div>
+
+            {{-- IMAGES CARD --}}
+            <div class="images-card">
+                <div class="images-box">
+                    <div class="info-label">Images</div>
+
+                    @if($item->images && $item->images->count())
+                        <div class="images-grid">
+                            @foreach($item->images as $img)
+                                {{-- unchanged image logic --}}
+                                <img src="{{ asset('storage/'.$img->imagePath) }}" alt="Item image">
+                            @endforeach
+                        </div>
+                    @else
+                        <div style="color:#6b7280; margin-top:10px;">No image uploaded.</div>
+                    @endif
                 </div>
             </div>
 
-            <div class="images-box">
-                <div class="info-label">Images</div>
-
-                @if($item->images && $item->images->count())
-                    <div class="images-grid">
-                        @foreach($item->images as $img)
-                            @php
-                                // imagePath in DB examples:
-                                // "items/foam-roller.jpg" OR "images/foam-roller.jpg" OR "foam-roller.jpg"
-                                $path = ltrim($img->imagePath ?? '', '/');
-                                $filename = basename($path);
-
-                                // Try best order:
-                                // 1) storage link: /storage/<path>
-                                // 2) public/items/<filename>
-                                // 3) public/images/<filename>
-                                $candidates = [
-                                    asset('storage/' . $path),
-                                    asset('items/' . $filename),
-                                    asset('images/' . $filename),
-                                ];
-
-                                $firstSrc = $candidates[0];
-                                $fallback1 = $candidates[1];
-                                $fallback2 = $candidates[2];
-                            @endphp
-
-                            <img
-                                src="{{ $firstSrc }}"
-                                alt="Item image"
-                                onerror="if(this.dataset.fk1){this.src=this.dataset.fk1; this.dataset.fk1=''; return;} if(this.dataset.fk2){this.src=this.dataset.fk2; this.dataset.fk2=''; return;} this.style.display='none';"
-                                data-fk1="{{ $fallback1 }}"
-                                data-fk2="{{ $fallback2 }}"
-                            >
-                        @endforeach
-                    </div>
-                @else
-                    <div style="color:#6b7280; margin-top:10px;">No image uploaded.</div>
-                @endif
-            </div>
         </div>
+
 
         <div class="desc-box">
             <div class="info-label">Description</div>

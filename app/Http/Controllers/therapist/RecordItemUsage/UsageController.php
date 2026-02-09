@@ -20,7 +20,7 @@ class UsageController extends Controller
     public function inventoryList()
     {
         $items = itemMaintenanceInfo::with('images')
-                ->where('category','therapy supplies')
+                ->where('category','Item')
                 ->where('status','available')
                 ->get();
 

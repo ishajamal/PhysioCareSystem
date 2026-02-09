@@ -229,7 +229,7 @@ body {
                     <th>Item Name</th>
                     <th>Category</th>
                     <th>Stock</th>
-                    <th>Status</th>
+                    <th>Stock Level</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -244,19 +244,21 @@ body {
                         <td>{{ $item->quantity }}</td>
                         <td>
                             @php
-                                $statusClass = '';
-                                if($item->status == 'available') {
-                                    $statusClass = 'status-available';
-                                } elseif($item->status == 'low') {
-                                    $statusClass = 'status-low';
-                                } elseif($item->status == 'out') {
-                                    $statusClass = 'status-out';
+                                $stockClass = '';
+                                $stockLevel = 10; // Example threshold, adjust as needed
+                                if($item->quantity > $stockLevel) {
+                                    $stockClass = 'status-available'; // High stock
+                                    $stockText = 'High';
+                                } else {
+                                    $stockClass = 'status-low'; // Low stock
+                                    $stockText = 'Low';
                                 }
                             @endphp
-                            <span class="status-badge {{ $statusClass }}">
-                                {{ ucfirst($item->status) }}
+                            <span class="status-badge {{ $stockClass }}">
+                                {{ $stockText }}
                             </span>
                         </td>
+
                         <td>
                             <button class="select-btn" onclick="window.location.href='{{ route('therapist.add.usage.record', ['itemID' => $item->itemID]) }}'">
                                 Select
