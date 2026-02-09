@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\admin\GenerateReport;
 
 use App\Http\Controllers\Controller;
+use App\Models\itemUsage;
 use App\Models\ReportLog;
 use App\Models\usageRecord;
 use App\Models\maintenanceRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Added for clarity
 
 class ReportController extends Controller
 {
@@ -17,6 +19,7 @@ class ReportController extends Controller
             $perPage = 10;
         }
 
+        // ReportLog uses the standard 'user' relationship
         $items = ReportLog::with('user')
             ->orderBy('generatedAt', 'desc')
             ->paginate($perPage)
@@ -41,16 +44,16 @@ class ReportController extends Controller
         ]);
 
         try {
-            // Create report log entry
             $reportLog = ReportLog::create([
                 'reportType' => ucfirst($validated['reportType']),
-                'generatedBy' => auth()->user()->userID ?? auth()->user()->id,
+                // FIX: Use auth()->id() to get current logged in user ID.
+                // Do NOT use 'usedByUser' here; that is only for the UsageRecord model.
+                'generatedBy' => Auth::id(), 
                 'generatedAt' => now(),
                 'dateStart' => $validated['dateStart'] ?? null,
                 'dateEnd' => $validated['dateEnd'] ?? null,
             ]);
 
-            // Store selected columns in session for later use
             session([
                 'report_columns_' . $reportLog->reportID => [
                     'type' => $validated['reportType'],
@@ -75,12 +78,12 @@ class ReportController extends Controller
         $reportData = [];
         $reportColumns = session('report_columns_' . $id, []);
         
-        // Fetch data based on report type
         if (strtolower($report->reportType) === 'usage') {
-            // Fetch usage records with related data
-            $query = usageRecord::with('user', 'itemUsages.item');
+            // REVERTED to usageRecord. 
+            // This fixes the "Unknown column 'usageDate'" error natively.
+            // This also fixes the "foreach" error if your view expects a list of records.
+            $query = \App\Models\usageRecord::with('usedByUser', 'itemUsages.itemMaintenanceInfo');
             
-            // Filter by date range if available
             if ($report->dateStart) {
                 $query->whereDate('usageDate', '>=', $report->dateStart);
             }
@@ -91,10 +94,8 @@ class ReportController extends Controller
             $reportData = $query->get();
         } 
         elseif (strtolower($report->reportType) === 'maintenance') {
-            // Fetch maintenance requests with related data
             $query = maintenanceRequest::with('submitter', 'itemMaintenances.itemInfo');
             
-            // Filter by date range if available
             if ($report->dateStart) {
                 $query->whereDate('dateSubmitted', '>=', $report->dateStart);
             }
@@ -104,17 +105,13 @@ class ReportController extends Controller
             
             $reportData = $query->get();
         }
-        
+        //dd($reportData->first()->itemUsages->first()->itemMaintenanceInfo);
         return view('admin.GenerateReport.reportDetails', compact('report', 'reportData', 'reportColumns'));
     }
 
     public function download($id)
     {
         $report = ReportLog::findOrFail($id);
-
-        // TODO: Implement actual report generation based on reportType
-        // For now, return a placeholder response
-        // You can generate PDF, Excel, or JSON based on reportType
 
         return response()->json([
             'message' => 'Download feature to be implemented',
@@ -123,7 +120,6 @@ class ReportController extends Controller
         ]);
     }
 
-    // Return printable HTML fragment for a report (used by AJAX print from dashboard)
     public function printable($id)
     {
         $report = ReportLog::with('user')->findOrFail($id);
@@ -132,7 +128,9 @@ class ReportController extends Controller
         $reportColumns = session('report_columns_' . $id, []);
 
         if (strtolower($report->reportType) === 'usage') {
-            $query = usageRecord::with('user', 'itemUsages.item');
+            // FIX: Using 'usedByUser' here as well
+            $query = usageRecord::with('usedByUser', 'itemUsages.item');
+
             if ($report->dateStart) {
                 $query->whereDate('usageDate', '>=', $report->dateStart);
             }
@@ -154,5 +152,3 @@ class ReportController extends Controller
         return view('admin.GenerateReport.printable_template_fragment', compact('report', 'reportData', 'reportColumns'));
     }
 }
-
-

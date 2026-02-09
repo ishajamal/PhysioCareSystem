@@ -174,6 +174,36 @@
     color: #6b7280;
     margin-top: 5px;
 }
+
+/* ================= BUTTONS ================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+/*  */
+.btn-primary:hover {
+    background-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
 </style>
 
 <div class="page-wrap">
@@ -181,9 +211,9 @@
         <div>
             <h1 class="page-title">Generate Report</h1>
         </div>
-        <a href="{{ route('admin.reports.dashboard') }}" class="btn-back">
+        <!-- <a href="{{ route('admin.reports.dashboard') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
-        </a>
+        </a> -->
     </div>
 
     <div class="card-box">
@@ -301,8 +331,8 @@
 
             <!-- Submit Button -->
             <div class="button-group">
-                <a href="{{ route('admin.reports.dashboard') }}" class="btn-back">Cancel</a>
-                <button type="submit" class="btn-save">
+                <a href="{{ route('admin.reports.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">
                     <i class="fas fa-file-csv"></i> Generate Report
                 </button>
             </div>

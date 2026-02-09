@@ -10,85 +10,128 @@ use Illuminate\Http\Request;
 
 class monitorUsageController extends Controller
 {
+
+    public function retrieveUsagerecord(Request $request)
+{
+    $perPage = (int) $request->get('perPage', 10);
+    
+    // Build the base query with joins and eager loading
+    $query = itemUsage::with(['usageRecord.usedByUser', 'itemMaintenanceInfo'])
+        ->join('usage_records', 'item_usages.usageID', '=', 'usage_records.usageID')
+        ->select('item_usages.*');
+
+    // 1. Search by Staff Name
+    if ($request->filled('userName')) {
+        $query->whereHas('usageRecord.usedByUser', function ($q) use ($request) {
+            $q->where('name', 'like', '%' . $request->userName . '%');
+        });
+    }
+
+    // 2. Filter by Category
+    if ($request->filled('itemCategory')) {
+        $query->whereHas('itemMaintenanceInfo', function ($q) use ($request) {
+            $q->where('category', $request->itemCategory);
+        });
+    }
+// 
+    // 3. Filter by Date Range
+    if ($request->filled('dateStart')) {
+        $query->whereDate('usage_records.usageDate', '>=', $request->dateStart);
+    }
+    if ($request->filled('dateEnd')) {
+        $query->whereDate('usage_records.usageDate', '<=', $request->dateEnd);
+    }
+
+    $itemUsages = $query->orderBy('usage_records.usageDate', 'desc')
+        ->paginate($perPage)
+        ->appends($request->query()); // Preserve search params in pagination links
+
+    return view('admin.MonitorUsage.monitorDashboard', compact('itemUsages'));
+}
+
     /**
      * Retrieve all usage records for the dashboard
      * @return \Illuminate\View\View
      */
-    public function retrieveUsagerecord(Request $request)
-    {
-        $perPage = (int) $request->get('perPage', 10);
-        if (!in_array($perPage, [10, 25, 50, 100])) {
-            $perPage = 10;
-        }
+    // public function retrieveUsagerecord(Request $request)
+    // {
+    //     $perPage = (int) $request->get('perPage', 10);
+    //     if (!in_array($perPage, [10, 25, 50, 100])) {
+    //         $perPage = 10;
+    //     }
 
-        $usageRecords = usageRecord::with(['usedByUser', 'itemUsages.itemMaintenanceInfo'])
-            ->orderBy('usageDate', 'desc')
-            ->paginate($perPage)
-            ->appends($request->query());
+    //     $itemUsages = itemUsage::with(['usageRecord.usedByUser', 'itemMaintenanceInfo'])
+    //         ->join('usage_records', 'item_usages.usageID', '=', 'usage_records.usageID')
+    //         ->orderBy('usage_records.usageDate', 'desc')
+    //         ->select('item_usages.*')
+    //         ->paginate($perPage)
+    //         ->appends($request->query());
 
-        return view('admin.MonitorUsage.monitorDashboard', compact('usageRecords'));
-    }
+    //     return view('admin.MonitorUsage.monitorDashboard', compact('itemUsages'));
+    // }
 
     /**
      * Handle filtered search based on user inputs
      * Supports filtering by: userName, itemCategory, dateStart, dateEnd
      * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
      */
-    public function displayfilteredsearh(Request $request)
-    {
-        $validated = $request->validate([
-            'userName' => 'nullable|string',
-            'itemCategory' => 'nullable|string',
-            'dateStart' => 'nullable|date',
-            'dateEnd' => 'nullable|date',
-            'perPage' => 'nullable|in:10,25,50,100'
-        ]);
+    // public function displayfilteredsearh(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'userName' => 'nullable|string',
+    //         'itemCategory' => 'nullable|string',
+    //         'dateStart' => 'nullable|date',
+    //         'dateEnd' => 'nullable|date',
+    //         'perPage' => 'nullable|in:10,25,50,100'
+    //     ]);
 
-        $perPage = (int) $request->get('perPage', 10);
-        if (!in_array($perPage, [10, 25, 50, 100])) {
-            $perPage = 10;
-        }
+    //     $perPage = (int) $request->get('perPage', 10);
+    //     if (!in_array($perPage, [10, 25, 50, 100])) {
+    //         $perPage = 10;
+    //     }
 
-        $query = usageRecord::with(['usedByUser', 'itemUsages.itemMaintenanceInfo']);
+    //     $query = itemUsage::with(['usageRecord.usedByUser', 'itemMaintenanceInfo'])
+    //         ->join('usage_records', 'item_usages.usageID', '=', 'usage_records.usageID');
 
-        // Filter by user name if provided
-        if (!empty($validated['userName'])) {
-            $query->whereHas('usedByUser', function ($q) use ($validated) {
-                $q->where('name', 'like', '%' . $validated['userName'] . '%');
-            });
-        }
+    //     // Filter by user name if provided
+    //     if (!empty($validated['userName'])) {
+    //         $query->whereHas('usageRecord.usedByUser', function ($q) use ($validated) {
+    //             $q->where('name', 'like', '%' . $validated['userName'] . '%');
+    //         });
+    //     }
 
-        // Filter by item category if provided
-        if (!empty($validated['itemCategory'])) {
-            $query->whereHas('itemUsages.itemMaintenanceInfo', function ($q) use ($validated) {
-                $q->where('category', $validated['itemCategory']);
-            });
-        }
+    //     // Filter by item category if provided
+    //     if (!empty($validated['itemCategory'])) {
+    //         $query->whereHas('itemMaintenanceInfo', function ($q) use ($validated) {
+    //             $q->where('category', $validated['itemCategory']);
+    //         });
+    //     }
 
-        // Filter by date range if provided
-        if (!empty($validated['dateStart'])) {
-            $query->whereDate('usageDate', '>=', $validated['dateStart']);
-        }
+    //     // Filter by date range if provided
+    //     if (!empty($validated['dateStart'])) {
+    //         $query->whereDate('usage_records.usageDate', '>=', $validated['dateStart']);
+    //     }
 
-        if (!empty($validated['dateEnd'])) {
-            $query->whereDate('usageDate', '<=', $validated['dateEnd']);
-        }
+    //     if (!empty($validated['dateEnd'])) {
+    //         $query->whereDate('usage_records.usageDate', '<=', $validated['dateEnd']);
+    //     }
 
-        $usageRecords = $query->orderBy('usageDate', 'desc')
-            ->paginate($perPage)
-            ->appends($request->query());
+    //     $itemUsages = $query->orderBy('usage_records.usageDate', 'desc')
+    //         ->select('item_usages.*')
+    //         ->paginate($perPage)
+    //         ->appends($request->query());
 
-        // If AJAX request, return JSON
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'data' => $usageRecords
-            ]);
-        }
+    //     // If AJAX request, return JSON
+    //     if ($request->ajax()) {
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $itemUsages
+    //         ]);
+    //     }
 
-        // Otherwise return view
-        return view('admin.MonitorUsage.monitorDashboard', compact('usageRecords'));
-    }
+    //     // Otherwise return view
+    //     return view('admin.MonitorUsage.monitorDashboard', compact('itemUsages'));
+    // }
 
     /**
      * Show details of a specific usage record
@@ -121,15 +164,17 @@ class monitorUsageController extends Controller
             $perPage = 10;
         }
 
-        // Fetch latest usage records
-        $usageRecords = usageRecord::with(['usedByUser', 'itemUsages.itemMaintenanceInfo'])
-            ->orderBy('usageDate', 'desc')
+        // Fetch latest item usages
+        $itemUsages = itemUsage::with(['usageRecord.usedByUser', 'itemMaintenanceInfo'])
+            ->join('usage_records', 'item_usages.usageID', '=', 'usage_records.usageID')
+            ->orderBy('usage_records.usageDate', 'desc')
+            ->select('item_usages.*')
             ->paginate($perPage);
 
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'data' => $usageRecords,
+                'data' => $itemUsages,
                 'message' => 'Data refreshed successfully'
             ]);
         }
