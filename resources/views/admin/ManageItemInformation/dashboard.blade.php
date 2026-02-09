@@ -3,11 +3,10 @@
 @section('title', 'Inventory Dashboard')
 
 @section('content')
-{{-- 1. Bootstrap Assets (Required for Modals) --}}
+{{-- 1. Bootstrap Assets (NOT needed anymore for delete modal, but keep if you use elsewhere) --}}
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-{{-- 2. Your Custom CSS --}}
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
@@ -239,173 +238,136 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-.alert-success { background: #d1fae5; color: #065f46; border-left-color: #10b981; }
 .alert-error { background: #fee2e2; color: #991b1b; border-left-color: #ef4444; }
 .no-data { text-align: center; padding: 50px 20px; color: #6b7280; font-style: italic; }
 .no-data-icon { font-size: 34px; margin-bottom: 15px; color: #c7d2fe; }
 .pagination-container { margin-top: 30px; display: flex; justify-content: center; }
 
-/* ================= TRANSPARENT MODAL STYLES ================= */
-.delete-modal .modal-dialog {
-    max-width: 450px;
-}
-
-.delete-modal .modal-content {
-    border-radius: 20px;
-    border: none;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* ✅ Correct bootstrap backdrop target */
-.modal-backdrop.show {
-    opacity: 0.35 !important;
-}
-
-.modal-backdrop {
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-}
-
-.delete-modal .modal-header { border-bottom: none; padding: 0; display: none; }
-.delete-modal .modal-body { padding: 40px 35px; text-align: center; }
-
-.delete-icon-container {
-    width: 80px;
-    height: 80px;
-    background: rgba(254, 226, 226, 0.8);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 25px;
-    border: 2px solid rgba(220, 38, 38, 0.2);
-}
-
-.delete-icon { font-size: 32px; color: #dc2626; }
-
-.modal-title {
-    font-weight: 900;
-    color: #111827;
-    font-size: 22px;
-    text-transform: uppercase;
-    text-align: center;
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-    word-spacing: 3px;
-}
-
-.modal-message {
-    text-align: center;
-    color: #4b5563;
-    font-size: 16px;
-    line-height: 1.7;
-    margin-bottom: 25px;
-    font-weight: 400;
-    letter-spacing: 0.3px;
-}
-
-#itemNameToDelete { font-weight: 700; color: #111827; }
-
-.confirmation-checkbox-container {
-    background: rgba(249, 250, 251, 0.9);
-    border-radius: 12px;
-    border: 1px solid rgba(229, 231, 235, 0.6);
-    padding: 18px 20px;
-    margin-bottom: 30px;
-    text-align: left;
-}
-
-.confirmation-checkbox {
-    cursor: pointer;
-    width: 18px;
-    height: 18px;
-    margin-right: 12px;
-}
-
-.confirmation-label {
-    font-size: 14px;
-    color: #4b5563;
-    cursor: pointer;
-    user-select: none;
-    font-weight: 500;
-    letter-spacing: 0.3px;
-}
-
-.modal-footer-custom {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    border-top: none;
-    padding: 0;
-}
-
-.btn-cancel {
-    border-radius: 10px;
-    font-weight: 600;
-    color: #374151;
-    background-color: rgba(243, 244, 246, 0.95);
-    border: 1px solid rgba(209, 213, 219, 0.8);
-    padding: 12px 28px;
-    font-size: 15px;
-    transition: all 0.2s ease;
-    min-width: 110px;
-}
-
-.btn-cancel:hover {
-    background-color: rgba(229, 231, 235, 0.95);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.btn-delete {
-    border-radius: 10px;
-    font-weight: 600;
-    background-color: #dc2626;
-    color: white;
-    border: none;
-    padding: 12px 28px;
-    font-size: 15px;
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
-    transition: all 0.2s ease;
-    min-width: 110px;
-}
-
-.btn-delete:hover:not(:disabled) {
-    background-color: #b91c1c;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
-}
-
-.btn-delete:disabled {
-    background-color: rgba(252, 165, 165, 0.8);
-    color: rgba(255, 255, 255, 0.7);
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
     .search-box { width: 100%; }
     .table-header { width: 100%; }
     .top-actions { justify-content: flex-start; }
 }
+
+/* =========================================================
+   ✅ MAINTENANCE-STYLE DELETE MODAL
+   ========================================================= */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+.modal-overlay.hidden { display: none; }
+.modal-overlay.show { display: flex; }
+
+.modal-content {
+    width: min(520px, 92vw);
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    position: relative;
+    padding: 26px 28px;
+}
+
+.close-btn {
+    position: absolute;
+    right: 16px;
+    top: 12px;
+    border: none;
+    background: transparent;
+    font-size: 22px;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+.icon-circle {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fee2e2;
+    margin: 6px auto 14px;
+}
+
+.icon-circle i { color: #b91c1c; font-size: 22px; }
+
+.modal-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    margin: 0 0 10px;
+    color: #111827;
+    text-transform: uppercase;
+}
+
+.modal-message {
+    text-align: center;
+    color: #374151;
+    margin: 0 0 14px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    margin: 14px 0 18px;
+    color: #374151;
+}
+
+.checkbox-container input { width: 16px; height: 16px; }
+
+.button-container {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.cancel-btn {
+    padding: 10px 22px;
+    border-radius: 12px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    color: #111827;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.delete-btn-modal {
+    padding: 10px 22px;
+    border-radius: 12px;
+    background: #dc2626;
+    border: none;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    opacity: 0.95;
+}
+
+.delete-btn-modal:disabled {
+    background: #fca5a5;
+    cursor: not-allowed;
+}
 </style>
 
 <div class="inventory-container">
-    {{-- Success/Error Messages --}}
-    @if(session('success'))
-    <div class="alert-message alert-success">
-        <i class="fas fa-check-circle"></i> {{ session('success') }}
-    </div>
-    @endif
+    {{-- ❌ SUCCESS REMOVED HERE (leave success popup to layouts.app only) --}}
 
     @if(session('error'))
-    <div class="alert-message alert-error">
-        <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-    </div>
+        <div class="alert-message alert-error">
+            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+        </div>
     @endif
 
     {{-- ✅ ONE ADD BUTTON TOP RIGHT --}}
@@ -417,8 +379,7 @@
 
     {{-- TABLE CARD --}}
     <div class="table-container">
-
-        {{-- ✅ TITLE LEFT + SEARCH RIGHT (INSIDE CARD) --}}
+        {{-- TITLE LEFT + SEARCH RIGHT --}}
         <div class="table-header">
             <h1 class="table-title">Inventory Summary</h1>
 
@@ -467,10 +428,18 @@
 
                                 <button class="action-btn delete-btn"
                                         title="Delete Item"
-                                        onclick="openDeleteModal('{{ $item->itemID }}', '{{ $item->itemName }}', '{{ route('admin.inventory.destroy', $item->itemID) }}')">
-                                    <i class="fas fa-trash-alt"></i>
+                                        onclick="openModal('deleteModal{{ $item->itemID }}')">
+                                    <i class="fa fa-trash"></i>
                                 </button>
                             </div>
+
+                            <x-delete-modal
+                                id="deleteModal{{ $item->itemID }}"
+                                title="ARE YOU SURE YOU WANT TO DELETE THIS RECORD?"
+                                message="This action cannot be undone."
+                                route="{{ route('admin.inventory.destroy', $item->itemID) }}"
+                                method="DELETE"
+                            />
                         </td>
                     </tr>
                 @empty
@@ -488,49 +457,10 @@
         </table>
 
         @if($items->hasPages())
-        <div class="pagination-container">
-            {{ $items->links('pagination::bootstrap-4') }}
-        </div>
+            <div class="pagination-container">
+                {{ $items->links('pagination::bootstrap-4') }}
+            </div>
         @endif
-    </div>
-</div>
-
-{{-- DELETE CONFIRMATION MODAL --}}
-<div class="modal fade delete-modal" id="deleteModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form id="deleteForm" method="POST">
-                @csrf
-                @method('DELETE')
-
-                <div class="modal-body">
-                    <div class="delete-icon-container">
-                        <i class="fas fa-trash-alt delete-icon"></i>
-                    </div>
-
-                    <h3 class="modal-title">DELETE INVENTORY ITEM</h3>
-
-                    <p class="modal-message">
-                        Are you sure you want to delete '<span id="itemNameToDelete"></span>'?<br>
-                        This action cannot be undone.
-                    </p>
-
-                    <div class="confirmation-checkbox-container">
-                        <div class="form-check d-flex align-items-center">
-                            <input class="form-check-input confirmation-checkbox" type="checkbox" id="confirmDeleteCheckbox">
-                            <label class="form-check-label confirmation-label" for="confirmDeleteCheckbox">
-                                I understand this action is permanent.
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer-custom">
-                        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-delete" id="deleteConfirmButton" disabled>Delete</button>
-                    </div>
-                </div>
-            </form>
-        </div>
     </div>
 </div>
 
@@ -551,17 +481,47 @@
         });
     }
 
-    function openDeleteModal(itemId, itemName, deleteRoute) {
-        document.getElementById('itemNameToDelete').textContent = itemName;
-        document.getElementById('deleteForm').action = deleteRoute;
+    // ✅ same functions as Maintenance
+    function openModal(modalId) {
+        var modal = document.getElementById(modalId);
 
-        document.getElementById('confirmDeleteCheckbox').checked = false;
-        document.getElementById('deleteConfirmButton').disabled = true;
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('show');
 
-        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-        deleteModal.show();
+            var checkbox = document.getElementById('confirmCheck' + modalId);
+            var deleteBtn = document.getElementById('deleteBtn' + modalId);
+
+            if (checkbox && deleteBtn) {
+                checkbox.checked = false;
+                deleteBtn.disabled = true;
+
+                checkbox.onchange = function() {
+                    deleteBtn.disabled = !this.checked;
+                };
+            }
+        } else {
+            console.error('Modal not found: ' + modalId);
+        }
     }
 
+    function closeModal(modalId) {
+        var modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('show');
+            modal.classList.add('hidden');
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-overlay') &&
+            event.target.id && event.target.id.startsWith('deleteModal')) {
+            event.target.classList.remove('show');
+            event.target.classList.add('hidden');
+        }
+    }
+
+    // auto-hide ONLY local alerts (error). success is handled by layouts.app now.
     document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
             const alerts = document.querySelectorAll('.alert-message');
@@ -571,31 +531,6 @@
                 setTimeout(() => alert.remove(), 500);
             });
         }, 5000);
-
-        const confirmCheckbox = document.getElementById('confirmDeleteCheckbox');
-        const deleteButton = document.getElementById('deleteConfirmButton');
-
-        if (confirmCheckbox && deleteButton) {
-            confirmCheckbox.addEventListener('change', function() {
-                deleteButton.disabled = !this.checked;
-            });
-        }
-
-        const deleteModalElement = document.getElementById('deleteModal');
-        if (deleteModalElement) {
-            deleteModalElement.addEventListener('hidden.bs.modal', function() {
-                if (confirmCheckbox) confirmCheckbox.checked = false;
-                if (deleteButton) deleteButton.disabled = true;
-                document.getElementById('deleteForm').action = '';
-            });
-        }
-
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => { this.style.transform = ''; }, 150);
-            });
-        });
     });
 </script>
 @endsection
