@@ -57,9 +57,14 @@ class ManageUserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
+
+        \App\Models\MaintenanceRequest::where('submittedBy', $user->userID)->delete();
+        
+        \App\Models\UsageRecord::where('usedBy', $user->userID)->delete();
+
         $user->delete();
 
         return redirect()->route('admin.manage.user')
-            ->with('success', 'User deleted successfully');
+            ->with('success', 'User and all their history deleted permanently.');
     }
 }
