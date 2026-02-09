@@ -245,10 +245,11 @@ body {
     display: flex;
     gap: 10px;
     justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
-/* View Button */
-.btn-view {
+.btn-edit, .btn-delete, .btn-view {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -258,10 +259,14 @@ body {
     font-size: 16px;
     border: none;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.btn-view {
     background-color: #dbeafe;
     color: #1e40af;
-    text-decoration: none;
 }
 
 .btn-view:hover {
@@ -270,45 +275,26 @@ body {
     box-shadow: 0 4px 8px rgba(30, 64, 175, 0.2);
 }
 
-/* Edit Button */
 .btn-edit {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s ease;
     background-color: #fef3c7;
     color: #b45309;
-    text-decoration: none;
 }
 
 .btn-edit:hover {
     background-color: #fde68a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(180, 83, 9, 0.2);
 }
 
-/* Delete Button */
 .btn-delete {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s ease;
     background-color: #fee2e2;
     color: #b91c1c;
 }
 
 .btn-delete:hover {
     background-color: #fca5a5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(185, 28, 28, 0.2);
 }
 
 /* ================= EMPTY STATE ================= */
@@ -448,22 +434,38 @@ body {
                             {{ $itemUsage->quantityUsed }}
                         </td>
                         <td>
-                            <div class="action-buttons">
-                                {{-- VIEW --}}
-                                <a href="{{ route('therapist.view.history.item.details', [$usage->usageID, $itemUsage->itemMaintenanceInfo->itemID]) }}" class="btn-view" title="View Details">
-                                    <i class="bi bi-eye"></i>
-                                </a>
+                             <div class="action-buttons">
+                                    <!-- View Button -->
+                                    <a href="{{ route('therapist.view.history.item.details', [$usage->usageID, $itemUsage->itemMaintenanceInfo->itemID]) }}" 
+                                    class="btn-view" 
+                                    title="View Details">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
 
-                                {{-- EDIT --}}
-                                <a href="{{ route('therapist.usage.edit', [$usage->usageID, $itemUsage->itemMaintenanceInfo->itemID]) }}" class="btn-edit" title="Edit">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
+                                    <!-- Edit Button -->
+                                    <a href="{{ route('therapist.usage.edit', [$usage->usageID, $itemUsage->itemMaintenanceInfo->itemID]) }}" 
+                                    class="btn-edit" 
+                                    title="Edit Request">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
 
-                                {{-- DELETE --}}
-                                <button type="button" class="btn-delete" onclick="openModal('deleteModal{{ $itemUsage->itemMaintenanceInfo->itemID }}')" title="Delete">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
+                                    <!-- Delete Button triggers modal -->
+                                    <button type="button" 
+                                            class="btn-delete" 
+                                            onclick="openModal('deleteModal{{ $itemUsage->itemMaintenanceInfo->itemID }}')" 
+                                            title="Delete Request">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Delete Modal -->
+                                <x-delete-modal
+                                    id="deleteModal{{ $itemUsage->itemMaintenanceInfo->itemID }}"
+                                    title="ARE YOU SURE YOU WANT TO DELETE THIS RECORD?"
+                                    message="This action cannot be undone."
+                                    route="{{ route('therapist.usage.delete', [$usage->usageID, $itemUsage->itemMaintenanceInfo->itemID]) }}"
+                                    method="delete"
+                                />
                         </td>
                     </tr>
 
