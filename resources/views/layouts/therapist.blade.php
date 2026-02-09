@@ -1128,14 +1128,6 @@
             updateHeaderPosition();
         });
 
-        // function openModal(id) {
-        // document.getElementById(id).classList.remove('hidden');
-        // }
-
-        // function closeModal(id) {
-        // document.getElementById(id).classList.add('hidden');
-        // }
-
         document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal-overlay')
@@ -1182,11 +1174,10 @@
                 })
                 .catch(err => console.error("Error fetching count:", err));
 
-            // 2. Get the List (Dropdown Items)
             fetch("/api/maintenance/notifications")
                 .then(res => res.json())
                 .then(data => {
-                    notifList.innerHTML = ""; // Clear old list
+                    notifList.innerHTML = "";
                     
                     if (data.length === 0) {
                         notifList.innerHTML = "<li style='padding:15px; text-align:center; color:#666;'>No new notifications</li>";
@@ -1203,7 +1194,6 @@
                                 <div style="font-size:11px; color:#9ca3af; margin-top:2px;">${item.date}</div>
                             `;
                             
-                            // Click to view details
                             li.onclick = function() {
                                 window.location.href = "/maintenance/view/" + item.id;
                             };
@@ -1215,16 +1205,13 @@
                 .catch(err => console.error("Error fetching list:", err));
         }
 
-        // Toggle Dropdown & Mark as Read
         notifBell.addEventListener("click", function (e) {
             e.stopPropagation();
-            // Check if currently hidden
             const isHidden = window.getComputedStyle(notifDropdown).display === "none";
             
             if (isHidden) {
                 notifDropdown.style.display = "block";
                 
-                // Mark as read in database
                 fetch("/api/maintenance/mark-read", {
                     method: "POST",
                     headers: {
@@ -1239,17 +1226,14 @@
             }
         });
 
-        // Close when clicking outside
         window.addEventListener("click", function (e) {
             if (!notifBell.contains(e.target) && !notifDropdown.contains(e.target)) {
                 notifDropdown.style.display = "none";
             }
         });
 
-        // Initial Load
         fetchNotifications();
         
-        // Refresh every 30 seconds
         setInterval(fetchNotifications, 30000);
     });
     </script>

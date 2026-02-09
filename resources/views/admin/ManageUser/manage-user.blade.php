@@ -93,34 +93,33 @@ body {
     border-collapse: collapse;
 }
 
-/* Column Widths - Adjusted for better fit */
 .users-table th:nth-child(1),
 .users-table td:nth-child(1) {
-    width: 70px; /* ID */
+    width: 70px;
     min-width: 70px;
 }
 
 .users-table th:nth-child(2),
 .users-table td:nth-child(2) {
-    width: 180px; /* Name */
+    width: 180px;
     min-width: 180px;
 }
 
 .users-table th:nth-child(3),
 .users-table td:nth-child(3) {
-    width: 250px; /* Email */
+    width: 250px;
     min-width: 250px;
 }
 
 .users-table th:nth-child(4),
 .users-table td:nth-child(4) {
-    width: 100px; /* Role */
+    width: 100px;
     min-width: 100px;
 }
 
 .users-table th:nth-child(5),
 .users-table td:nth-child(5) {
-    width: 120px; /* Actions - Increased for proper button size */
+    width: 120px;
     min-width: 120px;
     text-align: center;
 }
@@ -191,10 +190,10 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px; /* SAME SIZE as maintenance page */
-    height: 36px; /* SAME SIZE as maintenance page */
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
-    font-size: 16px; /* SAME SIZE as maintenance page */
+    font-size: 16px;
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -395,7 +394,6 @@ body {
 </style>
 
 <div class="main-content-users">
-    {{-- REMOVED THE SUCCESS MESSAGE SECTION --}}
     
     <div class="table-container">
         <div class="table-title">
@@ -437,7 +435,7 @@ body {
                     <td>
                         <div class="action-buttons">
                             <a href="{{ route('admin.manage.user.edit', $user->userID) }}" class="btn-edit" title="Edit User">
-                                <i class="fas fa-edit"></i>
+                                <i class="fa fa-pencil"></i>
                             </a>
                             <button class="btn-delete" onclick="openDeleteModal('deleteUser{{ $user->userID }}')" title="Delete User">
                                 <i class="fas fa-trash"></i>
@@ -446,7 +444,6 @@ body {
                     </td>
                 </tr>
                 
-                <!-- Delete modal component for each user -->
                 <x-delete-modal
                     id="deleteUser{{ $user->userID }}"
                     title="DELETE USER"
@@ -463,7 +460,6 @@ body {
             </tbody>
         </table>
         
-        <!-- Pagination - only show when not searching -->
         @if($users->hasPages() && empty($search))
         <div class="pagination-container" id="pagination-container">
             {{ $users->links('pagination::bootstrap-4') }}
@@ -473,7 +469,6 @@ body {
 </div>
 
 <script>
-// Function to OPEN delete modal
 function openDeleteModal(modalId) {
     var modal = document.getElementById(modalId);
     
@@ -497,7 +492,6 @@ function openDeleteModal(modalId) {
     }
 }
 
-// Function to CLOSE delete modal
 function closeModal(modalId) {
     var modal = document.getElementById(modalId);
     if (modal) {
@@ -506,7 +500,6 @@ function closeModal(modalId) {
     }
 }
 
-// Close modal when clicking outside (on the dark overlay)
 window.onclick = function(event) {
     if (event.target.classList.contains('modal-overlay') && 
         event.target.id && event.target.id.startsWith('deleteUser')) {
@@ -515,13 +508,11 @@ window.onclick = function(event) {
     }
 }
 
-// Live Search Functionality
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("search-input");
     const userRows = document.querySelectorAll(".user-row");
     const paginationContainer = document.getElementById("pagination-container");
     
-    // Create a "no results" row if it doesn't exist
     let noResultsRow = document.getElementById("noResultsRow");
     if (!noResultsRow && userRows.length > 0) {
         const tbody = document.getElementById("users-table-body");
@@ -536,13 +527,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const query = searchInput.value.toLowerCase().trim();
         let visibleCount = 0;
         
-        // Hide pagination when searching
         if (paginationContainer) {
             paginationContainer.style.display = query ? 'none' : 'flex';
         }
 
         if (query === '') {
-            // Show all rows when search is empty
             userRows.forEach(row => {
                 row.style.display = '';
             });
@@ -550,7 +539,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Filter rows
         userRows.forEach(row => {
             const searchText = row.getAttribute('data-search').toLowerCase();
             const isMatch = searchText.includes(query);
@@ -563,7 +551,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Show/hide no results message
         if (noResultsRow) {
             if (visibleCount === 0) {
                 noResultsRow.style.display = 'table-row';
@@ -573,10 +560,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Search on input (live search)
     searchInput.addEventListener("input", performSearch);
 
-    // Search on Enter key press
     searchInput.addEventListener("keypress", function(event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -584,7 +569,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Restore original state when search is cleared
     searchInput.addEventListener("search", function() {
         if (this.value === '') {
             performSearch();
