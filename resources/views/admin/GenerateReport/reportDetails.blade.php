@@ -195,16 +195,20 @@
                     <tbody>
                         @forelse($reportData as $record)
                             @foreach($record->itemUsages as $index => $usage)
-                                <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $loop->parent->iteration }}.{{ $index + 1 }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">#{{ $record->usageID }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $usage->item->itemID ?? 'N/A' }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $usage->item->product_name ?? 'N/A' }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $usage->quantity ?? 'N/A' }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $record->user->name ?? 'N/A' }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $record->usageDate?->format('Y-m-d H:i') ?? 'N/A' }}</td>
-                                </tr>
-                            @endforeach
+    <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 16px 14px; color: #374151;">{{ $loop->parent->iteration }}.{{ $index + 1 }}</td>
+        <td style="padding: 16px 14px; color: #374151;">#{{ $record->usageID }}</td>
+        <td style="padding: 16px 14px; color: #374151;">{{ $usage->itemID ?? 'N/A' }}</td>
+        
+        <td style="padding: 16px 14px; color: #374151;">
+            {{ $usage->itemMaintenanceInfo->itemName ?? 'N/A' }}
+        </td>
+        
+        <td style="padding: 16px 14px; color: #374151;">{{ $usage->quantityUsed ?? 'N/A' }}</td>
+        <td style="padding: 16px 14px; color: #374151;">{{ $record->usedByUser->name ?? 'N/A' }}</td>
+        <td style="padding: 16px 14px; color: #374151;">{{ $record->usageDate?->format('Y-m-d') ?? 'N/A' }}</td>
+    </tr>
+@endforeach
                         @empty
                             <tr>
                                 <td colspan="7" style="padding: 50px 20px; text-align: center; color: #6b7280;">
