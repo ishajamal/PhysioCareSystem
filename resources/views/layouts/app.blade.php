@@ -900,7 +900,12 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" onclick="showComingSoon(event, 'Reports')">
+                        <a href="{{ route('admin.usage.dashboard') }}" class="{{ request()->routeIs('admin.usage.dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-graph-up-arrow"></i> <span>Monitor Usage</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.reports.dashboard') }}" class="{{ request()->routeIs('admin.reports.dashboard') ? 'active' : '' }}">
                             <i class="bi bi-graph-up-arrow"></i> <span>Reports</span>
                         </a>
                     </li>
