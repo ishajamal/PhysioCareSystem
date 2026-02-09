@@ -81,7 +81,7 @@ class InventoryController extends Controller
             $path = $file->storeAs('items', $filename, 'public'); // items/xxx.jpg
 
             DB::table('item_images')->updateOrInsert(
-                ['itemID' => $itemID],
+                ['itemID' => $item->itemID],
                 [
                     'imagePath'  => $path,
                     'created_at' => now(),

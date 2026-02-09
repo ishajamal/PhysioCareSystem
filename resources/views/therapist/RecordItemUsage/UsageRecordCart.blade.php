@@ -121,10 +121,11 @@
     display: flex;
     gap: 10px;
     justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
-/* Edit / Delete Buttons inside table */
-.btn-edit, .btn-delete {
+.btn-edit, .btn-delete, .btn-view {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -134,14 +135,43 @@
     font-size: 16px;
     border: none;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    flex-shrink: 0;
 }
 
-.btn-edit { background-color: #fef3c7; color: #b45309; }
-.btn-edit:hover { background-color: #fde68a; }
+.btn-view {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
 
-.btn-delete { background-color: #fee2e2; color: #b91c1c; }
-.btn-delete:hover { background-color: #fca5a5; }
+.btn-view:hover {
+    background-color: #bfdbfe;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(30, 64, 175, 0.2);
+}
+
+.btn-edit {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.btn-edit:hover {
+    background-color: #fde68a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(180, 83, 9, 0.2);
+}
+
+.btn-delete {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.btn-delete:hover {
+    background-color: #fca5a5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(185, 28, 28, 0.2);
+}
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 768px){
@@ -199,13 +229,16 @@
                             <div class="action-buttons">
                                 <button class="btn-edit" 
                                         onclick="window.location.href='{{ route('therapist.cart.edit', [$cart->itemID]) }}'">
-                                    <i class="bi bi-pencil-square"></i>
+                                    <i class="fa fa-pencil"></i>
                                 </button>
 
                                 <!-- Delete modal trigger -->
-                                <button class="btn-delete" onclick="openModal('deleteModal{{ $cart->itemID }}')">
-                                    <i class="bi bi-trash"></i>
+                                <button type="button"
+                                        class="btn-delete"
+                                        onclick="openModal('deleteModal{{ $cart->itemID }}')">
+                                    <i class="fa fa-trash"></i>
                                 </button>
+
                             </div>
                         </td>
                     </tr>
