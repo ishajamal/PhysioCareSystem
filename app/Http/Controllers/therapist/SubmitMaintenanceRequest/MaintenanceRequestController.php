@@ -33,10 +33,12 @@ class MaintenanceRequestController extends Controller
         $rows = maintenanceRequest::query()
             ->where('maintenance_requests.userID', Auth::id())
             ->leftJoin('item_maintenances', 'item_maintenances.requestID', '=', 'maintenance_requests.requestID')
+            ->leftJoin('item_maintenance_infos', 'item_maintenance_infos.itemID', '=', 'item_maintenances.itemID')
             ->when($q, function ($query) use ($q) {
                 $query->where('maintenance_requests.requestID', $q)
                     ->orWhere('maintenance_requests.status', 'like', "%{$q}%")
-                    ->orWhere('item_maintenances.itemIssue', 'like', "%{$q}%");
+                    ->orWhere('item_maintenances.itemIssue', 'like', "%{$q}%")
+                    ->orWhere('item_maintenance_infos.itemName', 'like', "%{$q}%");
             })
             ->select([
                 'maintenance_requests.requestID',
@@ -44,6 +46,8 @@ class MaintenanceRequestController extends Controller
                 'maintenance_requests.status',
                 'maintenance_requests.isRead',
                 'item_maintenances.itemIssue',
+                'item_maintenances.itemID',
+                'item_maintenance_infos.itemName as equipmentName',
             ])
             ->orderByDesc('maintenance_requests.dateSubmitted')
             ->paginate(10)
@@ -93,10 +97,10 @@ class MaintenanceRequestController extends Controller
                 'isRead' => 0,
             ]);
 
-            // (B) Create request details (NOW includes itemID to satisfy DB constraint)
+            // (B) Create request details (includes itemID)
             itemMaintenance::create([
                 'requestID' => $mr->requestID,
-                'itemID' => $item->itemID, // ✅ FIX: required by DB
+                'itemID' => $item->itemID,
                 'itemIssue' => $request->itemIssue,
                 'detailsMaintenance' => $request->detailsMaintenance,
             ]);
@@ -141,7 +145,7 @@ class MaintenanceRequestController extends Controller
             ->where('requestID', $requestID)
             ->get();
 
-        // Optional: get equipment name for display (nice for UI)
+        // Optional: get equipment name for display
         $equipment = null;
         if ($details && isset($details->itemID)) {
             $equipment = itemMaintenanceInfo::query()->find($details->itemID);
