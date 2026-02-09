@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('item_maintenance_infos', function (Blueprint $table) {
             $table->id('itemID');
             $table->string('itemName');
-            $table->integer('quantity');
-            $table->string('stockLevel');
-            $table->string('condition');
+            $table->integer('quantity')->nullable();
+            $table->string('stockLevel')->nullable();
+            $table->string('condition')->nullable();
             $table->string('status');
             $table->string('category');
             $table->text('description')->nullable();

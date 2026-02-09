@@ -55,10 +55,7 @@ body {
     font-size: 14px;
 }
 
-.btn-secondary {
-    background: #f3f4f6;
-    color: #111827;
-}
+.btn-secondary { background: #f3f4f6; color: #111827; }
 .btn-secondary:hover { background: #e5e7eb; }
 
 .btn-primary {
@@ -153,7 +150,7 @@ body {
 
 <div class="main-content-view">
     <div class="header-title-wrapper">
-        <h1 class="maintenance-title">Edit: {{ $item->product_name ?? $item->itemName ?? 'Item' }}</h1>
+        <h1 class="maintenance-title">Edit: {{ $item->itemName }}</h1>
 
         <div class="btn-holder">
             <a href="{{ route('admin.inventory.show', $item->itemID) }}" class="btn btn-secondary">
@@ -182,33 +179,24 @@ body {
         @method('PUT')
 
         <div class="content-grid">
-            <!-- LEFT: DETAILS -->
+            <!-- LEFT -->
             <div class="card-box">
                 <div class="card-title">Item / Equipment Details</div>
 
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>ID *</label>
-                        <input class="form-control" name="itemID"
-                               value="{{ old('itemID', $item->itemID ?? $item->itemID ?? '') }}"
-                               required>
-                    </div>
-
-                    <div class="form-group">
+                    <div class="form-group full">
                         <label>Item Name *</label>
                         <input class="form-control" name="itemName"
-                               value="{{ old('itemName', $item->itemName ?? $item->itemName ?? '') }}"
+                               value="{{ old('itemName', $item->itemName) }}"
                                required>
                     </div>
 
                     <div class="form-group">
                         <label>Category *</label>
-                        @php
-                            $cat = strtolower(old('category', $item->category ?? 'item'));
-                        @endphp
-                        <select class="form-select" name="category" required>
-                            <option value="item" {{ $cat === 'item' ? 'selected' : '' }}>Item</option>
-                            <option value="equipment" {{ $cat === 'equipment' ? 'selected' : '' }}>Equipment</option>
+                        @php $cat = strtolower(old('category', $item->category)); @endphp
+                        <select class="form-select" name="category" id="categorySelect" required>
+                            <option value="item" {{ $cat==='item' ? 'selected' : '' }}>Item</option>
+                            <option value="equipment" {{ $cat==='equipment' ? 'selected' : '' }}>Equipment</option>
                         </select>
                     </div>
 
@@ -216,42 +204,48 @@ body {
                         <label>Status</label>
                         @php $status = old('status', $item->status ?? 'available'); @endphp
                         <select class="form-select" name="status">
-                            <option value="available" {{ $status === 'available' ? 'selected' : '' }}>available</option>
-                            <option value="under maintenance" {{ $status === 'under maintenance' ? 'selected' : '' }}>under maintenance</option>
-                            <option value="unavailable" {{ $status === 'unavailable' ? 'selected' : '' }}>unavailable</option>
+                            <option value="available" {{ $status==='available' ? 'selected' : '' }}>available</option>
+                            <option value="under maintenance" {{ $status==='under maintenance' ? 'selected' : '' }}>under maintenance</option>
+                            <option value="unavailable" {{ $status==='unavailable' ? 'selected' : '' }}>unavailable</option>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label>Quantity</label>
-                        <input class="form-control" name="quantity" value="{{ old('quantity', $item->quantity ?? '') }}">
+                    <!-- ITEM ONLY -->
+                    <div id="itemFields" class="full" style="display:none;">
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:14px;">
+                            <div class="form-group">
+                                <label>Quantity *</label>
+                                <input class="form-control" name="quantity" id="quantityInput"
+                                       value="{{ old('quantity', $item->quantity) }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Stock Level *</label>
+                                <input class="form-control" name="stockLevel" id="stockLevelInput"
+                                       value="{{ old('stockLevel', $item->stockLevel) }}">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Stock Level</label>
-                        <input class="form-control" name="stockLevel" value="{{ old('stockLevel', $item->stockLevel ?? '') }}">
+                    <!-- EQUIPMENT ONLY -->
+                    <div id="equipmentFields" class="full" style="display:none;">
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:14px;">
+                            <div class="form-group full">
+                                <label>Condition *</label>
+                                <input class="form-control" name="condition" id="conditionInput"
+                                       value="{{ old('condition', $item->condition) }}">
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="form-group">
-                        <label>Condition</label>
-                        <input class="form-control" name="condition" value="{{ old('condition', $item->condition ?? '') }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Model</label>
-                        <input class="form-control" name="model" value="{{ old('model', $item->model ?? '') }}">
-                    </div>
-
 
                     <div class="form-group full">
                         <label>Description</label>
-                        <textarea class="form-control" name="description" rows="3">{{ old('description', $item->description ?? '') }}</textarea>
+                        <textarea class="form-control" name="description" rows="3">{{ old('description', $item->description) }}</textarea>
                     </div>
-
                 </div>
             </div>
 
-            <!-- RIGHT: IMAGE -->
+            <!-- RIGHT -->
             <div class="card-box">
                 <div class="card-title">Item / Equipment Image</div>
 
@@ -278,21 +272,60 @@ body {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // image preview
     const input = document.getElementById('imageInput');
     const img = document.getElementById('previewImage');
     const placeholder = document.getElementById('previewPlaceholder');
 
-    if (!input) return;
+    if (input) {
+        input.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            img.src = url;
+            img.style.display = 'block';
+            if (placeholder) placeholder.style.display = 'none';
+        });
+    }
 
-    input.addEventListener('change', function () {
-        const file = this.files && this.files[0];
-        if (!file) return;
+    // category toggle
+    const category = document.getElementById('categorySelect');
+    const itemFields = document.getElementById('itemFields');
+    const equipmentFields = document.getElementById('equipmentFields');
 
-        const url = URL.createObjectURL(file);
-        img.src = url;
-        img.style.display = 'block';
-        if (placeholder) placeholder.style.display = 'none';
-    });
+    const quantity = document.getElementById('quantityInput');
+    const stockLevel = document.getElementById('stockLevelInput');
+    const condition = document.getElementById('conditionInput');
+
+    function toggleFields() {
+        const val = (category.value || '').toLowerCase();
+
+        if (val === 'item') {
+            itemFields.style.display = '';
+            equipmentFields.style.display = 'none';
+
+            if (quantity) quantity.required = true;
+            if (stockLevel) stockLevel.required = true;
+            if (condition) condition.required = false;
+
+            if (condition) condition.value = '';
+        } else {
+            itemFields.style.display = 'none';
+            equipmentFields.style.display = '';
+
+            if (quantity) quantity.required = false;
+            if (stockLevel) stockLevel.required = false;
+            if (condition) condition.required = true;
+
+            if (quantity) quantity.value = '';
+            if (stockLevel) stockLevel.value = '';
+        }
+    }
+
+    if (category) {
+        category.addEventListener('change', toggleFields);
+        toggleFields();
+    }
 });
 </script>
 @endsection

@@ -32,7 +32,6 @@ body {
     font-weight: 700;
     color: #1f2937;
     margin: 0;
-    letter-spacing: -0.5px;
 }
 
 .btn {
@@ -44,16 +43,12 @@ body {
     border-radius: 12px;
     cursor: pointer;
     border: none;
-    transition: all 0.3s ease;
     text-decoration: none;
     font-size: 14px;
-}
-
-.btn-secondary {
     background: #f3f4f6;
     color: #111827;
 }
-.btn-secondary:hover { background: #e5e7eb; }
+.btn:hover { background: #e5e7eb; }
 
 .content-grid {
     display: grid;
@@ -75,66 +70,47 @@ body {
     margin-bottom: 14px;
 }
 
-.details-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-.details-table tr {
+.details-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
     border-bottom: 1px solid #eef2f7;
+    gap: 14px;
 }
+.details-row:last-child { border-bottom: none; }
 
-.details-table td {
-    padding: 12px 10px;
-    vertical-align: top;
-}
-
-.details-table td:first-child {
-    width: 180px;
+.label {
     font-size: 11px;
-    font-weight: 800;
+    font-weight: 700;
     color: #6b7280;
     letter-spacing: 0.6px;
     text-transform: uppercase;
+    min-width: 140px;
 }
-
-.badge-pill {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
+.value {
+    font-size: 14px;
+    color: #111827;
+    text-align: right;
+    flex: 1;
 }
-
-.badge-green { background: #ecfdf5; color: #059669; }
-.badge-blue  { background: #e0f2fe; color: #0369a1; }
 
 .image-box {
     border-radius: 14px;
     border: 1px solid #e5e7eb;
     background: #f9fafb;
-    height: 240px;
+    height: 260px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
 }
+.image-box img { width:100%; height:100%; object-fit: contain; }
 
-.image-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-.small-note {
-    font-size: 12px;
-    color: #6b7280;
-    margin-top: 8px;
-}
+.small-note { font-size:12px; color:#6b7280; margin-top:8px; }
 
 @media (max-width: 900px) {
     .content-grid { grid-template-columns: 1fr; }
+    .value { text-align: left; }
 }
 </style>
 
@@ -142,41 +118,30 @@ body {
     <div class="header-title-wrapper">
         <h1 class="maintenance-title">Inventory Item Details</h1>
 
-        <a href="{{ route('admin.inventory.dashboard') }}" class="btn btn-secondary">
+        <a href="{{ route('admin.inventory.dashboard') }}" class="btn">
             <i class="fas fa-arrow-left"></i> Back
         </a>
     </div>
 
     <div class="content-grid">
-        <!-- LEFT: DETAILS -->
         <div class="card-box">
             <div class="card-title">Item / Equipment Information</div>
 
-            <table class="details-table">
-                <tr><td>ID</td><td>{{ $item->itemID }}</td></tr>
-                <tr><td>Item Name</td><td>{{ $item->itemName ?? $item->itemCode ?? '-' }}</td></tr>
-                <tr>
-                    <td>Category</td>
-                    <td>
-                        @if(strtolower($item->category ?? '') === 'item')
-                            <span class="badge-pill badge-green">Item</span>
-                        @else
-                            <span class="badge-pill badge-blue">Equipment</span>
-                        @endif
-                    </td>
-                </tr>
-                <tr><td>Status</td><td>{{ $item->status ?? '-' }}</td></tr>
-                <tr><td>Quantity</td><td>{{ $item->quantity ?? '-' }}</td></tr>
-                <tr><td>Stock Level</td><td>{{ $item->stockLevel ?? '-' }}</td></tr>
-                <tr><td>Condition</td><td>{{ $item->condition ?? '-' }}</td></tr>
-                <tr><td>Category</td><td>{{ $item->category ?? '-' }}</td></tr> 
-                <tr><td>Description</td><td>{{ $item->description ?? '-' }}</td></tr>
-                <tr><td>Created At</td><td>{{ $item->created_at ?? '-' }}</td></tr>
-                <tr><td>Updated At</td><td>{{ $item->updated_at ?? '-' }}</td></tr>
-            </table>
+            <div class="details-row"><div class="label">ID</div><div class="value">{{ $item->itemID }}</div></div>
+            <div class="details-row"><div class="label">Name</div><div class="value">{{ $item->itemName }}</div></div>
+            <div class="details-row"><div class="label">Category</div><div class="value">{{ $item->category }}</div></div>
+            <div class="details-row"><div class="label">Status</div><div class="value">{{ $item->status }}</div></div>
+
+            @if(strtolower($item->category) === 'item')
+                <div class="details-row"><div class="label">Quantity</div><div class="value">{{ $item->quantity }}</div></div>
+                <div class="details-row"><div class="label">Stock Level</div><div class="value">{{ $item->stockLevel }}</div></div>
+            @else
+                <div class="details-row"><div class="label">Condition</div><div class="value">{{ $item->condition }}</div></div>
+            @endif
+
+            <div class="details-row"><div class="label">Description</div><div class="value">{{ $item->description ?? '-' }}</div></div>
         </div>
 
-        <!-- RIGHT: IMAGE -->
         <div class="card-box">
             <div class="card-title">Item / Equipment Image</div>
 
@@ -188,9 +153,7 @@ body {
                 @endif
             </div>
 
-            <div class="small-note">
-                Uploaded images are stored in storage/app/public.
-            </div>
+            <div class="small-note">Uploaded images are stored in storage/app/public.</div>
         </div>
     </div>
 </div>

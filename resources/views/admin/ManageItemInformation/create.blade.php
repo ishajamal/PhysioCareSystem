@@ -192,72 +192,59 @@ body {
                 <div class="card-title">Item / Equipment Details</div>
 
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>Product Code *</label>
-                        <input class="form-control" name="product_code" value="{{ old('product_code') }}" placeholder="e.g., C023" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Product Name *</label>
-                        <input class="form-control" name="product_name" value="{{ old('product_name') }}" placeholder="e.g., Hot Gel" required>
+                    <div class="form-group full">
+                        <label>Item Name *</label>
+                        <input class="form-control" name="itemName" value="{{ old('itemName') }}" placeholder="e.g., Hot/Cold Pack" required>
                     </div>
 
                     <div class="form-group">
                         <label>Category *</label>
-                        <select class="form-select" name="category" required>
-                            <option value="" disabled {{ old('category') ? '' : 'selected' }}>Select Category</option>
-                            <option value="item" {{ old('category') === 'item' ? 'selected' : '' }}>Item</option>
-                            <option value="equipment" {{ old('category') === 'equipment' ? 'selected' : '' }}>Equipment</option>
+                        @php $cat = strtolower(old('category','')); @endphp
+                        <select class="form-select" name="category" id="categorySelect" required>
+                            <option value="" disabled {{ $cat==='' ? 'selected' : '' }}>Select Category</option>
+                            <option value="item" {{ $cat==='item' ? 'selected' : '' }}>Item</option>
+                            <option value="equipment" {{ $cat==='equipment' ? 'selected' : '' }}>Equipment</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Status</label>
+                        @php $status = old('status','available'); @endphp
                         <select class="form-select" name="status">
-                            <option value="available" {{ old('status','available') === 'available' ? 'selected' : '' }}>available</option>
-                            <option value="under maintenance" {{ old('status') === 'under maintenance' ? 'selected' : '' }}>under maintenance</option>
-                            <option value="unavailable" {{ old('status') === 'unavailable' ? 'selected' : '' }}>unavailable</option>
+                            <option value="available" {{ $status==='available' ? 'selected' : '' }}>available</option>
+                            <option value="under maintenance" {{ $status==='under maintenance' ? 'selected' : '' }}>under maintenance</option>
+                            <option value="unavailable" {{ $status==='unavailable' ? 'selected' : '' }}>unavailable</option>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label>Quantity</label>
-                        <input class="form-control" name="quantity" value="{{ old('quantity') }}" placeholder="e.g., 10">
+                    <!-- ITEM ONLY -->
+                    <div id="itemFields" class="full" style="display:none;">
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:14px;">
+                            <div class="form-group">
+                                <label>Quantity *</label>
+                                <input class="form-control" name="quantity" id="quantityInput" value="{{ old('quantity') }}" placeholder="e.g., 10">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Stock Level *</label>
+                                <input class="form-control" name="stockLevel" id="stockLevelInput" value="{{ old('stockLevel') }}" placeholder="e.g., low / adequate / high">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Unit</label>
-                        <input class="form-control" name="unit" value="{{ old('unit') }}" placeholder="e.g., bottle / unit / piece">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Brand</label>
-                        <input class="form-control" name="brand" value="{{ old('brand') }}" placeholder="e.g., PhysioCare">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Model</label>
-                        <input class="form-control" name="model" value="{{ old('model') }}" placeholder="e.g., HG-200">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Serial Number</label>
-                        <input class="form-control" name="serial_number" value="{{ old('serial_number') }}" placeholder="(Optional)">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Location</label>
-                        <input class="form-control" name="location" value="{{ old('location') }}" placeholder="e.g., Storage Room">
+                    <!-- EQUIPMENT ONLY -->
+                    <div id="equipmentFields" class="full" style="display:none;">
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:14px;">
+                            <div class="form-group full">
+                                <label>Condition *</label>
+                                <input class="form-control" name="condition" id="conditionInput" value="{{ old('condition') }}" placeholder="e.g., good / excellent / fair">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group full">
                         <label>Description</label>
                         <textarea class="form-control" name="description" rows="3" placeholder="Description...">{{ old('description') }}</textarea>
-                    </div>
-
-                    <div class="form-group full">
-                        <label>Notes</label>
-                        <textarea class="form-control" name="notes" rows="3" placeholder="Notes...">{{ old('notes') }}</textarea>
                     </div>
                 </div>
             </div>
@@ -286,25 +273,71 @@ body {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // image preview
     const input = document.getElementById('imageInput');
     const img = document.getElementById('previewImage');
     const placeholder = document.getElementById('previewPlaceholder');
 
-    if (!input) return;
+    if (input) {
+        input.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) {
+                img.style.display = 'none';
+                placeholder.style.display = 'block';
+                return;
+            }
+            const url = URL.createObjectURL(file);
+            img.src = url;
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+        });
+    }
 
-    input.addEventListener('change', function () {
-        const file = this.files && this.files[0];
-        if (!file) {
-            img.style.display = 'none';
-            placeholder.style.display = 'block';
-            return;
+    // category toggle
+    const category = document.getElementById('categorySelect');
+    const itemFields = document.getElementById('itemFields');
+    const equipmentFields = document.getElementById('equipmentFields');
+
+    const quantity = document.getElementById('quantityInput');
+    const stockLevel = document.getElementById('stockLevelInput');
+    const condition = document.getElementById('conditionInput');
+
+    function toggleFields() {
+        const val = (category.value || '').toLowerCase();
+
+        if (val === 'item') {
+            itemFields.style.display = '';
+            equipmentFields.style.display = 'none';
+
+            if (quantity) quantity.required = true;
+            if (stockLevel) stockLevel.required = true;
+            if (condition) condition.required = false;
+
+            if (condition) condition.value = '';
+        } else if (val === 'equipment') {
+            itemFields.style.display = 'none';
+            equipmentFields.style.display = '';
+
+            if (quantity) quantity.required = false;
+            if (stockLevel) stockLevel.required = false;
+            if (condition) condition.required = true;
+
+            if (quantity) quantity.value = '';
+            if (stockLevel) stockLevel.value = '';
+        } else {
+            itemFields.style.display = 'none';
+            equipmentFields.style.display = 'none';
+
+            if (quantity) quantity.required = false;
+            if (stockLevel) stockLevel.required = false;
+            if (condition) condition.required = false;
         }
+    }
 
-        const url = URL.createObjectURL(file);
-        img.src = url;
-        img.style.display = 'block';
-        placeholder.style.display = 'none';
-    });
+    if (category) {
+        category.addEventListener('change', toggleFields);
+        toggleFields(); // run once
+    }
 });
 </script>
 @endsection
