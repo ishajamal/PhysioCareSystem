@@ -155,6 +155,71 @@ body {
     .content-grid { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: 1fr; }
 }
+/* Custom Dropdown */
+.custom-dropdown {
+    position: relative;
+    font-size: 14px;
+}
+
+.dropdown-selected {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #f9fafb;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.dropdown-selected:hover {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.dropdown-selected::after {
+    content: "\f078"; /* FontAwesome chevron down */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+.dropdown-options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+    z-index: 100;
+}
+
+.dropdown-options li {
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dropdown-options li:hover {
+    background: #eef2ff;
+}
+.required {
+    color: #dc2626; /* Red color for required asterisk */
+    margin-left: 2px;
+}
+
+
 </style>
 
 <div class="main-content-view">
@@ -193,40 +258,35 @@ body {
 
                 <div class="form-grid">
                     <div class="form-group full">
-                        <label>Item Name *</label>
+                        <label>Item Name <span class="required">*</label>
                         <input class="form-control" name="itemName" value="{{ old('itemName') }}" placeholder="e.g., Hot/Cold Pack" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Category *</label>
-                        @php $cat = strtolower(old('category','')); @endphp
-                        <select class="form-select" name="category" id="categorySelect" required>
-                            <option value="" disabled {{ $cat==='' ? 'selected' : '' }}>Select Category</option>
-                            <option value="item" {{ $cat==='item' ? 'selected' : '' }}>Item</option>
-                            <option value="equipment" {{ $cat==='equipment' ? 'selected' : '' }}>Equipment</option>
-                        </select>
+                    <div class="form-group"> 
+                        <label>Category <span class="required">*</label> 
+                        @php $cat = strtolower(old('category','')); @endphp 
+                        <select class="form-select" name="category" id="categorySelect" required> 
+                            <option value="" disabled {{ $cat==='' ? 'selected' : '' }}>Select Category</option> 
+                            <option value="item" {{ $cat==='item' ? 'selected' : '' }}>Item</option> 
+                            <option value="equipment" {{ $cat==='equipment' ? 'selected' : '' }}>Equipment</option> 
+                        </select> 
                     </div>
 
                     <div class="form-group">
                         <label>Status</label>
-                        @php $status = old('status','available'); @endphp
-                        <select class="form-select" name="status">
-                            <option value="available" {{ $status==='available' ? 'selected' : '' }}>available</option>
-                            <option value="under maintenance" {{ $status==='under maintenance' ? 'selected' : '' }}>under maintenance</option>
-                            <option value="unavailable" {{ $status==='unavailable' ? 'selected' : '' }}>unavailable</option>
-                        </select>
+                        <input class="form-control" name="status" id="status" value="available" >
                     </div>
 
                     <!-- ITEM ONLY -->
                     <div id="itemFields" class="full" style="display:none;">
                         <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:14px;">
                             <div class="form-group">
-                                <label>Quantity *</label>
+                                <label>Quantity <span class="required">*</label>
                                 <input class="form-control" name="quantity" id="quantityInput" value="{{ old('quantity') }}" placeholder="e.g., 10">
                             </div>
 
                             <div class="form-group">
-                                <label>Stock Level *</label>
+                                <label>Stock Level <span class="required">*</label>
                                 <input class="form-control" name="stockLevel" id="stockLevelInput" value="{{ old('stockLevel') }}" placeholder="e.g., low / adequate / high">
                             </div>
                         </div>
@@ -236,7 +296,7 @@ body {
                     <div id="equipmentFields" class="full" style="display:none;">
                         <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:14px;">
                             <div class="form-group full">
-                                <label>Condition *</label>
+                                <label>Condition <span class="required">*</label>
                                 <input class="form-control" name="condition" id="conditionInput" value="{{ old('condition') }}" placeholder="e.g., good / excellent / fair">
                             </div>
                         </div>
@@ -339,5 +399,46 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleFields(); // run once
     }
 });
+
+// Custom Dropdown
+const dropdownSelected = document.getElementById('dropdownSelected');
+const dropdownOptions = document.getElementById('dropdownOptions');
+const categoryInput = document.getElementById('categoryInput');
+
+if (dropdownSelected && dropdownOptions && categoryInput) {
+    // Show / hide dropdown
+    dropdownSelected.addEventListener('click', () => {
+        dropdownOptions.style.display = dropdownOptions.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Select option
+    dropdownOptions.querySelectorAll('li').forEach(option => {
+        option.addEventListener('click', () => {
+            const value = option.dataset.value;
+            dropdownSelected.textContent = option.textContent;
+            categoryInput.value = value;
+            dropdownOptions.style.display = 'none';
+            toggleFields(); // trigger your existing item/equipment fields
+        });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!dropdownSelected.contains(e.target) && !dropdownOptions.contains(e.target)) {
+            dropdownOptions.style.display = 'none';
+        }
+    });
+
+    // Set old value if exists
+    @if(old('category'))
+        const oldVal = "{{ old('category') }}";
+        const oldOption = dropdownOptions.querySelector(`li[data-value='${oldVal}']`);
+        if (oldOption) {
+            dropdownSelected.textContent = oldOption.textContent;
+            categoryInput.value = oldVal;
+        }
+    @endif
+}
+
 </script>
 @endsection

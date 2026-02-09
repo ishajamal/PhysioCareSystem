@@ -226,10 +226,51 @@ class UsageHistoryController extends Controller
         }
     }
 
-    public function delete($id) {
-       DB::beginTransaction();
+    // public function delete($id) {
+    //    DB::beginTransaction();
+    //     try {
+    //         itemUsage::where('usageID', $id)->delete();
+    //         usageRecord::where('usageID', $id)->delete();
+
+    //         DB::commit();
+
+    //         return redirect()->route('therapist.usage.history')
+    //                         ->with('success', 'Usage record deleted successfully!');
+
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+
+    //         return redirect()->route('therapist.usage.history')
+    //                         ->withErrors(['error' => 'Failed to delete usage record']);
+    //     }
+    // }
+
+    public function delete($id)
+    {
+        DB::beginTransaction();
         try {
+            // Get all item usages for this usage record
+            $itemUsages = itemUsage::where('usageID', $id)->get();
+
+            foreach ($itemUsages as $itemUsage) {
+                $item = $itemUsage->itemMaintenanceInfo;
+
+                // Add the quantity back to inventory
+                if ($item) {
+                    $item->increment('quantity', $itemUsage->quantityUsed);
+
+                    // Optional: update status back to "available" if quantity > 0
+                    if ($item->quantity > 0 && $item->status === 'Unavailable') {
+                        $item->status = 'available';
+                        $item->save();
+                    }
+                }
+            }
+
+            // Delete all item usages
             itemUsage::where('usageID', $id)->delete();
+
+            // Delete usage record itself
             usageRecord::where('usageID', $id)->delete();
 
             DB::commit();
@@ -241,9 +282,10 @@ class UsageHistoryController extends Controller
             DB::rollBack();
 
             return redirect()->route('therapist.usage.history')
-                            ->withErrors(['error' => 'Failed to delete usage record']);
+                            ->withErrors(['error' => 'Failed to delete usage record: ' . $e->getMessage()]);
         }
     }
+
 
 
 }

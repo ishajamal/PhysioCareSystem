@@ -183,7 +183,7 @@ textarea {
         <h1 class="page-title">Edit Inventory Item</h1>
 
         <div class="btn-holder">
-            <a href="{{ route('admin.inventory.show', $item->itemID) }}" class="btn btn-secondary">
+            <a href="{{ route('admin.inventory.dashboard', $item->itemID) }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back
             </a>
 

@@ -171,6 +171,45 @@ public function updateCartItem(Request $request, $itemID)
                     ->with('success', 'Cart item updated successfully!');
 }
 
+// public function submitUsageRecord()
+// {
+//     $usageID = session('current_usage_id');
+
+//     if (!$usageID) {
+//         return redirect()->route('therapist.usage.record')
+//                          ->withErrors(['error' => 'No active usage record to submit!']);
+//     }
+
+//     $cartItems = itemUsage::where('usageID', $usageID)->get();
+
+//     DB::beginTransaction();
+//     try {
+//         foreach ($cartItems as $cart) {
+//             $item = itemMaintenanceInfo::findOrFail($cart->itemID);
+
+//             if ($item->quantity < $cart->quantityUsed) {
+//                 throw new \Exception("Insufficient stock for item {$item->itemName}");
+//             }
+
+//             // Subtract stock
+//             $item->quantity -= $cart->quantityUsed;
+//             $item->save();
+//         }
+
+        
+
+//         session()->forget('current_usage_id');
+
+//         DB::commit();
+
+//         return redirect()->route('therapist.usage.history')
+//                          ->with('success', 'Usage record submitted successfully!');
+
+//     } catch (\Exception $e) {
+//         DB::rollBack();
+//         return back()->withErrors(['error' => 'Failed to submit usage record: ' . $e->getMessage()]);
+//     }
+// }
 public function submitUsageRecord()
 {
     $usageID = session('current_usage_id');
@@ -193,10 +232,15 @@ public function submitUsageRecord()
 
             // Subtract stock
             $item->quantity -= $cart->quantityUsed;
+
+            // Update status to "Unavailable" if quantity is 0
+            if ($item->quantity <= 0) {
+                $item->status = 'Unavailable';
+                $item->quantity = 0; // ensure it doesn't go negative
+            }
+
             $item->save();
         }
-
-        
 
         session()->forget('current_usage_id');
 
@@ -210,6 +254,7 @@ public function submitUsageRecord()
         return back()->withErrors(['error' => 'Failed to submit usage record: ' . $e->getMessage()]);
     }
 }
+
 
 public function deleteCartItem($itemID)
 {
