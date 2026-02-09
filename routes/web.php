@@ -13,7 +13,7 @@ use App\Http\Controllers\admin\GenerateReport\ReportController;
 use App\Http\Controllers\admin\MonitorUsage\monitorUsageController;  
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\InventoryController;
-
+//
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -139,7 +139,7 @@ Route::middleware('auth')->group(function () {
     */
         Route::prefix('usage')->name('usage.')->group(function () {
             Route::get('/', [monitorUsageController::class, 'retrieveUsagerecord'])->name('dashboard');
-            Route::post('/filter', [monitorUsageController::class, 'displayfilteredsearh'])->name('filter');
+            Route::get('/filter', [monitorUsageController::class, 'displayfilteredsearh'])->name('filter');
             Route::get('/refresh', [monitorUsageController::class, 'refreshMonitoringdata'])->name('refresh');
             Route::get('/{usageID}', [monitorUsageController::class, 'showusagedetails'])->name('details');
         });
