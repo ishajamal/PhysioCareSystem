@@ -271,9 +271,6 @@ body {
                         <select name="role" class="role-select">
                             <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                             <option value="therapist" {{ $user->role == 'therapist' ? 'selected' : '' }}>Therapist</option>
-                            <option value="manager" {{ $user->role == 'manager' ? 'selected' : '' }}>Manager</option>
-                            <option value="technician" {{ $user->role == 'technician' ? 'selected' : '' }}>Technician</option>
-                            <option value="staff" {{ $user->role == 'staff' ? 'selected' : '' }}>Staff</option>
                         </select>
                     </div>
                     

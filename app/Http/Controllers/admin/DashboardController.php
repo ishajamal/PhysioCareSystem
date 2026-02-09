@@ -10,10 +10,11 @@ class DashboardController extends Controller
     public function index()
     {
         // Stats
-        $newRequests = MaintenanceRequest::where('status', 'new')->count();
+        $InProgressRequests = MaintenanceRequest::where('status', 'in progress')->count();
         $pendingRequests = MaintenanceRequest::where('status', 'pending')->count();
         $completedRequests = MaintenanceRequest::where('status', 'completed')->count();
 
+        
         // Inventory
         $lowStockItems = ItemMaintenanceInfo::where('quantity', '<=', 5)->get();
         $lowStockCount = $lowStockItems->count();
@@ -25,7 +26,7 @@ class DashboardController extends Controller
             ->get();
 
         return view('admin.dashboard', compact(
-            'newRequests', 
+            'InProgressRequests', 
             'pendingRequests', 
             'completedRequests', 
             'lowStockItems', 
