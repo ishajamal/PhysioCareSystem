@@ -22,17 +22,17 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 26px;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 14px;
 }
 
-.maintenance-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1f2937;
+.page-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #111827;
     margin: 0;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.6px;
 }
 
 .btn-holder {
@@ -46,16 +46,19 @@ body {
     align-items: center;
     gap: 8px;
     padding: 10px 18px;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: 12px;
     cursor: pointer;
     border: none;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     text-decoration: none;
     font-size: 14px;
 }
 
-.btn-secondary { background: #f3f4f6; color: #111827; }
+.btn-secondary {
+    background: #f3f4f6;
+    color: #111827;
+}
 .btn-secondary:hover { background: #e5e7eb; }
 
 .btn-primary {
@@ -65,6 +68,7 @@ body {
 }
 .btn-primary:hover { background: #1a4070; transform: translateY(-1px); }
 
+/* ===== layout like organized screenshot ===== */
 .content-grid {
     display: grid;
     grid-template-columns: 2fr 1.2fr;
@@ -72,43 +76,49 @@ body {
 }
 
 .card-box {
-    background: white;
+    background: #fff;
     border-radius: 18px;
     padding: 22px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
 }
 
 .card-title {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 800;
     color: #111827;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
 }
 
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 16px 20px;
 }
 
 .form-group label {
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     color: #6b7280;
     letter-spacing: 0.6px;
     text-transform: uppercase;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     display: block;
 }
 
 .form-control, .form-select, textarea {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid #e5e7eb;
     background: #f9fafb;
-    padding: 10px 12px;
+    padding: 12px 14px;
     font-size: 14px;
+    color: #111827;
     outline: none;
+}
+
+textarea {
+    min-height: 120px;
+    resize: none;
 }
 
 .form-control:focus, .form-select:focus, textarea:focus {
@@ -119,11 +129,35 @@ body {
 
 .full { grid-column: 1 / -1; }
 
+/* status pill */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    width: fit-content;
+}
+
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-available { background: #10b981; }
+.dot-unavailable { background: #ef4444; }
+.dot-under-maintenance { background: #f59e0b; }
+
+.status-text {
+    font-weight: 800;
+    color: #111827;
+    text-transform: capitalize;
+}
+
+/* image panel */
 .image-box {
     border-radius: 14px;
     border: 1px solid #e5e7eb;
     background: #f9fafb;
-    height: 240px;
+    height: 320px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -136,11 +170,7 @@ body {
     object-fit: contain;
 }
 
-.small-note {
-    font-size: 12px;
-    color: #6b7280;
-    margin-top: 8px;
-}
+.small-note { font-size: 12px; color: #6b7280; margin-top: 10px; }
 
 @media (max-width: 900px) {
     .content-grid { grid-template-columns: 1fr; }
@@ -150,7 +180,7 @@ body {
 
 <div class="main-content-view">
     <div class="header-title-wrapper">
-        <h1 class="maintenance-title">Edit: {{ $item->itemName }}</h1>
+        <h1 class="page-title">Edit Inventory Item</h1>
 
         <div class="btn-holder">
             <a href="{{ route('admin.inventory.show', $item->itemID) }}" class="btn btn-secondary">
@@ -179,16 +209,19 @@ body {
         @method('PUT')
 
         <div class="content-grid">
-            <!-- LEFT -->
+            {{-- LEFT --}}
             <div class="card-box">
                 <div class="card-title">Item / Equipment Details</div>
 
                 <div class="form-grid">
-                    <div class="form-group full">
+                    <div class="form-group">
+                        <label>Item ID</label>
+                        <input class="form-control" value="{{ $item->itemID }}" readonly>
+                    </div>
+
+                    <div class="form-group">
                         <label>Item Name *</label>
-                        <input class="form-control" name="itemName"
-                               value="{{ old('itemName', $item->itemName) }}"
-                               required>
+                        <input class="form-control" name="itemName" value="{{ old('itemName', $item->itemName) }}" required>
                     </div>
 
                     <div class="form-group">
@@ -203,16 +236,32 @@ body {
                     <div class="form-group">
                         <label>Status</label>
                         @php $status = old('status', $item->status ?? 'available'); @endphp
-                        <select class="form-select" name="status">
+
+                        {{-- Keep dropdown (editable) but show it like organized --}}
+                        <select class="form-select" name="status" id="statusSelect">
                             <option value="available" {{ $status==='available' ? 'selected' : '' }}>available</option>
                             <option value="under maintenance" {{ $status==='under maintenance' ? 'selected' : '' }}>under maintenance</option>
                             <option value="unavailable" {{ $status==='unavailable' ? 'selected' : '' }}>unavailable</option>
                         </select>
+
+                        {{-- Optional: small pill preview under dropdown --}}
+                        <div style="margin-top:10px;">
+                            @php
+                                $st = strtolower($status);
+                                $dotClass = 'dot-available';
+                                if ($st === 'unavailable') $dotClass = 'dot-unavailable';
+                                if ($st === 'under maintenance') $dotClass = 'dot-under-maintenance';
+                            @endphp
+                            <div class="status-pill">
+                                <span class="dot {{ $dotClass }}" id="statusDot"></span>
+                                <span class="status-text" id="statusText">{{ $status }}</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- ITEM ONLY -->
+                    {{-- ITEM ONLY --}}
                     <div id="itemFields" class="full" style="display:none;">
-                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:14px;">
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:16px 20px;">
                             <div class="form-group">
                                 <label>Quantity *</label>
                                 <input class="form-control" name="quantity" id="quantityInput"
@@ -227,10 +276,10 @@ body {
                         </div>
                     </div>
 
-                    <!-- EQUIPMENT ONLY -->
+                    {{-- EQUIPMENT ONLY --}}
                     <div id="equipmentFields" class="full" style="display:none;">
-                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:14px;">
-                            <div class="form-group full">
+                        <div class="form-grid" style="grid-template-columns: 1fr; gap:16px 20px;">
+                            <div class="form-group">
                                 <label>Condition *</label>
                                 <input class="form-control" name="condition" id="conditionInput"
                                        value="{{ old('condition', $item->condition) }}">
@@ -240,12 +289,12 @@ body {
 
                     <div class="form-group full">
                         <label>Description</label>
-                        <textarea class="form-control" name="description" rows="3">{{ old('description', $item->description) }}</textarea>
+                        <textarea class="form-control" name="description" rows="4">{{ old('description', $item->description) }}</textarea>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT -->
+            {{-- RIGHT --}}
             <div class="card-box">
                 <div class="card-title">Item / Equipment Image</div>
 
@@ -259,7 +308,7 @@ body {
                 </div>
 
                 <div style="margin-top:14px;">
-                    <label style="font-size:11px;font-weight:700;color:#6b7280;letter-spacing:0.6px;text-transform:uppercase;margin-bottom:6px;display:block;">
+                    <label style="font-size:11px;font-weight:800;color:#6b7280;letter-spacing:0.6px;text-transform:uppercase;margin-bottom:8px;display:block;">
                         Replace Image
                     </label>
                     <input class="form-control" type="file" name="image" accept=".jpg,.jpeg,.png,.webp" id="imageInput">
@@ -325,6 +374,28 @@ document.addEventListener('DOMContentLoaded', function () {
     if (category) {
         category.addEventListener('change', toggleFields);
         toggleFields();
+    }
+
+    // status pill preview updates
+    const statusSelect = document.getElementById('statusSelect');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+
+    function updateStatusPill() {
+        if (!statusSelect || !statusDot || !statusText) return;
+
+        const val = (statusSelect.value || '').toLowerCase();
+        statusText.textContent = statusSelect.value;
+
+        statusDot.classList.remove('dot-available', 'dot-unavailable', 'dot-under-maintenance');
+        if (val === 'unavailable') statusDot.classList.add('dot-unavailable');
+        else if (val === 'under maintenance') statusDot.classList.add('dot-under-maintenance');
+        else statusDot.classList.add('dot-available');
+    }
+
+    if (statusSelect) {
+        statusSelect.addEventListener('change', updateStatusPill);
+        updateStatusPill();
     }
 });
 </script>

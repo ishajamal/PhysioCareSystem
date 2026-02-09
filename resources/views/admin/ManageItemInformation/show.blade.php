@@ -22,33 +22,39 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 26px;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 14px;
 }
 
-.maintenance-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1f2937;
+.page-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #111827;
     margin: 0;
+    letter-spacing: -0.6px;
 }
+
+.btn-holder { display: flex; gap: 12px; align-items: center; }
 
 .btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 10px 18px;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: 12px;
     cursor: pointer;
     border: none;
     text-decoration: none;
     font-size: 14px;
+}
+
+.btn-secondary {
     background: #f3f4f6;
     color: #111827;
 }
-.btn:hover { background: #e5e7eb; }
+.btn-secondary:hover { background: #e5e7eb; }
 
 .content-grid {
     display: grid;
@@ -57,106 +63,210 @@ body {
 }
 
 .card-box {
-    background: white;
+    background: #fff;
     border-radius: 18px;
     padding: 22px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
 }
 
 .card-title {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 800;
     color: #111827;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
 }
 
-.details-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #eef2f7;
-    gap: 14px;
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
 }
-.details-row:last-child { border-bottom: none; }
 
-.label {
+.form-group label {
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     color: #6b7280;
     letter-spacing: 0.6px;
     text-transform: uppercase;
-    min-width: 140px;
-}
-.value {
-    font-size: 14px;
-    color: #111827;
-    text-align: right;
-    flex: 1;
+    margin-bottom: 8px;
+    display: block;
 }
 
+.form-control, .form-textarea {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #111827;
+    outline: none;
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: none;
+}
+
+.form-control[readonly],
+.form-textarea[readonly] {
+    cursor: default;
+}
+
+/* full width row */
+.full { grid-column: 1 / -1; }
+
+/* status pill */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    width: fit-content;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot-available { background: #10b981; }
+.dot-unavailable { background: #ef4444; }
+.dot-under-maintenance { background: #f59e0b; }
+
+.status-text {
+    font-weight: 800;
+    color: #111827;
+    text-transform: capitalize;
+}
+
+/* image panel */
 .image-box {
     border-radius: 14px;
     border: 1px solid #e5e7eb;
     background: #f9fafb;
-    height: 260px;
+    height: 320px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
 }
-.image-box img { width:100%; height:100%; object-fit: contain; }
 
-.small-note { font-size:12px; color:#6b7280; margin-top:8px; }
+.image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
 
+.placeholder {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.small-note {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 10px;
+}
+
+/* responsive */
 @media (max-width: 900px) {
     .content-grid { grid-template-columns: 1fr; }
-    .value { text-align: left; }
+    .form-grid { grid-template-columns: 1fr; }
 }
 </style>
 
 <div class="main-content-view">
-    <div class="header-title-wrapper">
-        <h1 class="maintenance-title">Inventory Item Details</h1>
 
-        <a href="{{ route('admin.inventory.dashboard') }}" class="btn">
-            <i class="fas fa-arrow-left"></i> Back
-        </a>
+    <div class="header-title-wrapper">
+        <h1 class="page-title">Inventory Item Details</h1>
+
+        <div class="btn-holder">
+            <a href="{{ route('admin.inventory.dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
     </div>
 
     <div class="content-grid">
+
+        {{-- LEFT CARD: DETAILS --}}
         <div class="card-box">
             <div class="card-title">Item / Equipment Information</div>
 
-            <div class="details-row"><div class="label">ID</div><div class="value">{{ $item->itemID }}</div></div>
-            <div class="details-row"><div class="label">Name</div><div class="value">{{ $item->itemName }}</div></div>
-            <div class="details-row"><div class="label">Category</div><div class="value">{{ $item->category }}</div></div>
-            <div class="details-row"><div class="label">Status</div><div class="value">{{ $item->status }}</div></div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Item ID</label>
+                    <input class="form-control" value="{{ $item->itemID }}" readonly>
+                </div>
 
-            @if(strtolower($item->category) === 'item')
-                <div class="details-row"><div class="label">Quantity</div><div class="value">{{ $item->quantity }}</div></div>
-                <div class="details-row"><div class="label">Stock Level</div><div class="value">{{ $item->stockLevel }}</div></div>
-            @else
-                <div class="details-row"><div class="label">Condition</div><div class="value">{{ $item->condition }}</div></div>
-            @endif
+                <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" value="{{ $item->itemName }}" readonly>
+                </div>
 
-            <div class="details-row"><div class="label">Description</div><div class="value">{{ $item->description ?? '-' }}</div></div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input class="form-control" value="{{ ucfirst($item->category) }}" readonly>
+                </div>
 
-            <div class="info-row">
-                <span class="label">CREATED AT</span>
-                <span class="value">
-                    {{ $item->created_at ? $item->created_at->format('d M Y, h:i A') : '-' }}
-                </span>
+                <div class="form-group">
+                    <label>Status</label>
+                    @php
+                        $st = strtolower($item->status ?? 'available');
+                        $dotClass = 'dot-available';
+                        if ($st === 'unavailable') $dotClass = 'dot-unavailable';
+                        if ($st === 'under maintenance') $dotClass = 'dot-under-maintenance';
+                    @endphp
+                    <div class="status-pill">
+                        <span class="dot {{ $dotClass }}"></span>
+                        <span class="status-text">{{ $item->status ?? 'available' }}</span>
+                    </div>
+                </div>
+
+                {{-- Show fields based on category --}}
+                @if(strtolower($item->category) === 'item')
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input class="form-control" value="{{ $item->quantity ?? '-' }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Level</label>
+                        <input class="form-control" value="{{ $item->stockLevel ?? '-' }}" readonly>
+                    </div>
+                @else
+                    <div class="form-group full">
+                        <label>Condition</label>
+                        <input class="form-control" value="{{ $item->condition ?? '-' }}" readonly>
+                    </div>
+                @endif
+
+                <div class="form-group full">
+                    <label>Description</label>
+                    <textarea class="form-textarea" readonly>{{ $item->description ?? '-' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Created At</label>
+                    <input class="form-control"
+                           value="{{ $item->created_at ? $item->created_at->format('d/m/Y h:i A') : '-' }}"
+                           readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Updated At</label>
+                    <input class="form-control"
+                           value="{{ $item->updated_at ? $item->updated_at->format('d/m/Y h:i A') : '-' }}"
+                           readonly>
+                </div>
             </div>
-
-            <div class="info-row">
-                <span class="label">UPDATED AT</span>
-                <span class="value">
-                    {{ $item->updated_at ? $item->updated_at->format('d M Y, h:i A') : '-' }}
-                </span>
-            </div>
-
         </div>
 
+        {{-- RIGHT CARD: IMAGE --}}
         <div class="card-box">
             <div class="card-title">Item / Equipment Image</div>
 
@@ -164,12 +274,13 @@ body {
                 @if($imageUrl)
                     <img src="{{ $imageUrl }}" alt="Item Image">
                 @else
-                    <div class="small-note">No image available</div>
+                    <div class="placeholder">No image available</div>
                 @endif
             </div>
 
             <div class="small-note">Uploaded images are stored in storage/app/public.</div>
         </div>
+
     </div>
 </div>
 @endsection
