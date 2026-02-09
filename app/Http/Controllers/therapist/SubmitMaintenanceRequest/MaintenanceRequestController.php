@@ -92,7 +92,7 @@ class MaintenanceRequestController extends Controller
             $mr = maintenanceRequest::create([
                 'userID' => Auth::id(),
                 'dateSubmitted' => now(),
-                'status' => 'pending',
+                'status' => 'Pending',
                 'submittedBy' => Auth::id(),
                 'isRead' => 0,
             ]);

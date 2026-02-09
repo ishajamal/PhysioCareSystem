@@ -258,11 +258,6 @@
     <div class="card">
         <div class="card-header">
             <h2>Inventory</h2>
-            <select class="filter">
-                <option>view all</option>
-                <option>Low Stock</option>
-                <option>Out of Stock</option>
-            </select>
         </div>
 
         <div class="inventory-status">
@@ -288,11 +283,6 @@
     <div class="card">
         <div class="card-header">
             <h2>Top Item</h2>
-            <select class="filter">
-                <option>This month</option>
-                <option>This week</option>
-                <option>Today</option>
-            </select>
         </div>
 
         <table class="items-table">

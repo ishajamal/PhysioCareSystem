@@ -169,6 +169,12 @@ body {
 .records-table th:first-child {
     padding-left: 30px;
 }
+.records-table th:nth-child(5),
+.records-table td:nth-child(5) {
+    width: 120px;
+    min-width: 120px;
+    text-align: center;
+}
 
 .records-table th:last-child {
     padding-right: 30px;
@@ -243,75 +249,56 @@ body {
     border-radius: 50%;
 }
 
-.action-buttons {
-    justify-content: center !important;        /* center horizontally */
-    align-items: center !important;            /* center vertically */
-    gap: 10px;                      /* spacing between buttons */
-}
 
 
-/* View Button */
-.btn-view {
+/* ================= MODERN BUTTONS ================= */
+.btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    gap: 8px;
+    padding: 10px 22px;
+    font-weight: 600;
     font-size: 16px;
-    border: none;
+    border-radius: 12px;
     cursor: pointer;
-    transition: 0.2s ease;
-    background-color: #dbeafe;
-    color: #1e40af;
-    text-decoration: none;
-}
-
-.btn-view:hover {
-    background-color: #bfdbfe;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(30, 64, 175, 0.2);
-}
-
-/* Edit Button */
-.btn-edit {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    font-size: 16px;
     border: none;
-    cursor: pointer;
-    transition: 0.2s ease;
-    background-color: #fef3c7;
-    color: #b45309;
-    text-decoration: none;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-.btn-edit:hover {
-    background-color: #fde68a;
+/* Cancel Button - Gray */
+.btn-cancel {
+    background-color: #f0f0f0;
+    color: #333;
 }
 
-/* Delete Button */
-.btn-delete {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s ease;
-    background-color: #fee2e2;
-    color: #b91c1c;
+.btn-cancel:hover {
+    background-color: #e0e0e0;
 }
 
-.btn-delete:hover {
-    background-color: #fca5a5;
+/* Submit Button - Green */
+.btn-submit {
+    background-color: #4caf50;
+    color: white;
+}
+
+.btn-submit:hover {
+    background-color: #43a047;
+}
+
+/* Add Item Button - Blue Gradient */
+.btn-add {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.btn-add:hover {
+    background: linear-gradient(135deg, #1e40af, #1d4ed8);
+}
+
+/* Icon inside buttons */
+.btn i {
+    font-size: 18px;
 }
 
 /* ================= EMPTY STATE ================= */
@@ -349,7 +336,15 @@ body {
     line-height: 1.5;
 }
 
-.btn-edit, .btn-delete {
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.btn-edit, .btn-delete, .btn-view {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -359,16 +354,43 @@ body {
     font-size: 16px;
     border: none;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    flex-shrink: 0;
 }
 
-.btn-edit { background-color: #fef3c7; color: #b45309; }
-.btn-edit:hover { background-color: #fde68a; }
+.btn-view {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
 
-.btn-delete { background-color: #fee2e2; color: #b91c1c; }
-.btn-delete:hover { background-color: #fca5a5; }
+.btn-view:hover {
+    background-color: #bfdbfe;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(30, 64, 175, 0.2);
+}
 
+.btn-edit {
+    background-color: #fef3c7;
+    color: #b45309;
+}
 
+.btn-edit:hover {
+    background-color: #fde68a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(180, 83, 9, 0.2);
+}
+
+.btn-delete {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.btn-delete:hover {
+    background-color: #fca5a5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(185, 28, 28, 0.2);
+}
 /* ================= FOOTER ================= */
 .table-footer {
     padding: 20px 30px;
@@ -529,11 +551,11 @@ body {
                                         class="btn-view"
                                         title="View Details"
                                         onclick="window.location='{{ route('therapist.view.history.details', $record['usageID']) }}'">
-                                    <i class="bi bi-eye"></i>
+                                    <i class="fa fa-eye"></i>
                                 </button>
 
                                 <button class="btn-delete" onclick="openModal('deleteModal{{ $record['usageID'] }}')">
-                                    <i class="bi bi-trash"></i>
+                                    <i class="fa fa-trash"></i>
                                 </button>
                             </td>
                             <x-delete-modal

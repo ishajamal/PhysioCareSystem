@@ -296,15 +296,17 @@ body {
                 <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; border: 1px solid #bae6fd;">
                     <span class="info-label" style="color: #0369a1;">Update Status</span>
                     <select name="status" class="status-dropdown">
-                        @php $currentStatus = $request->status; @endphp
-                        <option value="Pending" {{ $currentStatus == 'Pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="In Progress" {{ $currentStatus == 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                        <option value="Completed" {{ $currentStatus == 'Completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="Rejected" {{ $currentStatus == 'Rejected' ? 'selected' : '' }}>Rejected</option>
-                        <option value="Cancelled" {{ $currentStatus == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        @php 
+                            $currentStatus = strtolower(trim($request->status)); 
+                        @endphp
+                        
+                        <option value="Pending" {{ $currentStatus == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="In Progress" {{ $currentStatus == 'in progress' ? 'selected' : '' }}>In Progress</option>
+                        <option value="Completed" {{ $currentStatus == 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="Rejected" {{ $currentStatus == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                        <option value="Cancelled" {{ $currentStatus == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                     </select>
                 </div>
-
                 <hr style="margin: 30px 0; border: 0; border-top: 1px solid #e5e7eb;">
 
                 <h3 class="section-title">Submitted By</h3>
