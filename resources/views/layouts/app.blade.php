@@ -878,9 +878,7 @@
                 <ul>
                     <li>
                         <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                            <i class="bi bi-clipboard2-data-fill"></i> <span>Dashboard</span> 
-                            <span class="badge pulse" id="dashboardMenuBadge" style="display: none;">0</span>
-                        </a>
+                            <i class="bi bi-clipboard2-data-fill"></i> <span>Dashboard</span>                         </a>
                     </li>
                     <li>
                         <a href="{{ route('admin.inventory.dashboard') }}" 
@@ -892,7 +890,6 @@
                         <a href="{{ route('admin.maintenance.index') }}" 
                            class="{{ in_array(request()->route()->getName(), ['admin.maintenance.index','admin.maintenance.view','admin.maintenance.edit']) ? 'active' : '' }}">
                             <i class="bi bi-journal-check"></i> <span>Maintenance</span>
-                            <span class="badge" id="sidebarMaintenanceBadge" style="display: none;">0</span>
                         </a>
                     </li>
                     <li>

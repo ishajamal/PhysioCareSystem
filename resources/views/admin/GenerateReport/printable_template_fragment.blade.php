@@ -1,4 +1,5 @@
-<div id="printableReportContainer" style="font-family: 'Inter', Arial, sans-serif; padding: 28px; color:#111;">
+<!-- Printable template fragment for reuse -->
+<div style="font-family: 'Inter', Arial, sans-serif; padding: 28px; color:#111;">
     <div style="text-align:center; margin-bottom:24px;">
         <img src="{{ asset('images/physiocare-logo.png') }}" alt="PhysioCare" style="height:32px; object-fit:contain; display:block; margin:0 auto; margin-bottom:16px;">
         <div style="font-size:18px; font-weight:700; margin-bottom:20px;">PhysioCare Inventory System</div>
@@ -8,7 +9,7 @@
 
     <div style="margin-top:20px;">
         @if(strtolower($report->reportType) === 'usage')
-            <table class="printable-table" id="usagePrintTable" style="width:100%; border-collapse:collapse; font-size:12px;">
+            <table style="width:100%; border-collapse:collapse; font-size:12px;">
                 <thead>
                     <tr>
                         <th style="padding:8px; border-bottom:1px solid #ddd; text-align:left;">No</th>
@@ -23,23 +24,27 @@
                 <tbody>
                     @forelse($reportData as $record)
                         @foreach($record->itemUsages as $index => $usage)
-                            <tr>
-                                <td style="padding:8px; vertical-align:top;">{{ $loop->parent->iteration }}</td>
-                                <td style="padding:8px; vertical-align:top;">{{ $record->usageID }}</td>
-                                <td style="padding:8px; vertical-align:top;">{{ $usage->item->itemID ?? 'N/A' }}</td>
-                                <td style="padding:8px; vertical-align:top;">{{ $usage->item->product_name ?? 'N/A' }}</td>
-                                <td style="padding:8px; vertical-align:top;">{{ $usage->quantity ?? 'N/A' }}</td>
-                                <td style="padding:8px; vertical-align:top;">{{ $record->user->name ?? 'N/A' }}</td>
-                                <td style="padding:8px; vertical-align:top;">{{ $record->usageDate?->format('Y-m-d H:i') ?? 'N/A' }}</td>
-                            </tr>
-                        @endforeach
+    <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 16px 14px; color: #374151;">{{ $loop->parent->iteration }}.{{ $index + 1 }}</td>
+        <td style="padding: 16px 14px; color: #374151;">#{{ $record->usageID }}</td>
+        <td style="padding: 16px 14px; color: #374151;">{{ $usage->itemID ?? 'N/A' }}</td>
+        
+        <td style="padding: 16px 14px; color: #374151;">
+            {{ $usage->itemMaintenanceInfo->itemName ?? 'N/A' }}
+        </td>
+        
+        <td style="padding: 16px 14px; color: #374151;">{{ $usage->quantityUsed ?? 'N/A' }}</td>
+        <td style="padding: 16px 14px; color: #374151;">{{ $record->usedByUser->name ?? 'N/A' }}</td>
+        <td style="padding: 16px 14px; color: #374151;">{{ $record->usageDate?->format('Y-m-d') ?? 'N/A' }}</td>
+    </tr>
+@endforeach
                     @empty
                         <tr><td colspan="7" style="padding:18px; text-align:center; color:#666;">No usage data</td></tr>
                     @endforelse
                 </tbody>
             </table>
         @elseif(strtolower($report->reportType) === 'maintenance')
-            <table class="printable-table" id="maintenancePrintTable" style="width:100%; border-collapse:collapse; font-size:12px;">
+            <table style="width:100%; border-collapse:collapse; font-size:12px;">
                 <thead>
                     <tr>
                         <th style="padding:8px; border-bottom:1px solid #ddd; text-align:left;">No</th>
@@ -57,8 +62,8 @@
                     @forelse($reportData as $request)
                         @foreach($request->itemMaintenances as $index => $maintenance)
                             <tr>
-                                <td style="padding:8px; vertical-align:top;">{{ $loop->parent->iteration }}</td>
-                                <td style="padding:8px; vertical-align:top;">{{ $request->requestID }}</td>
+                                <td style="padding:8px; vertical-align:top;">{{ $loop->parent->iteration }}.{{ $index + 1 }}</td>
+                                <td style="padding:8px; vertical-align:top;">#{{ $request->requestID }}</td>
                                 <td style="padding:8px; vertical-align:top;">{{ $maintenance->itemInfo->itemID ?? 'N/A' }}</td>
                                 <td style="padding:8px; vertical-align:top;">{{ $maintenance->itemInfo->product_name ?? 'N/A' }}</td>
                                 <td style="padding:8px; vertical-align:top;">{{ $maintenance->itemIssue ?? 'N/A' }}</td>
@@ -80,50 +85,3 @@
         &copy; {{ date('Y') }} PhysioCare Inventory System
     </div>
 </div>
-
-<script>
-(function() {
-    function cleanPrintableColumns() {
-        const tables = document.querySelectorAll('.printable-table');
-        tables.forEach(table => {
-            const rows = table.querySelectorAll('tbody tr');
-            if (rows.length === 0 || (rows.length === 1 && rows[0].cells.length === 1)) return;
-
-            const headerCells = table.querySelectorAll('thead th');
-            const colCount = headerCells.length;
-
-            for (let i = 0; i < colCount; i++) {
-                let allNA = true;
-                let hasDataRows = false;
-
-                rows.forEach(row => {
-                    const cell = row.cells[i];
-                    if (cell) {
-                        hasDataRows = true;
-                        const text = cell.textContent.trim();
-                        // If we find any value that isn't N/A, keep the column
-                        if (text !== 'N/A' && text !== '') {
-                            allNA = false;
-                        }
-                    }
-                });
-
-                if (allNA && hasDataRows) {
-                    // Hide Header
-                    headerCells[i].style.display = 'none';
-                    // Hide corresponding cells in all rows
-                    rows.forEach(row => {
-                        if (row.cells[i]) row.cells[i].style.display = 'none';
-                    });
-                }
-            }
-        });
-    }
-
-    // Run immediately
-    cleanPrintableColumns();
-    
-    // Also attach to window load for safety in popup windows
-    window.onload = cleanPrintableColumns;
-})();
-</script>

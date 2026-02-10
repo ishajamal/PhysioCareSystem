@@ -7,37 +7,61 @@ use App\Models\usageRecord;
 use App\Models\itemUsage;
 use App\Models\itemMaintenanceInfo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class monitorUsageController extends Controller
 {
 
-    public function retrieveUsagerecord(Request $request)
+   public function retrieveUsagerecord(Request $request)
 {
     $perPage = (int) $request->get('perPage', 10);
     
-    // Calculate the most used item today
+    // 1. Calculate the most used item today (Keep your existing logic)
     $today = now()->startOfDay();
     $mostUsedToday = \App\Models\itemUsage::whereHas('usageRecord', function ($q) use ($today) {
             $q->whereDate('usageDate', $today);
         })
         ->with('itemMaintenanceInfo')
-        ->select('itemID', \DB::raw('SUM(quantityUsed) as total_qty'))
+        ->select('itemID', DB::raw('SUM(quantityUsed) as total_qty'))
         ->groupBy('itemID')
         ->orderBy('total_qty', 'desc')
         ->first();
 
-    // Base query for the table
+    // 2. Base query for the table using correct relationship names
     $query = itemUsage::with(['usageRecord.usedByUser', 'itemMaintenanceInfo'])
         ->join('usage_records', 'item_usages.usageID', '=', 'usage_records.usageID')
         ->select('item_usages.*');
 
-    // ... (existing filters for userName, itemCategory, etc.) ...
+    // 3. APPLY FILTERS (This was missing/commented out)
+    
+    // Filter by Staff Name
+    if ($request->filled('userName')) {
+        $query->whereHas('usageRecord.usedByUser', function ($q) use ($request) {
+            $q->where('name', 'like', '%' . $request->userName . '%');
+        });
+    }
 
+    // Filter by Category
+    if ($request->filled('itemCategory')) {
+        $query->whereHas('itemMaintenanceInfo', function ($q) use ($request) {
+            $q->where('category', $request->itemCategory);
+        });
+    }
+
+    // Filter by Date Range
+    if ($request->filled('dateStart')) {
+        $query->whereDate('usage_records.usageDate', '>=', $request->dateStart);
+    }
+    if ($request->filled('dateEnd')) {
+        $query->whereDate('usage_records.usageDate', '<=', $request->dateEnd);
+    }
+
+    // 4. Finalize and Paginate
     $itemUsages = $query->orderBy('usage_records.usageDate', 'desc')
         ->paginate($perPage)
         ->appends($request->query());
 
-    // Include the variable in compact
     return view('admin.MonitorUsage.monitorDashboard', compact('itemUsages', 'mostUsedToday'));
 }
     /**
