@@ -48,16 +48,51 @@ body {
     overflow: hidden;
 }
 
+/* ================= TABS ================= */
+.tabs-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 1px;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease;
+    position: relative;
+    bottom: -2px; /* Aligns with bottom border */
+}
+
+.tab-btn:hover {
+    color: #3b82f6;
+    background: #eff6ff;
+}
+
+.tab-btn.active {
+    color: #2563eb;
+    background: #eff6ff;
+    border-bottom: 3px solid #2563eb;
+}
+
 /* ================= TABLE TITLE BAR ================= */
 .table-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    margin-top: 10px;
 }
 
 .handle-maintenance-title {
-    font-size: 34px;
+    font-size: 24px;
     font-weight: 700;
     color: #1f2937;
     margin: 0;
@@ -183,29 +218,12 @@ body {
     vertical-align: middle;
 }
 
-.status-pending {
-    background: #f59e0b; 
-}
-
-.status-in-progress {
-    background: #3b82f6; 
-}
-
-.status-approved {
-    background: #10b981; 
-}
-
-.status-rejected {
-    background: #ef4444; 
-}
-
-.status-completed {
-    background: #10b981; 
-}
-
-.status-cancelled {
-    background: #6b7280; 
-}
+.status-pending { background: #f59e0b; }
+.status-in-progress { background: #3b82f6; }
+.status-approved { background: #10b981; }
+.status-rejected { background: #ef4444; }
+.status-completed { background: #10b981; }
+.status-cancelled { background: #6b7280; }
 
 /* ================= STATUS BADGES ================= */
 .status-badge {
@@ -221,35 +239,12 @@ body {
     box-sizing: border-box;
 }
 
-.status-pending-badge {
-    background: #fffbeb;
-    color: #d97706;
-}
-
-.status-in-progress-badge {
-    background: #eff6ff;
-    color: #2563eb;
-}
-
-.status-approved-badge {
-    background: #ecfdf5;
-    color: #059669;
-}
-
-.status-rejected-badge {
-    background: #fef2f2;
-    color: #dc2626;
-}
-
-.status-completed-badge {
-    background: #ecfdf5;
-    color: #059669;
-}
-
-.status-cancelled-badge {
-    background: #f3f4f6;
-    color: #6b7280;
-}
+.status-pending-badge { background: #fffbeb; color: #d97706; }
+.status-in-progress-badge { background: #eff6ff; color: #2563eb; }
+.status-approved-badge { background: #ecfdf5; color: #059669; }
+.status-rejected-badge { background: #fef2f2; color: #dc2626; }
+.status-completed-badge { background: #ecfdf5; color: #059669; }
+.status-cancelled-badge { background: #f3f4f6; color: #6b7280; }
 
 /* ================= ACTION BUTTONS ================= */
 .action-buttons {
@@ -297,17 +292,6 @@ body {
     box-shadow: 0 4px 8px rgba(180, 83, 9, 0.2);
 }
 
-.btn-delete {
-    background-color: #fee2e2;
-    color: #b91c1c;
-}
-
-.btn-delete:hover {
-    background-color: #fca5a5;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(185, 28, 28, 0.2);
-}
-
 .delete-btn {
     display: inline-flex;
     align-items: center;
@@ -339,20 +323,13 @@ body {
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 992px) {
-    .inventory-table th:nth-child(1),
-    .inventory-table td:nth-child(1),
-    .inventory-table th:nth-child(2),
-    .inventory-table td:nth-child(2),
-    .inventory-table th:nth-child(3),
-    .inventory-table td:nth-child(3),
-    .inventory-table th:nth-child(4),
-    .inventory-table td:nth-child(4),
-    .inventory-table th:nth-child(5),
-    .inventory-table td:nth-child(5),
-    .inventory-table th:nth-child(6),
-    .inventory-table td:nth-child(6),
-    .inventory-table th:nth-child(7),
-    .inventory-table td:nth-child(7) {
+    .inventory-table th:nth-child(1), .inventory-table td:nth-child(1),
+    .inventory-table th:nth-child(2), .inventory-table td:nth-child(2),
+    .inventory-table th:nth-child(3), .inventory-table td:nth-child(3),
+    .inventory-table th:nth-child(4), .inventory-table td:nth-child(4),
+    .inventory-table th:nth-child(5), .inventory-table td:nth-child(5),
+    .inventory-table th:nth-child(6), .inventory-table td:nth-child(6),
+    .inventory-table th:nth-child(7), .inventory-table td:nth-child(7) {
         width: auto;
         min-width: auto;
     }
@@ -364,85 +341,35 @@ body {
 }
 
 @media (max-width: 768px) {
-    .main-content-maintenance {
-        padding: 20px 15px;
-    }
-
-    .handle-maintenance-title {
-        font-size: 22px;
-    }
-
-    .table-title {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 15px;
-    }
-
-    .search-container {
-        width: 100%;
-        min-width: auto;
-    }
-
-    .table-container {
-        padding: 15px;
-    }
-
-    .inventory-table th,
-    .inventory-table td {
-        padding: 12px 8px;
-        font-size: 13px;
-    }
-    
-    .action-buttons {
-        gap: 8px;
-    }
-    
-    .btn-view, .btn-edit, .btn-delete, .delete-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 14px;
-    }
-    
-    .status-badge {
-        font-size: 11px;
-        padding: 5px 8px;
-        min-width: 80px;
-    }
-}
-
-@media (max-width: 480px) {
-    .inventory-table {
-        display: block;
-        overflow-x: auto;
-    }
-    
-    .action-buttons {
-        gap: 6px;
-    }
-    
-    .btn-view, .btn-edit, .btn-delete, .delete-btn {
-        width: 30px;
-        height: 30px;
-        font-size: 13px;
-    }
-    
-    .status-badge {
-        font-size: 10px;
-        padding: 4px 6px;
-        min-width: 70px;
-    }
+    .main-content-maintenance { padding: 20px 15px; }
+    .table-title { flex-direction: column; align-items: stretch; gap: 15px; }
+    .search-container { width: 100%; min-width: auto; }
+    .table-container { padding: 15px; }
+    .inventory-table th, .inventory-table td { padding: 12px 8px; font-size: 13px; }
+    .action-buttons { gap: 8px; }
+    .btn-view, .btn-edit, .btn-delete, .delete-btn { width: 32px; height: 32px; font-size: 14px; }
+    .status-badge { font-size: 11px; padding: 5px 8px; min-width: 80px; }
+    .tabs-container { overflow-x: auto; white-space: nowrap; padding-bottom: 5px; }
 }
 </style>
 
 <div class="main-content-maintenance">
     <div class="table-container">
+        
+        {{-- ================= TABS SECTION ================= --}}
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab('active', this)">Active Requests</button>
+            <button class="tab-btn" onclick="switchTab('history', this)">History (Completed/Closed)</button>
+        </div>
+
         <div class="table-title">
-            <span class="handle-maintenance-title">Maintenance Request</span>
+            <span class="handle-maintenance-title" id="table-heading">Active Maintenance Requests</span>
             <div class="search-container">
                 <i class="fas fa-search"></i>
                 <input type="text" placeholder="Search" class="search-input" id="search-input" />
             </div>
         </div>
+
         <table class="inventory-table">
             <thead>
                 <tr>
@@ -458,9 +385,11 @@ body {
             <tbody id="maintenance-table-body">
                 @forelse($requests as $index => $row)
                 @php
-                    $statusClass = strtolower(str_replace(' ', '-', $row->maintenanceRequest->status));
+                    $rawStatus = strtolower(trim($row->maintenanceRequest->status));
+                    $statusClass = str_replace(' ', '-', $rawStatus);
                 @endphp
-                <tr data-row-id="{{ $row->requestID }}">
+                {{-- Added class "maintenance-row" and "data-status" attribute for JS filtering --}}
+                <tr class="maintenance-row" data-status="{{ $rawStatus }}" data-row-id="{{ $row->requestID }}">
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $row->requestID }}</td>
                     <td>{{ $row->maintenanceRequest->userID }}</td>
@@ -468,7 +397,7 @@ body {
                     <td>
                         <span class="status-indicator status-{{ $statusClass }}"></span>
                         <span class="status-badge status-{{ $statusClass }}-badge">
-                            {{ $row->maintenanceRequest->status }}
+                            {{ ucfirst($row->maintenanceRequest->status) }}
                         </span>
                     </td>
                     <td>{{ $row->itemInfo->itemName ?? 'N/A' }}</td>
@@ -496,16 +425,90 @@ body {
                     />
                 
                 @empty
-                <tr id="noResultsRow">
-                    <td colspan="7" style="text-align: center">No record found</td>
-                </tr>
                 @endforelse
+                
+                {{-- This row is handled by JS now --}}
+                <tr id="noResultsRow" style="display: none;">
+                    <td colspan="7" style="text-align: center">No record found in this section</td>
+                </tr>
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
+    // ================= TAB & FILTER LOGIC =================
+    let currentTab = 'active'; // Default tab
+    const finalStates = ['completed', 'rejected', 'cancelled']; // States that belong in History
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Run filter immediately to hide completed items from the active tab on load
+        applyFilters(); 
+
+        const searchInput = document.getElementById("search-input");
+        searchInput.addEventListener("input", function () {
+            applyFilters();
+        });
+    });
+
+    function switchTab(tab, btnElement) {
+        currentTab = tab;
+        
+        // Update styling on tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+
+        // Update the heading text
+        const heading = document.getElementById('table-heading');
+        if (tab === 'active') {
+            heading.innerText = 'Active Maintenance Requests';
+        } else {
+            heading.innerText = 'Maintenance History';
+        }
+
+        // Re-apply filters based on new tab
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const query = document.getElementById("search-input").value.toLowerCase();
+        const rows = document.querySelectorAll(".maintenance-row");
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const status = row.getAttribute('data-status');
+            const textMatch = row.innerText.toLowerCase().includes(query);
+            
+            // Determine if the row belongs in the currently selected tab
+            let tabMatch = false;
+            if (currentTab === 'active') {
+                // If it is NOT in final states, it is active
+                tabMatch = !finalStates.includes(status);
+            } else if (currentTab === 'history') {
+                // If it IS in final states, it belongs in history
+                tabMatch = finalStates.includes(status);
+            }
+
+            // Show row ONLY if it matches the tab AND the search query
+            if (tabMatch && textMatch) {
+                row.style.display = "";
+                visibleCount++;
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        // Handle empty states (No results)
+        const noRes = document.getElementById("noResultsRow");
+        if (visibleCount === 0) {
+            noRes.style.display = "table-row";
+        } else {
+            noRes.style.display = "none";
+        }
+    }
+
+
+    // ================= MODAL LOGIC =================
     function openModal(modalId) {
         var modal = document.getElementById(modalId);
         
@@ -544,35 +547,5 @@ body {
             event.target.classList.add('hidden');
         }
     }
-
-document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.getElementById("search-input");
-
-    searchInput.addEventListener("input", function () {
-        const query = this.value.toLowerCase();
-        const rows = document.querySelectorAll("#maintenance-table-body tr:not(#noResultsRow)");
-        let visibleCount = 0;
-
-        rows.forEach(row => {
-            const match = row.innerText.toLowerCase().includes(query);
-            row.style.display = match ? "" : "none";
-            if(match) visibleCount++;
-        });
-
-        const noRes = document.getElementById("noResultsRow");
-        if (visibleCount === 0) {
-            if (!noRes) {
-                const newRow = document.createElement('tr');
-                newRow.id = 'noResultsRow';
-                newRow.innerHTML = `<td colspan="7" style="text-align: center">No record found</td>`;
-                document.getElementById("maintenance-table-body").appendChild(newRow);
-            } else {
-                noRes.style.display = "table-row";
-            }
-        } else if (noRes) {
-            noRes.style.display = "none";
-        }
-    });
-});
 </script>
 @endsection

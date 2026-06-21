@@ -3,6 +3,8 @@
 @section('title', 'Report Details - #' . $report->reportID)
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
@@ -98,22 +100,14 @@
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
-.badge-usage {
-    background: #dbeafe;
-    color: #0369a1;
-}
-
-.badge-maintenance {
-    background: #fecaca;
-    color: #dc2626;
-}
+.badge-usage { background: #dbeafe; color: #0369a1; }
+.badge-maintenance { background: #fecaca; color: #dc2626; }
 
 .action-buttons-group {
     display: flex;
     gap: 12px;
     margin-top: 20px;
 }
-
 
 .report-content {
     background: white;
@@ -132,6 +126,19 @@
 .empty-state-icon {
     font-size: 48px;
     margin-bottom: 15px;
+}
+
+/* ================= CHART CONTAINER ================= */
+.chart-wrapper {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 350px;
 }
 </style>
 
@@ -158,27 +165,72 @@
         </div>
 
         <div class="btn-holder">
-                <a href="{{ route('admin.reports.dashboard') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back
-                </a>
-                <button type="submit" class="btn btn-primary" onclick="printReport()">
-                    <i class="fas fa-print"></i> Print Report
-                </button>
-            </div>
-
-        <!-- <div class="action-buttons-group" style="flex-direction: column; margin-top: 0;">
-            <button type="button" class="btn btn-primary" onclick="printReport()">
-                <i class="fas fa-download"></i> Export / Print
-            </button>
             <a href="{{ route('admin.reports.dashboard') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back 
+                <i class="fas fa-arrow-left"></i> Back
             </a>
+            <button type="submit" class="btn btn-primary" onclick="printReport()">
+                <i class="fas fa-print"></i> Print Report
+            </button>
         </div>
-    </div> -->
-<!--  -->
+    </div>
+
     <div class="report-content">
+
+        {{-- ================= DATA PREPARATION FOR CHART ================= --}}
+        @php
+            $chartLabels = [];
+            $chartValues = [];
+            $chartTitle = '';
+
+            if (strtolower($report->reportType) === 'usage') {
+                $chartTitle = 'Most Used Equipment (By Quantity)';
+                $itemCounts = [];
+                
+                foreach($reportData as $record) {
+                    foreach($record->itemUsages as $usage) {
+                        $name = $usage->itemMaintenanceInfo->itemName ?? 'Unknown Item';
+                        $qty = is_numeric($usage->quantityUsed) ? (int)$usage->quantityUsed : 1;
+                        
+                        if(!isset($itemCounts[$name])) {
+                            $itemCounts[$name] = 0;
+                        }
+                        $itemCounts[$name] += $qty;
+                    }
+                }
+                arsort($itemCounts); // Sort highest to lowest
+                $chartLabels = array_keys($itemCounts);
+                $chartValues = array_values($itemCounts);
+                
+            } elseif (strtolower($report->reportType) === 'maintenance') {
+                $chartTitle = 'Maintenance Issues (By Equipment)';
+                $itemCounts = [];
+                
+                foreach($reportData as $request) {
+                    foreach($request->itemMaintenances as $maintenance) {
+                        $name = $maintenance->itemInfo->product_name ?? 'Unknown Equipment';
+                        
+                        if(!isset($itemCounts[$name])) {
+                            $itemCounts[$name] = 0;
+                        }
+                        $itemCounts[$name] += 1;
+                    }
+                }
+                arsort($itemCounts); // Sort highest to lowest
+                $chartLabels = array_keys($itemCounts);
+                $chartValues = array_values($itemCounts);
+            }
+        @endphp
+
+        {{-- ================= RENDER CHART ================= --}}
+        @if(!empty($chartLabels) && !empty($chartValues))
+            <div class="chart-wrapper">
+                <canvas id="reportChart" style="max-height: 300px; width: 100%;"></canvas>
+            </div>
+        @endif
+
+
+        {{-- ================= DATA TABLES ================= --}}
         @if(strtolower($report->reportType) === 'usage')
-            <!-- USAGE REPORT TABLE -->
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
@@ -195,20 +247,16 @@
                     <tbody>
                         @forelse($reportData as $record)
                             @foreach($record->itemUsages as $index => $usage)
-    <tr style="border-bottom: 1px solid #f1f5f9;">
-        <td style="padding: 16px 14px; color: #374151;">{{ $loop->parent->iteration }}.{{ $index + 1 }}</td>
-        <td style="padding: 16px 14px; color: #374151;">#{{ $record->usageID }}</td>
-        <td style="padding: 16px 14px; color: #374151;">{{ $usage->itemID ?? 'N/A' }}</td>
-        
-        <td style="padding: 16px 14px; color: #374151;">
-            {{ $usage->itemMaintenanceInfo->itemName ?? 'N/A' }}
-        </td>
-        
-        <td style="padding: 16px 14px; color: #374151;">{{ $usage->quantityUsed ?? 'N/A' }}</td>
-        <td style="padding: 16px 14px; color: #374151;">{{ $record->usedByUser->name ?? 'N/A' }}</td>
-        <td style="padding: 16px 14px; color: #374151;">{{ $record->usageDate?->format('Y-m-d') ?? 'N/A' }}</td>
-    </tr>
-@endforeach
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="padding: 16px 14px; color: #374151;">{{ $loop->parent->iteration }}.{{ $index + 1 }}</td>
+                                    <td style="padding: 16px 14px; color: #374151;">#{{ $record->usageID }}</td>
+                                    <td style="padding: 16px 14px; color: #374151;">{{ $usage->itemID ?? 'N/A' }}</td>
+                                    <td style="padding: 16px 14px; color: #374151;">{{ $usage->itemMaintenanceInfo->itemName ?? 'N/A' }}</td>
+                                    <td style="padding: 16px 14px; color: #374151;">{{ $usage->quantityUsed ?? 'N/A' }}</td>
+                                    <td style="padding: 16px 14px; color: #374151;">{{ $record->usedByUser->name ?? 'N/A' }}</td>
+                                    <td style="padding: 16px 14px; color: #374151;">{{ $record->usageDate?->format('Y-m-d') ?? 'N/A' }}</td>
+                                </tr>
+                            @endforeach
                         @empty
                             <tr>
                                 <td colspan="7" style="padding: 50px 20px; text-align: center; color: #6b7280;">
@@ -222,7 +270,6 @@
             </div>
 
         @elseif(strtolower($report->reportType) === 'maintenance')
-            <!-- MAINTENANCE REPORT TABLE -->
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
@@ -288,12 +335,52 @@
     </div>
 </div>
 
-<!-- Printable template (hidden) -->
 <div id="printableArea" style="display:none;">
 @include('admin.GenerateReport.printable_template_fragment')
 </div>
 
 <script>
+// ================= INITIALIZE CHART.JS ================= //
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('reportChart');
+    if(ctx) {
+        new Chart(ctx.getContext('2d'), {
+            type: 'pie', // A pie chart to visualize the distribution
+            data: {
+                labels: @json($chartLabels),
+                datasets: [{
+                    label: '{{ $chartTitle }}',
+                    data: @json($chartValues),
+                    backgroundColor: [
+                        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', 
+                        '#8b5cf6', '#06b6d4', '#f43f5e', '#14b8a6', '#64748b'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { font: { family: 'Inter', size: 13 } }
+                    },
+                    title: {
+                        display: true,
+                        text: '{{ $chartTitle }}',
+                        font: { family: 'Inter', size: 18, weight: 'bold' },
+                        padding: { bottom: 20 }
+                    }
+                }
+            }
+        });
+    }
+});
+
+// ================= PRINT LOGIC ================= //
 function printReport() {
     const printable = document.getElementById('printableArea').innerHTML;
     const styles = `
@@ -326,12 +413,12 @@ function printReport() {
         try { w.print(); } catch (e) { console.error('Print error:', e); }
     }, 300);
 }
+
 // Auto-trigger print when ?print=1 is present
 document.addEventListener('DOMContentLoaded', function() {
     try {
         const params = new URLSearchParams(window.location.search);
         if (params.get('print') === '1') {
-            // give the page a moment to render
             setTimeout(() => { if (typeof printReport === 'function') printReport(); }, 500);
         }
     } catch (e) { /* ignore */ }

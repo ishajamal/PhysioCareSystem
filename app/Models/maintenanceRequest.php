@@ -16,6 +16,8 @@ class maintenanceRequest extends Model
         'status',
         'submittedBy',
         'isRead',
+        'proof_document_path',
+        'proof_remarks',
     ];
 
     protected $casts = [

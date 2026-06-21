@@ -268,10 +268,11 @@ body {
                     
                     <div class="info-item">
                         <span class="info-label">Role</span>
-                        <select name="role" class="role-select">
-                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                            <option value="therapist" {{ $user->role == 'therapist' ? 'selected' : '' }}>Therapist</option>
-                        </select>
+                        <input type="text"
+                               value="{{ ucfirst($user->role) }}"
+                               class="form-control-lg"
+                               readonly>
+                        <input type="hidden" name="role" value="{{ $user->role }}">
                     </div>
                     
                     <div class="info-item">

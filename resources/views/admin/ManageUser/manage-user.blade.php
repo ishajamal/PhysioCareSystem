@@ -177,7 +177,7 @@ body {
     border: 1px solid #a7f3d0;
 }
 
-/* ================= ACTION BUTTONS - SAME AS MAINTENANCE PAGE ================= */
+/* ================= ACTION BUTTONS ================= */
 .action-buttons {
     display: flex;
     gap: 10px;
@@ -217,10 +217,15 @@ body {
     color: #b91c1c;
 }
 
-.btn-delete:hover {
+.btn-delete:hover:not(:disabled) {
     background-color: #fca5a5;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(185, 28, 28, 0.2);
+}
+
+.btn-delete:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 /* ================= PAGINATION ================= */
@@ -437,13 +442,23 @@ body {
                             <a href="{{ route('admin.manage.user.edit', $user->userID) }}" class="btn-edit" title="Edit User">
                                 <i class="fa fa-pencil"></i>
                             </a>
-                            <button class="btn-delete" onclick="openDeleteModal('deleteUser{{ $user->userID }}')" title="Delete User">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            
+                            {{-- Check if the row belongs to the currently logged-in user --}}
+                            @if(auth()->check() && auth()->user()->userID == $user->userID)
+                                <button class="btn-delete" disabled title="You cannot delete your own account">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            @else
+                                <button class="btn-delete" onclick="openDeleteModal('deleteUser{{ $user->userID }}')" title="Delete User">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            @endif
                         </div>
                     </td>
                 </tr>
                 
+                {{-- Only render the modal if the user is NOT the currently logged-in user --}}
+                @if(!auth()->check() || auth()->user()->userID != $user->userID)
                 <x-delete-modal
                     id="deleteUser{{ $user->userID }}"
                     title="DELETE USER"
@@ -451,6 +466,7 @@ body {
                     route="{{ route('admin.manage.user.delete', $user->userID) }}"
                     method="DELETE"
                 />
+                @endif
                 
                 @empty
                 <tr id="noResultsRow">

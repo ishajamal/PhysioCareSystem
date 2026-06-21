@@ -135,6 +135,36 @@
     font-size: 14px;
     padding: 6px 0 0;
 }
+
+/* Admin Proof Styles */
+.proof-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #ecfdf5;
+    color: #059669;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    border: 1px solid #a7f3d0;
+    transition: all 0.2s ease;
+}
+.proof-btn:hover {
+    background: #d1fae5;
+    border-color: #6ee7b7;
+}
+.proof-box {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid #bbf7d0;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.6;
+    margin-top: 6px;
+}
 </style>
 
 <div class="mr-page">
@@ -146,7 +176,6 @@
         </a>
     </div>
 
-    <!-- META CARD -->
     <div class="mr-card">
         <div class="section-title">Request Info</div>
 
@@ -165,14 +194,41 @@
 
             <div class="meta-item">
                 <div class="meta-label">Status</div>
-                <div class="meta-value" style="text-transform: capitalize;">
+                <div class="meta-value" style="text-transform: capitalize; color: {{ strtolower($req->status) == 'completed' ? '#059669' : '#111827' }};">
                     {{ $req->status }}
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ISSUE CARD -->
+    @if(strtolower(trim($req->status)) === 'completed')
+    <div class="mr-card" style="background: #f0fdf4; border: 1px solid #a7f3d0;">
+        <div class="section-title" style="color: #059669;">Admin Proof of Completion</div>
+
+        @if($req->proof_document_path)
+            <div style="margin-bottom: 16px;">
+                <div class="meta-label" style="color: #047857;">Attached Document</div>
+                <a href="{{ asset('storage/' . $req->proof_document_path) }}" target="_blank" class="proof-btn">
+                    View Proof File &nearr;
+                </a>
+            </div>
+        @endif
+
+        @if($req->proof_remarks)
+            <div>
+                <div class="meta-label" style="color: #047857;">Admin Remarks / Notes</div>
+                <div class="proof-box">
+                    {{ $req->proof_remarks }}
+                </div>
+            </div>
+        @endif
+
+        @if(empty($req->proof_document_path) && empty($req->proof_remarks))
+            <div class="no-image" style="color: #047857;">The admin did not attach any specific proof files or remarks.</div>
+        @endif
+    </div>
+    @endif
+
     <div class="mr-card">
         <div class="section-title">Issue & Details</div>
 
@@ -191,9 +247,8 @@
         </div>
     </div>
 
-    <!-- EVIDENCE CARD -->
     <div class="mr-card">
-        <div class="section-title">Evidence Images</div>
+        <div class="section-title">My Evidence Images</div>
 
         @if($images->count() === 0)
             <div class="no-image">No images uploaded.</div>
