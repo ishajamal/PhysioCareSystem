@@ -396,24 +396,66 @@ body {
         min-width: 65px;
     }
 }
+.module-tabs {
+    display: flex;
+    gap: 25px;
+    border-bottom: 2px solid #e5e7eb;
+    margin-top: 18px;
+    margin-bottom: 28px;
+}
+
+.module-tab {
+    padding: 14px 22px;
+    text-decoration: none;
+    color: #6b7280;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 3px solid transparent;
+}
+
+.module-tab:hover {
+    background: #f3f4f6;
+    color: #26599F;
+}
+
+.module-tab.active {
+    background: #eff6ff;
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+}
 </style>
 
 <div class="main-content-users">
     
     <div class="table-container">
         <div class="table-title">
-            <span class="handle-users-title">Manage Users</span>
+            <div>
+                <span class="handle-users-title">Manage Users</span>
+
+                <div class="module-tabs">
+                    <a href="{{ route('admin.manage.user') }}" class="module-tab active">
+                        User List
+                    </a>
+
+                    <a href="{{ route('admin.manage.user.account.approval') }}" class="module-tab">
+                        Account Approval
+                    </a>
+                </div>
+            </div>
+
             <div class="search-container">
                 <div class="search-input-wrapper">
                     <i class="fas fa-search"></i>
-                    <input type="text" 
-                           name="search" 
-                           placeholder="Search ID, Name, or Email" 
-                           class="search-input" 
-                           value="{{ $search }}"
-                           id="search-input">
+                    <input type="text"
+                        name="search"
+                        placeholder="Search ID, Name, or Email"
+                        class="search-input"
+                        value="{{ $search }}"
+                        id="search-input">
                 </div>
             </div>
+
         </div>
         
         <table class="users-table">

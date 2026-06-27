@@ -982,7 +982,7 @@
                     <span>Therapist</span>
                     <i class="fas fa-chevron-down"></i>
                 </span>
-                {{-- <div class="notification-wrapper">
+                <div class="notification-wrapper">
                     <div class="header-icon" id="notificationBell">
                         <i class="far fa-bell"></i>
                         <span id="notificationCount" style="display: none;">0</span>
@@ -995,9 +995,11 @@
                         </ul>
                     </div>
                 </div>
-                <div class="header-icon" onclick="window.location.href='#'">
+                
+                <a href="{{ route('profile.edit') }}" class="header-icon">
                     <i class="far fa-user-circle"></i>
-                </div> --}}
+                </a>
+
             </div>
         </header>
 

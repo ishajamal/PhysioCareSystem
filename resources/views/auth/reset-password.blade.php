@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | PhysioCare</title>
+  <title>Reset Password | PhysioCare</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
   <style>
     :root {
       --primary: #6387c2;
       --primary-dark: #5070a8;
       --gray: #6c757d;
       --dark: #2c3e50;
+      --danger: #dc3545;
     }
 
     * {
@@ -30,7 +31,7 @@
       padding: 20px;
     }
 
-    .login-container {
+    .reset-container {
       background: white;
       border-radius: 20px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
@@ -41,7 +42,7 @@
       position: relative;
     }
 
-    .login-container::before {
+    .reset-container::before {
       content: '';
       position: absolute;
       top: 0;
@@ -68,17 +69,11 @@
       align-items: center;
       padding: 40px;
       color: white;
-      position: relative;
-      overflow: hidden;
     }
 
     .logo-box img {
       max-width: 350px;
       filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.4));
-    }
-
-    .logo-box {
-      padding: 16px;
     }
 
     h2 {
@@ -88,7 +83,7 @@
       font-weight: 700;
     }
 
-    p.subtitle {
+    .subtitle {
       color: var(--gray);
       margin-bottom: 30px;
       font-size: 0.95rem;
@@ -106,29 +101,25 @@
       color: var(--dark);
     }
 
-    .input-field,
     .password-wrapper {
       position: relative;
     }
 
-    .input-field input,
     .password-wrapper input {
       width: 100%;
-      padding: 15px 45px 15px 45px;
+      padding: 15px 45px;
       border: 2px solid #e0e3e7;
       border-radius: 10px;
       font-size: 1rem;
       transition: all 0.3s ease;
     }
 
-    .input-field input:focus,
     .password-wrapper input:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(99, 135, 194, 0.2);
       outline: none;
     }
 
-    .input-field i,
     .password-wrapper i.fa-lock {
       position: absolute;
       left: 15px;
@@ -136,29 +127,25 @@
       transform: translateY(-50%);
       color: var(--gray);
       font-size: 1.1rem;
-      z-index: 1;
     }
 
-    .password-wrapper .toggle-password {
+    .toggle-password {
       position: absolute;
       right: 15px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--gray);
       cursor: pointer;
-      transition: color 0.3s;
-      font-size: 1.1rem;
-      z-index: 2;
       background: none;
       border: none;
-      padding: 5px;
+      font-size: 1.1rem;
     }
 
-    .password-wrapper .toggle-password:hover {
+    .toggle-password:hover {
       color: var(--primary);
     }
 
-    .login-btn {
+    .reset-btn {
       width: 100%;
       padding: 15px;
       background: linear-gradient(to right, var(--primary), var(--primary-dark));
@@ -173,33 +160,10 @@
       margin-top: 10px;
     }
 
-    .login-btn:hover {
+    .reset-btn:hover {
       background: linear-gradient(to right, var(--primary-dark), var(--primary));
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(99, 135, 194, 0.4);
-    }
-
-    .login-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .error-message {
-      color: #e74c3c;
-      font-size: 0.875rem;
-      margin-top: 5px;
-      display: block;
-    }
-
-    .success-message {
-      margin-bottom: 15px;
-      padding: 12px;
-      background: #d4edda;
-      color: #155724;
-      border-radius: 8px;
-      text-align: center;
-      border-left: 4px solid #28a745;
     }
 
     .error-alert {
@@ -209,25 +173,24 @@
       color: #721c24;
       border-radius: 8px;
       text-align: center;
-      border-left: 4px solid #dc3545;
+      border-left: 4px solid var(--danger);
     }
 
-    .register-link {
+    .login-link {
       text-align: center;
       margin-top: 25px;
       color: var(--gray);
       font-size: 0.95rem;
     }
 
-    .register-link a {
+    .login-link a {
       color: var(--primary);
       text-decoration: none;
       font-weight: 600;
-      transition: color 0.3s;
       margin-left: 5px;
     }
 
-    .register-link a:hover {
+    .login-link a:hover {
       color: var(--primary-dark);
       text-decoration: underline;
     }
@@ -248,7 +211,7 @@
     }
 
     @media (max-width: 768px) {
-      .login-container {
+      .reset-container {
         flex-direction: column;
       }
 
@@ -264,93 +227,65 @@
         max-width: 200px;
       }
     }
-
-    /* Loading animation */
-    .loader {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #f3f3f3;
-      border-top: 2px solid var(--primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
   </style>
 </head>
+
 <body>
-  <div class="login-container">
+  <div class="reset-container">
     <div class="form-section">
-      <h2>Welcome Back</h2>
-      <p class="subtitle">Please login to your account</p>
-      
-      <form action="{{ route('login.post') }}" method="POST" id="loginForm">
+      <h2>Reset Password</h2>
+      <p class="subtitle">Create a new password for your PhysioCare account</p>
+
+      @if(session('error'))
+        <div class="error-alert">{{ session('error') }}</div>
+      @endif
+
+      @if($errors->any())
+        <div class="error-alert">
+          @foreach($errors->all() as $error)
+            {{ $error }}<br>
+          @endforeach
+        </div>
+      @endif
+
+      <form method="POST" action="{{ route('password.update') }}">
         @csrf
 
-        @if(session('success'))
-          <div class="success-message">{{ session('success') }}</div>
-        @endif
-
-        @if(session('error'))
-          <div class="error-alert">{{ session('error') }}</div>
-        @endif
-
-        @if($errors->any())
-          <div class="error-alert">
-            @foreach($errors->all() as $error)
-              {{ $error }}<br>
-            @endforeach
-          </div>
-        @endif
+        <input type="hidden" name="token" value="{{ $token }}">
+        <input type="hidden" name="email" value="{{ $email }}">
 
         <div class="form-group">
-          <label>ID</label>
-          <div class="input-field">
-            <i class="fas fa-user"></i>
-            <input type="text" name="id" value="{{ old('id') }}" placeholder="Enter your ID" required>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label>Password</label>
+          <label>New Password</label>
           <div class="password-wrapper">
             <i class="fas fa-lock"></i>
-            <input type="password" name="password" id="password" placeholder="Enter your password" required>
-            <button type="button" class="toggle-password" onclick="togglePassword()">
+            <input type="password" name="password" id="password" placeholder="Enter new password" required>
+            <button type="button" class="toggle-password" onclick="togglePassword('password', this)">
               <i class="fas fa-eye"></i>
             </button>
           </div>
         </div>
 
-        <div style="text-align: right; margin-top: -10px; margin-bottom: 20px;">
-            <a href="{{ route('password.request') }}"
-              style="
-                  color: #6387c2;
-                  text-decoration: none;
-                  font-size: 14px;
-                  font-weight: 500;
-              ">
-                Forgot Password?
-            </a>
+        <div class="form-group">
+          <label>Confirm New Password</label>
+          <div class="password-wrapper">
+            <i class="fas fa-lock"></i>
+            <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm new password" required>
+            <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation', this)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
         </div>
-        
-        <button type="submit" class="login-btn" id="loginBtn">
-          <span id="btnText">Login</span>
-          <span id="btnLoader" style="display: none;">
-            <div class="loader"></div> Logging in...
-          </span>
+
+        <button type="submit" class="reset-btn">
+          Reset Password
         </button>
-        
-        <div class="register-link">
-          Don't have an account? <a href="{{ route('register') }}">Register here</a>
+
+        <div class="login-link">
+          Remember your password? <a href="{{ route('login') }}">Back to Login</a>
         </div>
       </form>
     </div>
-    
+
     <div class="logo-section">
       <div class="logo-box">
         <img src="{{ asset('images/physiocare-logo.png') }}" alt="PhysioCare Logo" onerror="this.onerror=null; this.style.display='none';">
@@ -361,41 +296,19 @@
   </div>
 
   <script>
-    function togglePassword() {
-      const passwordInput = document.getElementById('password');
-      const toggleIcon = document.querySelector('.toggle-password i');
-      
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleIcon.classList.remove('fa-eye');
-        toggleIcon.classList.add('fa-eye-slash');
+    function togglePassword(inputId, button) {
+      const input = document.getElementById(inputId);
+      const icon = button.querySelector('i');
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
       } else {
-        passwordInput.type = 'password';
-        toggleIcon.classList.remove('fa-eye-slash');
-        toggleIcon.classList.add('fa-eye');
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
       }
-    }
-
-    // Form submission handler
-    document.getElementById('loginForm').addEventListener('submit', function() {
-      const btn = document.getElementById('loginBtn');
-      const btnText = document.getElementById('btnText');
-      const btnLoader = document.getElementById('btnLoader');
-      
-      btn.disabled = true;
-      btnText.style.display = 'none';
-      btnLoader.style.display = 'inline';
-    });
-
-    // Auto focus on first input
-    document.addEventListener('DOMContentLoaded', function() {
-      const firstInput = document.querySelector('input[name="id"]');
-      if (firstInput) firstInput.focus();
-    });
-
-    // Prevent form resubmission on page refresh
-    if (window.history.replaceState) {
-      window.history.replaceState(null, null, window.location.href);
     }
   </script>
 </body>

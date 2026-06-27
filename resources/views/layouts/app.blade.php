@@ -897,6 +897,12 @@
                             <i class="bi bi-person-gear"></i> <span>Users</span>
                         </a>
                     </li>
+                    {{-- <li>
+                        <a href="{{ route('admin.account.approval') }}" class="{{ request()->routeIs('admin.account.approval.approve','admin.account.approval') ? 'active' : '' }}">
+                            <i class="fas fa-user-check"></i>
+                            Account Approval
+                        </a>
+                    </li> --}}
                     <li>
                         <a href="{{ route('admin.usage.dashboard') }}"                           
                             class="{{ in_array(request()->route()->getName(), 
@@ -947,7 +953,7 @@
                         </ul>
                     </div>
                 </div>
-                <a href="{{ route('admin.manage.user') }}" class="header-icon">
+                <a href="{{ route('profile.edit') }}" class="header-icon">
                     <i class="far fa-user-circle"></i>
                 </a>
             </div>

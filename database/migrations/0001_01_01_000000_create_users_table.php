@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('profileImage')->nullable();
             $table->string('phoneNumber')->nullable();
+            $table->boolean('is_approved')->default(false);
             $table->timestamps();
         });
 

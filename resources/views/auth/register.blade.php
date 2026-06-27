@@ -363,9 +363,21 @@
     <div class="form-section">
       <h2>Create Account</h2>
       <p class="subtitle">Join PhysioCare today</p>
+      <div style="
+          background:#eff6ff;
+          border-left:4px solid #2563eb;
+          padding:12px;
+          border-radius:8px;
+          margin-bottom:20px;
+          font-size:14px;
+          color:#1e3a8a;
+      ">
+          Therapist accounts require administrator approval before login access is granted.
+      </div>
       
       <form action="{{ route('register.post') }}" method="POST" id="registerForm">
         @csrf
+
 
         @if($errors->any())
           <div class="error-alert">
@@ -401,29 +413,33 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label>Phone Number</label>
-            <div class="input-field">
-              <i class="fas fa-phone"></i>
-              <input type="tel" name="phoneNumber" value="{{ old('phoneNumber') }}" placeholder="012-3456789">
-            </div>
-            @error('phoneNumber')
-              <span class="error-message">{{ $message }}</span>
-            @enderror
+              <label>Phone Number</label>
+              <div class="input-field">
+                  <i class="fas fa-phone"></i>
+                  <input type="tel"
+                        name="phoneNumber"
+                        value="{{ old('phoneNumber') }}"
+                        placeholder="012-3456789">
+              </div>
+
+              @error('phoneNumber')
+                  <span class="error-message">{{ $message }}</span>
+              @enderror
           </div>
 
           <div class="form-group">
-            <label>Role<span class="required">*</span></label>
-            <div class="input-field">
-              <i class="fas fa-user-tag"></i>
-              <select name="role" required>
-                <option value="">Select Role</option>
-                <option value="therapist" {{ old('role') == 'therapist' ? 'selected' : '' }}>Therapist</option>
-                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-              </select>
-            </div>
-            @error('role')
-              <span class="error-message">{{ $message }}</span>
-            @enderror
+              <label>Role</label>
+
+              <div class="input-field">
+                  <i class="fas fa-user-tag"></i>
+
+                  <input type="text"
+                        value="Therapist"
+                        readonly
+                        style="background-color: #f3f4f6; cursor: not-allowed;">
+              </div>
+
+              <input type="hidden" name="role" value="therapist">
           </div>
         </div>
 

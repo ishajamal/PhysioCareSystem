@@ -15,6 +15,7 @@ class AuthController extends Controller
      */
     public function showLogin()
     {
+        
         return view('auth.login');
     }
 
@@ -40,9 +41,18 @@ class AuthController extends Controller
 
     // Check password
     if (!Hash::check($password, $user->password)) {
-        return back()->with('error', 'Incorrect password.')->withInput($request->only('id'));
+        return back()->with('error', 'Wrong ID or password.')->withInput($request->only('id'));
     }
 
+    if (
+            $user->role === 'therapist' &&
+            !$user->is_approved
+        ) {
+            return back()->with(
+                'error',
+                'Your account is waiting for admin approval.'
+            );
+        }
     // Login the user
     Auth::login($user, $request->filled('remember'));
     $request->session()->regenerate();
@@ -89,14 +99,18 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role' => 'therapist',
             'phoneNumber' => $request->phoneNumber,
+            'is_approved' => false,
         ]);
 
         Log::info('User registered', ['userID' => $user->userID, 'email' => $user->email]);
 
         // Redirect to login with success message showing the new userID
-        return redirect()->route('login')->with('success', 'Registration successful! Your ID is: ' . $user->userID . '. Please login with your ID and password.');
+        return redirect()->route('login')->with(
+            'success',
+            'Registration successful. Your account has been submitted for administrator approval. You will be notified once your account has been approved.'
+        );    
     }
 
     /**

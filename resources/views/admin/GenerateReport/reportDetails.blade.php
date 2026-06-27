@@ -207,7 +207,7 @@
                 
                 foreach($reportData as $request) {
                     foreach($request->itemMaintenances as $maintenance) {
-                        $name = $maintenance->itemInfo->product_name ?? 'Unknown Equipment';
+                        $name = $maintenance->itemInfo->itemName ?? 'Unknown Equipment';
                         
                         if(!isset($itemCounts[$name])) {
                             $itemCounts[$name] = 0;
@@ -292,7 +292,7 @@
                                     <td style="padding: 16px 14px; color: #374151;">{{ $loop->parent->iteration }}.{{ $index + 1 }}</td>
                                     <td style="padding: 16px 14px; color: #374151;">#{{ $request->requestID }}</td>
                                     <td style="padding: 16px 14px; color: #374151;">{{ $maintenance->itemInfo->itemID ?? 'N/A' }}</td>
-                                    <td style="padding: 16px 14px; color: #374151;">{{ $maintenance->itemInfo->product_name ?? 'N/A' }}</td>
+                                    <td style="padding: 16px 14px; color: #374151;">{{ $maintenance->itemInfo->itemName ?? 'N/A' }}</td>
                                     <td style="padding: 16px 14px; color: #374151;">{{ $maintenance->itemIssue ?? 'N/A' }}</td>
                                     <td style="padding: 16px 14px; color: #374151;">{{ $request->submitter->name ?? 'N/A' }}</td>
                                     <td style="padding: 16px 14px;">

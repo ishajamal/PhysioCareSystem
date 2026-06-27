@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\AccountApprovalController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\admin\ManageUser\ManageUserController;
 use App\Http\Controllers\AuthController;
@@ -13,6 +14,10 @@ use App\Http\Controllers\admin\GenerateReport\ReportController;
 use App\Http\Controllers\admin\MonitorUsage\monitorUsageController;  
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\InventoryController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Mail;
+
 //
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +43,19 @@ Route::middleware('guest')->group(function () {
     // Register routes
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+
+    // Forgot Password Routes
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotForm'])
+        ->name('password.request');
+
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])
+        ->name('password.email');
+
+    Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])
+        ->name('password.reset');
+
+    Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])
+        ->name('password.update');
 });
 
 /*
@@ -47,6 +65,11 @@ Route::middleware('guest')->group(function () {
 */
 Route::middleware('auth')->group(function () {
 
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::post('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
     /*
     |--------------------------------------------------------------------------
     | ADMIN Routes
@@ -103,6 +126,19 @@ Route::middleware('auth')->group(function () {
 
 
     /*
+
+    /*
+
+    |--------------------------------------------------------------------------
+    | ACCOUNT APPROVAL Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/manage-user/account-approval', [AccountApprovalController::class, 'index'])
+    ->name('manage.user.account.approval');
+
+    Route::post('/manage-user/account-approval/{id}/approve', [AccountApprovalController::class, 'approve'])
+    ->name('manage.user.account.approval.approve');
         /*
     |--------------------------------------------------------------------------
     | MANAGE MAINTENANCE Routes
@@ -201,4 +237,6 @@ Route::middleware('auth')->group(function () {
 
     // Logout (must be POST for security)
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    
 });

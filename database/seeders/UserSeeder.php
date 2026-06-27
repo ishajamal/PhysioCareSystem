@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -23,6 +22,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'profileImage' => 'profiles/admin.jpg',
                 'phoneNumber' => '012-3456789',
+                'is_approved' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -34,6 +34,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'profileImage' => 'profiles/john.jpg',
                 'phoneNumber' => '012-9876543',
+                'is_approved' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -45,6 +46,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'profileImage' => 'profiles/sarah.jpg',
                 'phoneNumber' => '013-1234567',
+                'is_approved' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -56,6 +58,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'profileImage' => 'profiles/mike.jpg',
                 'phoneNumber' => '014-7654321',
+                'is_approved' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -67,6 +70,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'profileImage' => 'profiles/emma.jpg',
                 'phoneNumber' => '015-5555555',
+                'is_approved' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
