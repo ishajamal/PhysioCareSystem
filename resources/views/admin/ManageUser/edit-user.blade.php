@@ -158,30 +158,7 @@ body {
     color: #9ca3af;
 }
 
-/* ================= ROLE SELECT ================= */
-.role-select {
-    width: 100%;
-    padding: 14px 16px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    background-color: white;
-    font-size: 14px;
-    color: #1f2937;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    background-size: 16px;
-}
-
-.role-select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* ================= ROLE BADGE ================= */
+/* ================= ROLE BADGE & USER HEADER ================= */
 .role-badge {
     display: inline-block;
     padding: 6px 16px;
@@ -194,7 +171,6 @@ body {
     color: #1e40af;
 }
 
-/* ================= USER INFO HEADER ================= */
 .user-header {
     text-align: center;
     margin-bottom: 40px;
@@ -215,10 +191,25 @@ body {
     margin-bottom: 15px;
     font-weight: 500;
 }
+
+/* ================= VALIDATION STYLES ================= */
+.is-invalid {
+    border-color: #ef4444 !important;
+}
+.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+.invalid-feedback {
+    color: #ef4444;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+    font-weight: 500;
+}
 </style>
 
 <div class="main-content-view">
-    <form method="POST" action="{{ route('admin.manage.user.update', $user->userID) }}">
+    <form method="POST" action="{{ route('admin.manage.user.update', $user->userID ?? $user->id) }}" novalidate>
         @csrf
 
         <div class="header-title-wrapper">
@@ -248,22 +239,31 @@ body {
                 <h2 class="section-title">User Information</h2>
                 
                 <div class="info-grid">
+                    
                     <div class="info-item">
                         <span class="info-label">Full Name</span>
                         <input type="text"
                                name="name"
-                               value="{{ $user->name }}"
-                               class="form-control-lg"
+                               value="{{ old('name', $user->name) }}"
+                               class="form-control-lg @error('name') is-invalid @enderror"
                                required>
+                        @error('name')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
                     </div>
                     
                     <div class="info-item">
                         <span class="info-label">Email Address</span>
                         <input type="email"
                                name="email"
-                               value="{{ $user->email }}"
-                               class="form-control-lg"
+                               id="email"
+                               value="{{ old('email', $user->email) }}"
+                               class="form-control-lg @error('email') is-invalid @enderror"
                                required>
+                        @error('email')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                        <span id="email-error" class="invalid-feedback" style="display: none;">Enter valid email format</span>
                     </div>
                     
                     <div class="info-item">
@@ -272,16 +272,20 @@ body {
                                value="{{ ucfirst($user->role) }}"
                                class="form-control-lg"
                                readonly>
-                        <input type="hidden" name="role" value="{{ $user->role }}">
+                        <input type="hidden" name="role" value="{{ old('role', $user->role) }}">
                     </div>
                     
                     <div class="info-item">
                         <span class="info-label">Password <span style="color: #9ca3af; font-weight: normal;">(Optional)</span></span>
                         <input type="password"
                                name="password"
-                               class="form-control-lg"
+                               class="form-control-lg @error('password') is-invalid @enderror"
                                placeholder="Leave blank to keep current password">
+                        @error('password')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
                     </div>
+                    
                 </div>
 
                 <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; border: 1px solid #bae6fd; margin-top: 30px;">
@@ -297,32 +301,20 @@ body {
 </div>
 
 <script>
-    // Add form validation feedback
     document.querySelector('form').addEventListener('submit', function(e) {
-        const nameInput = document.querySelector('input[name="name"]');
-        const emailInput = document.querySelector('input[name="email"]');
-        let isValid = true;
-
-        // Reset styles
-        [nameInput, emailInput].forEach(input => {
-            input.style.borderColor = '#d1d5db';
-        });
-
-        // Validate name
-        if (!nameInput.value.trim()) {
-            nameInput.style.borderColor = '#ef4444';
-            isValid = false;
-        }
-
-        // Validate email
-        if (!emailInput.value.trim() || !emailInput.checkValidity()) {
-            emailInput.style.borderColor = '#ef4444';
-            isValid = false;
-        }
-
-        if (!isValid) {
-            e.preventDefault();
-            alert('Please fill in all required fields correctly.');
+        const emailInput = document.getElementById('email');
+        const emailError = document.getElementById('email-error');
+        
+        // This regex perfectly matches the backend validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+        
+        if (!emailPattern.test(emailInput.value.trim())) {
+            e.preventDefault(); // Stop the form from submitting
+            emailInput.classList.add('is-invalid');
+            emailError.style.display = 'block';
+        } else {
+            emailInput.classList.remove('is-invalid');
+            emailError.style.display = 'none';
         }
     });
 </script>
