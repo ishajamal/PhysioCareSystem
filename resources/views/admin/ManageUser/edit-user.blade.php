@@ -158,6 +158,22 @@ body {
     color: #9ca3af;
 }
 
+.form-control-lg.is-invalid {
+    border-color: #ef4444;
+}
+
+.form-control-lg.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.field-error {
+    color: #ef4444;
+    font-size: 13px;
+    margin-top: 6px;
+    display: block;
+    font-weight: 500;
+}
+
 /* ================= ROLE SELECT ================= */
 .role-select {
     width: 100%;
@@ -218,6 +234,9 @@ body {
 </style>
 
 <div class="main-content-view">
+
+
+
     <form method="POST" action="{{ route('admin.manage.user.update', $user->userID) }}">
         @csrf
 
@@ -252,18 +271,24 @@ body {
                         <span class="info-label">Full Name</span>
                         <input type="text"
                                name="name"
-                               value="{{ $user->name }}"
-                               class="form-control-lg"
+                               value="{{ old('name', $user->name) }}"
+                               class="form-control-lg @error('name') is-invalid @enderror"
                                required>
+                        @error('name')
+                            <span class="field-error">{{ $message }}</span>
+                        @enderror
                     </div>
                     
                     <div class="info-item">
                         <span class="info-label">Email Address</span>
                         <input type="email"
                                name="email"
-                               value="{{ $user->email }}"
-                               class="form-control-lg"
+                               value="{{ old('email', $user->email) }}"
+                               class="form-control-lg @error('email') is-invalid @enderror"
                                required>
+                        @error('email')
+                            <span class="field-error">{{ $message }}</span>
+                        @enderror
                     </div>
                     
                     <div class="info-item">
@@ -301,22 +326,23 @@ body {
     document.querySelector('form').addEventListener('submit', function(e) {
         const nameInput = document.querySelector('input[name="name"]');
         const emailInput = document.querySelector('input[name="email"]');
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
         let isValid = true;
 
         // Reset styles
         [nameInput, emailInput].forEach(input => {
-            input.style.borderColor = '#d1d5db';
+            input.classList.remove('is-invalid');
         });
 
         // Validate name
         if (!nameInput.value.trim()) {
-            nameInput.style.borderColor = '#ef4444';
+            nameInput.classList.add('is-invalid');
             isValid = false;
         }
 
-        // Validate email
-        if (!emailInput.value.trim() || !emailInput.checkValidity()) {
-            emailInput.style.borderColor = '#ef4444';
+        // Validate email (matches server-side regex: must have @ and a dot + TLD)
+        if (!emailInput.value.trim() || !emailPattern.test(emailInput.value.trim())) {
+            emailInput.classList.add('is-invalid');
             isValid = false;
         }
 

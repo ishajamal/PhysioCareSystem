@@ -13,10 +13,11 @@ class ManageUserController extends Controller
     {
         $search = $request->search;
 
-        $users = User::when($search, function ($query) use ($search) {
-            $query->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('UserID', $search);
-        })->paginate(10);
+        $users = User::where('is_approved', 1)
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('UserID', $search);
+            })->paginate(10);
 
         return view('admin.ManageUser.manage-user', compact('users', 'search'));
     }
@@ -33,8 +34,20 @@ class ManageUserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $id . ',userID',
+            'email' => [
+                'required',
+                'email:rfc',
+                'regex:/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/',
+                'unique:users,email,' . $id . ',userID',
+            ],
             'role' => 'required'
+        ], [
+            'name.required'  => 'Please enter a name',
+            'email.required' => 'Please enter an email address',
+            'email.email'    => 'Enter valid email format',
+            'email.regex'    => 'Enter valid email format',
+            'email.unique'   => 'This email is already taken by another user',
+            'role.required'  => 'Please select a role',
         ]);
 
         $user = User::findOrFail($id);

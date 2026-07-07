@@ -581,7 +581,7 @@ body {
                                     <i class="bi bi-inbox"></i>
                                 </div>
                                 <h3>No Records Found</h3>
-                                <p>No usage history available for the selected date. Try a different date or check back later.</p>
+                                <p>No usage history available.</p>
                             </div>
                         </td>
                     </tr>

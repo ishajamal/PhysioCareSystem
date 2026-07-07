@@ -198,6 +198,38 @@ body {
         font-size: 12px;
     }
 }
+/* ================= UNAVAILABLE ROW ================= */
+.unavailable-row {
+    background: #f3f4f6 !important;
+}
+
+.unavailable-row td {
+    color: #9ca3af;
+}
+
+.unavailable-row:hover {
+    background: #f3f4f6 !important;
+}
+
+/* ================= DISABLED BUTTON ================= */
+.disabled-btn {
+    background: #d1d5db !important;
+    color: #6b7280 !important;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.disabled-btn:hover {
+    background: #d1d5db !important;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ================= UNAVAILABLE BADGE ================= */
+.status-unavailable {
+    background: #fee2e2;
+    color: #b91c1c;
+}
 </style>
 
 
@@ -236,7 +268,7 @@ body {
             <tbody id="inventoryTableBody">
                 @if($items->count() > 0)
                     @foreach($items as $index => $item)
-                    <tr>
+                    <tr class="{{ ($item->status == 'Unavailable' || $item->quantity <= 0) ? 'unavailable-row' : '' }}">
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->itemID }}</td>
                         <td>{{ $item->itemName }}</td>
@@ -244,23 +276,33 @@ body {
                         <td>{{ $item->quantity }}</td>
                         <td>
                             @php
-                                $statusClass = '';
-                                if($item->status == 'available') {
-                                    $statusClass = 'status-available';
-                                } elseif($item->status == 'low') {
+                                if ($item->status == 'Unavailable' || $item->quantity <= 0) {
+                                    $statusClass = 'status-unavailable';
+                                    $statusText = 'Unavailable';
+                                } elseif ($item->quantity <= 10) {
                                     $statusClass = 'status-low';
-                                } elseif($item->status == 'out') {
-                                    $statusClass = 'status-out';
+                                    $statusText = 'Low';
+                                } else {
+                                    $statusClass = 'status-available';
+                                    $statusText = 'Available';
                                 }
                             @endphp
+
                             <span class="status-badge {{ $statusClass }}">
-                                {{ ucfirst($item->status) }}
+                                {{ $statusText }}
                             </span>
                         </td>
                         <td>
-                            <button class="select-btn" onclick="window.location.href='{{ route('therapist.add.new.record', [ 'usageID' => $usageID, 'itemID' => $item->itemID]) }}'">
-                                Select
-                            </button>
+                            @if($item->status == 'Unavailable' || $item->quantity <= 0)
+                                <button class="select-btn disabled-btn" disabled>
+                                    Select
+                                </button>
+                            @else
+                                <button class="select-btn"
+                                    onclick="window.location.href='{{ route('therapist.add.new.record', ['usageID' => $usageID, 'itemID' => $item->itemID]) }}'">
+                                    Select
+                                </button>
+                            @endif
                         </td>
                     </tr>
                     @endforeach

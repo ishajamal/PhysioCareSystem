@@ -14,9 +14,9 @@ class UsageHistoryController extends Controller
 {
     public function index(Request $request)
     {
-        $query = usageRecord::with('itemUsages');
+        $query = usageRecord::with('itemUsages')
+            ->where('usedBy', Auth::id());   // or therapistID depending on your column
 
-        // Date filter
         if ($request->filled('date')) {
             $query->whereDate('usageDate', $request->date);
         }
@@ -26,9 +26,9 @@ class UsageHistoryController extends Controller
             ->get()
             ->map(function ($record) {
                 return [
-                    'usageID'     => $record->usageID,
-                    'usageDate'   => $record->usageDate->format('Y-m-d'),
-                    'totalItems'  => $record->itemUsages->sum('quantityUsed'),
+                    'usageID'    => $record->usageID,
+                    'usageDate'  => $record->usageDate->format('Y-m-d'),
+                    'totalItems' => $record->itemUsages->sum('quantityUsed'),
                 ];
             });
 
@@ -154,8 +154,7 @@ class UsageHistoryController extends Controller
     public function inventoryList($usageID)
     {
         $items = itemMaintenanceInfo::with('images')
-                ->where('category','therapy supplies')
-                ->where('status','available')
+                ->where('category','Item')
                 ->get();
 
         return view('therapist.ManageUsageHistory.list-inventory', compact('items','usageID'));
@@ -261,7 +260,7 @@ class UsageHistoryController extends Controller
 
                     // Optional: update status back to "available" if quantity > 0
                     if ($item->quantity > 0 && $item->status === 'Unavailable') {
-                        $item->status = 'available';
+                        $item->status = 'Available';
                         $item->save();
                     }
                 }

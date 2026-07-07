@@ -453,12 +453,7 @@ body {
 
     <!-- ================= CONTENT CARD ================= -->
     <div class="content-card">
-        @if(session('success'))
-            <div class="success-alert">
-                <i class="fas fa-check-circle"></i>
-                {{ session('success') }}
-            </div>
-        @endif
+        
 
         @if($therapists->count() > 0)
             <div class="table-wrapper">

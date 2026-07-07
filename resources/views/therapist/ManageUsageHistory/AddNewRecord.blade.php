@@ -44,7 +44,7 @@
 }
 .btn-back i {
     font-weight: 900;
-    font-size: 14px; /* Make it bigger too */
+    font-size: 14px;
 }
 
 .btn-back:hover {
@@ -72,9 +72,8 @@
     font-size: 16px;
     vertical-align: middle;
     margin-right: 5px;
-    color: white !important; /* Make it visible on blue button */
+    color: white !important;
 }
-
 
 /* ================= CARD LAYOUT ================= */
 .usage-card {
@@ -221,11 +220,36 @@
     color: #dc2626;
     font-weight: 700;
 }
+
+/* ================= ERROR STATES ================= */
+.error-text {
+    font-size: 12px;
+    color: #dc2626;
+    margin-top: 4px;
+    font-weight: 600;
+    display: none;
+}
+
+.form-control.input-error {
+    border-color: #dc2626;
+    background: #fef2f2;
+}
+
+.general-error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    display: none;
+}
 </style>
 
 
-<div >
-    
+<div>
 
     <!-- Header -->
     <div class="page-header">
@@ -241,7 +265,13 @@
 
         <!-- Left Side: Form -->
         <div class="usage-left">
-            <form id="usageForm" action="{{  route('therapist.usage.item.store', $usageID) }}" method="POST">
+
+            <!-- General error banner -->
+            <div id="generalError" class="general-error">
+                Some fields are required!
+            </div>
+
+            <form id="usageForm" action="{{ route('therapist.usage.item.store', $usageID) }}" method="POST" novalidate>
                 @csrf
 
                 <input type="hidden" name="item_id" value="{{ $item->itemID }}">
@@ -261,22 +291,26 @@
                     <div class="form-group">
                         <label class="form-label required">Quantity</label>
                         <input type="number" 
-                               name="quantity" 
-                               class="form-control" 
-                               min="1" 
-                               max="{{ $item->quantity }}"
-                               value="1"
-                               required>
+                            name="quantity" 
+                            id="quantityInput"
+                            class="form-control" 
+                            min="1" 
+                            max="{{ $item->quantity }}"
+                            value="1"
+                            required>
                         <span class="available-text">Available: {{ $item->quantity }}</span>
+                        <span class="error-text" id="quantityError">Quantity must be at least 1</span>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">Date Submitted</label>
                         <input type="date" 
                                name="usage_date" 
+                               id="usageDateInput"
                                class="form-control" 
                                value="{{ date('Y-m-d') }}"
                                required>
+                        <span class="error-text" id="usageDateError">This field is required</span>
                     </div>
 
                     <div class="form-group full">
@@ -293,7 +327,7 @@
                         <textarea name="notes" 
                                   class="form-control readonly" 
                                   rows="5"
-                                  placeholder="Add notes here..."> {{ $item->description }}</textarea>
+                                  placeholder="Add notes here...">{{ $item->description }}</textarea>
                     </div>
 
                 </div>
@@ -301,28 +335,74 @@
         </div>
 
        <!-- Right Side: Image -->
-<div class="usage-right">
-    <div class="image-box">
-        @if($item->images && $item->images->count() > 0)
-            <img src="{{ asset('storage/' . $item->images->first()->imagePath) }}" alt="Item Image">
-        @else
-            <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No Image">
-        @endif
-    </div>
-</div>
+        <div class="usage-right">
+            <div class="image-box">
+                @if($item->images && $item->images->count() > 0)
+                    <img src="{{ asset('storage/' . $item->images->first()->imagePath) }}" alt="Item Image">
+                @else
+                    <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No Image">
+                @endif
+            </div>
+        </div>
 
     </div>
 </div>
 
 <script>
-document.querySelector('input[name="quantity"]').addEventListener('change', function() {
-    const maxQuantity = {{ $item->quantity }};
-    if (this.value > maxQuantity) {
-        this.value = maxQuantity;
-        alert('Quantity cannot exceed available stock of ' + maxQuantity);
+const quantityInput = document.getElementById('quantityInput');
+const quantityError = document.getElementById('quantityError');
+const usageDateInput = document.getElementById('usageDateInput');
+const usageDateError = document.getElementById('usageDateError');
+const generalError = document.getElementById('generalError');
+const maxQuantity = {{ $item->quantity }};
+
+function validateQuantity() {
+    const val = Number(quantityInput.value);
+
+    if (quantityInput.value === '' || val < 1) {
+        quantityError.textContent = 'Quantity must be at least 1';
+        quantityError.style.display = 'block';
+        quantityInput.classList.add('input-error');
+        return false;
     }
-    if (this.value < 1) {
-        this.value = 1;
+
+    if (val > maxQuantity) {
+        quantityError.textContent = 'Quantity cannot exceed available stock of ' + maxQuantity;
+        quantityError.style.display = 'block';
+        quantityInput.classList.add('input-error');
+        return false;
+    }
+
+    quantityError.style.display = 'none';
+    quantityInput.classList.remove('input-error');
+    return true;
+}
+
+function validateDate() {
+    if (usageDateInput.value === '') {
+        usageDateError.style.display = 'block';
+        usageDateInput.classList.add('input-error');
+        return false;
+    }
+
+    usageDateError.style.display = 'none';
+    usageDateInput.classList.remove('input-error');
+    return true;
+}
+
+quantityInput.addEventListener('input', validateQuantity);
+usageDateInput.addEventListener('input', validateDate);
+
+document.getElementById('usageForm').addEventListener('submit', function(e) {
+    const isQuantityValid = validateQuantity();
+    const isDateValid = validateDate();
+
+    if (!isQuantityValid || !isDateValid) {
+        e.preventDefault();
+        generalError.style.display = 'block';
+        generalError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+        generalError.style.display = 'none';
     }
 });
 </script>
