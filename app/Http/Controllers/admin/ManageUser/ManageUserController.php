@@ -15,7 +15,6 @@ class ManageUserController extends Controller
 
         $users = User::when($search, function ($query) use ($search) {
             $query->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%')
                   ->orWhere('UserID', $search);
         })->paginate(10);
 
@@ -35,18 +34,8 @@ class ManageUserController extends Controller
         // Strict Backend Validation 
         $request->validate([
             'name' => 'required',
-            'email' => [
-                'required',
-                // This Regex forces a standard email format with a proper domain (.com, .org, etc.)
-                // (It rejects "admin@test")
-                'regex:/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/',
-                'unique:users,email,' . $id . ',userID'
-            ],
+            'email' => 'required|email|unique:users,email,' . $id . ',userID',
             'role' => 'required'
-        ], [
-            // Custom error messages mapped directly to your Test Spec
-            'email.regex' => 'Enter valid email format',
-            'email.unique' => 'This email is already in use.'
         ]);
 
         $user = User::findOrFail($id);

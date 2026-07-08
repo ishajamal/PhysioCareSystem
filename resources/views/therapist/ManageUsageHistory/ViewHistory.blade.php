@@ -369,7 +369,7 @@ body {
             <div class="info-item">
                 <div class="info-label">Usage ID</div>
                 <div class="info-value">
-                    UHG-{{ str_pad($usage->usageID, 3, '0', STR_PAD_LEFT) }}
+                    {{$usage->usageID}}
                 </div>
             </div>
 

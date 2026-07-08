@@ -158,6 +158,22 @@ body {
     color: #9ca3af;
 }
 
+.form-control-lg.is-invalid {
+    border-color: #ef4444;
+}
+
+.form-control-lg.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.field-error {
+    color: #ef4444;
+    font-size: 13px;
+    margin-top: 6px;
+    display: block;
+    font-weight: 500;
+}
+
 /* ================= ROLE BADGE & USER HEADER ================= */
 .role-badge {
     display: inline-block;
@@ -209,7 +225,7 @@ body {
 </style>
 
 <div class="main-content-view">
-    <form method="POST" action="{{ route('admin.manage.user.update', $user->userID ?? $user->id) }}" novalidate>
+    <form method="POST" action="{{ route('admin.manage.user.update', $user->userID) }}">
         @csrf
 
         <div class="header-title-wrapper">
@@ -247,23 +263,15 @@ body {
                                value="{{ old('name', $user->name) }}"
                                class="form-control-lg @error('name') is-invalid @enderror"
                                required>
-                        @error('name')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
                     </div>
                     
                     <div class="info-item">
                         <span class="info-label">Email Address</span>
                         <input type="email"
                                name="email"
-                               id="email"
-                               value="{{ old('email', $user->email) }}"
-                               class="form-control-lg @error('email') is-invalid @enderror"
+                               value="{{ $user->email }}"
+                               class="form-control-lg"
                                required>
-                        @error('email')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
-                        <span id="email-error" class="invalid-feedback" style="display: none;">Enter valid email format</span>
                     </div>
                     
                     <div class="info-item">
@@ -302,19 +310,30 @@ body {
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
-        const emailInput = document.getElementById('email');
-        const emailError = document.getElementById('email-error');
-        
-        // This regex perfectly matches the backend validation
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
-        
-        if (!emailPattern.test(emailInput.value.trim())) {
-            e.preventDefault(); // Stop the form from submitting
-            emailInput.classList.add('is-invalid');
-            emailError.style.display = 'block';
-        } else {
-            emailInput.classList.remove('is-invalid');
-            emailError.style.display = 'none';
+        const nameInput = document.querySelector('input[name="name"]');
+        const emailInput = document.querySelector('input[name="email"]');
+        let isValid = true;
+
+        // Reset styles
+        [nameInput, emailInput].forEach(input => {
+            input.style.borderColor = '#d1d5db';
+        });
+
+        // Validate name
+        if (!nameInput.value.trim()) {
+            nameInput.style.borderColor = '#ef4444';
+            isValid = false;
+        }
+
+        // Validate email
+        if (!emailInput.value.trim() || !emailInput.checkValidity()) {
+            emailInput.style.borderColor = '#ef4444';
+            isValid = false;
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields correctly.');
         }
     });
 </script>

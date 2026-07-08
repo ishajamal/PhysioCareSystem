@@ -20,8 +20,7 @@ class UsageController extends Controller
     public function inventoryList()
     {
         $items = itemMaintenanceInfo::with('images')
-                ->where('category','Item')
-                ->where('status','available')
+                ->where('category', 'Item')
                 ->get();
 
         return view('therapist.RecordItemUsage.InventoryList', compact('items'));
@@ -121,7 +120,7 @@ class UsageController extends Controller
 
         // Get all available items for the "Add Item" modal dropdown
         $items = itemMaintenanceInfo::with('images')
-                ->where('category', 'therapy supplies')
+                ->where('category', 'Item')
                 ->where('status', 'available')
                 ->get();
         

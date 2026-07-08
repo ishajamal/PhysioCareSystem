@@ -198,6 +198,37 @@ body {
         font-size: 12px;
     }
 }
+/* ================= UNAVAILABLE ROW ================= */
+.unavailable-row {
+    background: #f3f4f6 !important;
+    color: #9ca3af;
+}
+
+.unavailable-row td {
+    color: #9ca3af;
+}
+
+.unavailable-row:hover {
+    background: #f3f4f6 !important;
+}
+
+.disabled-btn {
+    background: #d1d5db;
+    color: #6b7280;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.disabled-btn:hover {
+    background: #d1d5db;
+    transform: none;
+    box-shadow: none;
+}
+
+.status-unavailable {
+    background: #fee2e2;
+    color: #b91c1c;
+}
 </style>
 
 
@@ -236,7 +267,7 @@ body {
             <tbody id="inventoryTableBody">
                 @if($items->count() > 0)
                     @foreach($items as $index => $item)
-                    <tr>
+                    <tr class="{{ $item->status == 'Unavailable' ? 'unavailable-row' : '' }}">
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->itemID }}</td>
                         <td>{{ $item->itemName }}</td>
@@ -244,13 +275,14 @@ body {
                         <td>{{ $item->quantity }}</td>
                         <td>
                             @php
-                                $stockClass = '';
-                                $stockLevel = 10; // Example threshold, adjust as needed
-                                if($item->quantity > $stockLevel) {
-                                    $stockClass = 'status-available'; // High stock
+                                if ($item->status == 'Unavailable') {
+                                    $stockClass = 'status-unavailable';
+                                    $stockText = 'Unavailable';
+                                } elseif ($item->quantity > 10) {
+                                    $stockClass = 'status-available';
                                     $stockText = 'High';
                                 } else {
-                                    $stockClass = 'status-low'; // Low stock
+                                    $stockClass = 'status-low';
                                     $stockText = 'Low';
                                 }
                             @endphp
@@ -260,9 +292,16 @@ body {
                         </td>
 
                         <td>
-                            <button class="select-btn" onclick="window.location.href='{{ route('therapist.add.usage.record', ['itemID' => $item->itemID]) }}'">
-                                Select
-                            </button>
+                            @if($item->status == 'Unavailable')
+                                <button class="select-btn disabled-btn" disabled>
+                                    Select
+                                </button>
+                            @else
+                                <button class="select-btn"
+                                    onclick="window.location.href='{{ route('therapist.add.usage.record', ['itemID' => $item->itemID]) }}'">
+                                    Select
+                                </button>
+                            @endif
                         </td>
                     </tr>
                     @endforeach
@@ -275,6 +314,13 @@ body {
                         </td>
                     </tr>
                 @endif
+                 <tr id="noResultsRow" style="display: none;">
+                    <td colspan="7" class="no-data">
+                        <i class="fas fa-box-open no-data-icon"></i>
+                        <br>
+                        No inventory items found
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -283,24 +329,44 @@ body {
 <script>
     // Function untuk live search
     function searchItems() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const rows = document.querySelectorAll('#inventoryTableBody tr');
-        
-        rows.forEach(row => {
-            // Skip the "no data" row
-            if (row.querySelector('.no-data')) return;
-            
-            const code = row.cells[1].textContent.toLowerCase();
-            const name = row.cells[2].textContent.toLowerCase();
-            const category = row.cells[3].textContent.toLowerCase();
-            
-            if (code.includes(searchTerm) || name.includes(searchTerm) || category.includes(searchTerm)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+    const tbody = document.getElementById('inventoryTableBody');
+    const rows = tbody.querySelectorAll('tr');
+    const noResultsRow = document.getElementById('noResultsRow');
+
+    let found = false;
+
+    rows.forEach(row => {
+
+        // Ignore the "No records found" row
+        if (row.id === "noResultsRow") return;
+
+        // Ignore the initial "No inventory items found" row
+        if (row.querySelector('.no-data')) return;
+
+        const code = row.cells[1].textContent.toLowerCase();
+        const name = row.cells[2].textContent.toLowerCase();
+        const category = row.cells[3].textContent.toLowerCase();
+
+        if (
+            code.includes(searchTerm) ||
+            name.includes(searchTerm) ||
+            category.includes(searchTerm)
+        ) {
+            row.style.display = "";
+            found = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Show "No records found" only if search text exists and nothing matches
+    if (searchTerm !== "" && !found) {
+        noResultsRow.style.display = "";
+    } else {
+        noResultsRow.style.display = "none";
     }
+}
 
     
 </script>

@@ -180,8 +180,22 @@
     .header-actions { flex-direction: column; gap: 10px; }
     .btn-add, .btn-submit, .btn-cancel { width: 100%; justify-content: center; }
 }
+/* ================= TABLE HEADER ================= */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
 
-
+.table-header h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+}
 </style>
 
 <div >
@@ -208,7 +222,12 @@
 
     <!-- Main Card -->
     <div class="usage-card">
-        <table class="usage-table">
+
+    <div class="table-header">
+        <h3>Usage Draft List</h3>
+    </div>
+
+    <table class="usage-table">
             <thead>
                 <tr>
                     <th>No.</th>
