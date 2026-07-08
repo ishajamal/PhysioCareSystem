@@ -258,8 +258,8 @@ body {
                 </div>
 
                 <div class="filter-date-group">
-                    <input type="date" name="dateStart" value="{{ request('dateStart') }}" class="filter-input" title="Start Date">
-                    <input type="date" name="dateEnd" value="{{ request('dateEnd') }}" class="filter-input" title="End Date">
+                    <input type="date" name="dateStart" id="dateStart" value="{{ request('dateStart') }}" class="filter-input" title="Start Date">
+                    <input type="date" name="dateEnd" id="dateEnd" value="{{ request('dateEnd') }}" class="filter-input" title="End Date">
                 </div>
 
                 <div style="display: flex; gap: 10px;">
@@ -342,5 +342,26 @@ body {
                 btn.disabled = false;
             });
     }
+document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('filterForm');
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const startVal = document.querySelector('[name="dateStart"]').value;
+                const endVal = document.querySelector('[name="dateEnd"]').value;
+
+                if (startVal && endVal) {
+                    const startDate = new Date(startVal);
+                    const endDate = new Date(endVal);
+
+                    if (startDate > endDate) {
+                        e.preventDefault(); // Stop the form from submitting
+                        alert('Start date cannot be later than end date.'); // Show alert window
+                    }
+                }
+            });
+        }
+    });
+
 </script>
 @endsection

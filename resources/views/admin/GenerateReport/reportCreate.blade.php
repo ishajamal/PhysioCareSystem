@@ -363,7 +363,26 @@ function updateCheckboxes() {
         maintenanceSection.classList.add('hidden-section');
     }
 }
+document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('reportForm');
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const startVal = document.querySelector('[name="dateStart"]').value;
+                const endVal = document.querySelector('[name="dateEnd"]').value;
 
+                if (startVal && endVal) {
+                    const startDate = new Date(startVal);
+                    const endDate = new Date(endVal);
+
+                    if (startDate > endDate) {
+                        e.preventDefault(); // Stop the form from submitting
+                        alert('Start date cannot be later than end date.'); // Show alert window
+                    }
+                }
+            });
+        }
+    });
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     updateCheckboxes();
